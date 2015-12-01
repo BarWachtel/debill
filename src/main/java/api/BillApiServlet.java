@@ -1,3 +1,5 @@
+package api;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -6,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "test", urlPatterns = {"/test"})
-public class Servlet extends HttpServlet {
+@WebServlet(name = "BillApiServlet", urlPatterns = {"/bill"})
+public class BillApiServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

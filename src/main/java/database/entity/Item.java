@@ -1,4 +1,4 @@
-package entities;
+package database.entity;
 
 public class Item {
 

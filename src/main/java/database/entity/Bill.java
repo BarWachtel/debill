@@ -1,4 +1,4 @@
-package entities;
+package database.entity;
 
 import java.util.List;
 
