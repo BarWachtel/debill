@@ -52,3 +52,12 @@ public class Bill {
         this.items = items;
     }
 }
+
+/*
+CREATE TABLE `dbName`.`bill` (
+  `id` INT NOT NULL,
+  `manager` INT NULL,
+  `private` INT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+ */
