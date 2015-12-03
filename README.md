@@ -1,7 +1,19 @@
-~~Setup git~~<br/>
-Singelton MySQL db connection -
+Bar Wachtel 04/12/15 -<br/>
+I made some changes:<br/>
+i. I setup the REST servlets, its VERY important you do the following -<br/>
+File -> Project Structure -> Select all JARs, right click and select "Put into /WEB-INF/lib"
 
-##API (Rest (javax.ws.rs.*) OR Servlets (HttpServlets))
+ii. Database credentials are placed in DatabaseCredentials class,<br/>
+since the file wasnt packaged in application server (tried many places).<br/>
+Anyway DB resources should go in context.xml OR web.xml eventually.
+
+iii. Added end to end example -<br/>
+/user/ & /user/{id} <br/>
+Notice these return the Java object as JSON
+
+-----------------------------------------------------------------------------------------
+
+##API (Rest (javax.ws.rs.*)
 ####Only non-authorized paths -
 	get /view/ - index (screen)
 	get /facebook - setup user session

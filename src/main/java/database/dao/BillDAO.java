@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by user on 01/12/2015.
@@ -16,8 +17,16 @@ import java.util.Collection;
 public class BillDAO {
 	private static String tableName = "bill";
 
-	public static Collection<Bill> getAll() {
-		Collection<Bill> bills = null;
+	public void populateItems() {
+		// Requires another query
+	}
+
+	public void populateManager() {
+		// Requires another query
+	}
+
+	public static List<Bill> getAll() {
+		List<Bill> bills = null;
 		Connection conn = DBConnSingleton.getConnection();
 		try {
 			Statement statement = conn.createStatement();
@@ -31,6 +40,23 @@ public class BillDAO {
 		}
 
 		return bills;
+	}
+
+	public static Bill get(int id) {
+		Bill bill = null;
+		Connection conn = DBConnSingleton.getConnection();
+		try {
+			Statement statement = conn.createStatement();
+			ResultSet resultSet =
+					statement.executeQuery("SELECT * FROM " + tableName + " WHERE id = " + id);
+			if (resultSet.next()) {
+				bill = createBillObject(resultSet);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return bill;
 	}
 
 	private static Bill createBillObject(ResultSet resultSet) {

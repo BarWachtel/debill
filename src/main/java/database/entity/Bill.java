@@ -51,6 +51,13 @@ public class Bill {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Bill id: ").append(id).append(" isPrivate: ").append(isPrivate);
+		return sb.toString();
+	}
 }
 
 /*

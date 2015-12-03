@@ -1,12 +1,32 @@
 package database.entity;
 
+import java.sql.Date;
+
 public class User {
 
     private int id;
     private String firstName;
     private String lastName;
+	private String facebookId;
+	private Date creationTime;
 
-    public User() {
+	public Date getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
+	}
+
+	public User() {
 
     }
 
@@ -41,3 +61,14 @@ public class User {
         this.lastName = lastName;
     }
 }
+
+/**
+ CREATE TABLE `debill`.`user` (
+ `firstname` VARCHAR(35) NOT NULL,
+ `lastname` VARCHAR(35) NULL,
+ `create_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+ `facebookid` VARCHAR(65) NULL,
+ `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (`id`),
+ UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+ */

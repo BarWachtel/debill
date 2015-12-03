@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-<display-name>debill</display-name>
-<servlet>
-    <servlet-name>debill</servlet-name>
-    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-    <!-- Register resources and providers under com.vogella.jersey.first package. -->
-    <init-param>
-        <param-name>com.sun.jersey.config.server.provider.packages</param-name>
-        <param-value>api</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-</servlet>
-<servlet-mapping>
-    <servlet-name>debill</servlet-name>
-    <url-pattern>/rest/*</url-pattern>
-</servlet-mapping>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>debill</display-name>
+    <servlet>
+        <servlet-name>apiRoutes</servlet-name>
+        <servlet-class>
+            com.sun.jersey.spi.container.servlet.ServletContainer
+        </servlet-class>
+
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>api.route</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>apiRoutes</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 </web-app>

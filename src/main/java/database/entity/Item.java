@@ -3,18 +3,36 @@ package database.entity;
 public class Item {
 
     private int id;
-    private int amount;
-    private float pricePerUnit;
+	private String name;
+	private int quantity;
+    private float price;
+	private int billId;
 
     public Item() {
 
     }
 
-    public Item(int id, int amount, float pricePerUnit) {
+    public Item(int id, int quantity, float price) {
         this.id = id;
-        this.amount = amount;
-        this.pricePerUnit = pricePerUnit;
+        this.quantity = quantity;
+        this.price = price;
     }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getBillId() {
+		return billId;
+	}
+
+	public void setBillId(int billId) {
+		this.billId = billId;
+	}
 
     public int getId() {
         return id;
@@ -24,19 +42,30 @@ public class Item {
         this.id = id;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
-    public float getPricePerUnit() {
-        return pricePerUnit;
+    public float getPrice() {
+        return price;
     }
 
-    public void setPricePerUnit(float pricePerUnit) {
-        this.pricePerUnit = pricePerUnit;
+    public void setPrice(float price) {
+        this.price = price;
     }
 }
+
+/**
+ CREATE TABLE `debill`.`category` (
+ `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+ `name` VARCHAR(150) NOT NULL,
+ `price` DECIMAL(10,2) NOT NULL,
+ `quantity` INT NULL DEFAULT 1,
+ `billid` INT NOT NULL,
+ PRIMARY KEY (`id`),
+ UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+ */
