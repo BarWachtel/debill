@@ -88,8 +88,8 @@ public class JDBCBillDAO implements BillDAO {
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setBoolean(1,bill.isPrivate());
-            preparedStatement.setInt(1,bill.getId());
-            preparedStatement.executeUpdate();
+            preparedStatement.setInt(2,bill.getId());
+            resultSet = preparedStatement.executeUpdate();
             conn.close();
         } catch (SQLException | QueryBuilderException e) {
             e.printStackTrace();
