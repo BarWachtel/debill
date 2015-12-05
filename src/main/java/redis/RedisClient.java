@@ -5,9 +5,6 @@ import redis.clients.jedis.Jedis;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Created by user on 29/11/2015.
- */
 public class RedisClient {
 	public static void main(String[] args) {
 		Jedis redisClient = new Jedis("localhost", 6379);

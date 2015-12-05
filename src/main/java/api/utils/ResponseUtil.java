@@ -6,10 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Created by user on 01/12/2015.
- */
 public class ResponseUtil {
+
 	public static void send(String msg, HttpServletResponse response) throws IOException {
 		response.setContentType("text/plain");
 		doSend(msg.toString(), response);

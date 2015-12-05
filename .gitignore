@@ -2,3 +2,5 @@ debill.iml
 out/
 .idea/
 target/
+db_credentials.txt
+DatabaseCredentials

@@ -1,10 +1,8 @@
 package api.controller;
 
-import database.dao.BillDAO;
+import database.dao.JDBCBillDAO;
 import database.entity.Bill;
-import org.json.JSONArray;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,12 +10,12 @@ import java.util.List;
  */
 public class BillController {
 	public static List<Bill> getAll() {
-		List<Bill> bills = BillDAO.getAll();
+		List<Bill> bills = JDBCBillDAO.getAllBills();
 		return bills;
 	}
 
 	public static Bill get(int id) {
-		Bill bill = BillDAO.get(id);
+		Bill bill = JDBCBillDAO.get(id);
 		return bill;
 	}
 }

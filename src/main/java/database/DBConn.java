@@ -2,15 +2,12 @@ package database;
 
 import generalutils.DatabaseCredentials;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class DBConnSingleton {
+public class DBConn {
 	private static final String URL = "jdbc:mysql://localhost/";
 //	private static final String FILE_NAME = "db_credentials.txt";
 
@@ -20,9 +17,9 @@ public class DBConnSingleton {
 	private static String USER_NAME = DatabaseCredentials.USER_NAME;
 	private static String PASSWORD = DatabaseCredentials.PASSWORD;
 	private static final Lock instanceLock = new ReentrantLock();
-	private static DBConnSingleton instance = null;
+	private static DBConn instance = null;
 
-	public static DBConnSingleton getInstance() {
+	public static DBConn getInstance() {
 		if (instance == null) {
 			instantiateInstance();
 		}
@@ -32,7 +29,7 @@ public class DBConnSingleton {
 	private static void instantiateInstance() {
 		instanceLock.lock();
 		if (instance == null) {
-			instance = new DBConnSingleton();
+			instance = new DBConn();
 		}
 		instanceLock.unlock();
 	}
