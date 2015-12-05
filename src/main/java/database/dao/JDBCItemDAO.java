@@ -16,26 +16,36 @@ import java.util.Map;
 public class JDBCItemDAO implements ItemDAO {
 
     private enum Columns {
-        itemId,
-        billId,
-        name,
-        price,
-        amount
-    }
+        itemId ("item_id"),
+        billId ("bill_id"),
+        name ("name"),
+        price ("price"),
+        amount ("amount");
+
+		String asString;
+
+		Columns(String asString) {
+			this.asString = asString;
+		}
+
+		public String getAsString() {
+			return asString;
+		}
+	}
 
     private static final String tableName;
     private static final QueryBuilderFactory queryBuilderFactory;
-    private static final Map<Columns, String> columnsToStrings;
+//    private static final Map<Columns, String> columnsToStrings;
 
     static {
         tableName = "items";
         queryBuilderFactory = new QueryBuilderFactory();
-        columnsToStrings = new HashMap<>();
-        columnsToStrings.put(Columns.itemId, "item_id");
-        columnsToStrings.put(Columns.billId, "bill_id");
-        columnsToStrings.put(Columns.name, "name");
-        columnsToStrings.put(Columns.price, "price");
-        columnsToStrings.put(Columns.amount, "amount");
+//        columnsToStrings = new HashMap<>();
+//        columnsToStrings.put(Columns.itemId, "item_id");
+//        columnsToStrings.put(Columns.billId, "bill_id");
+//        columnsToStrings.put(Columns.name, "name");
+//        columnsToStrings.put(Columns.price, "price");
+//        columnsToStrings.put(Columns.amount, "amount");
     }
 
     @Override
@@ -67,8 +77,8 @@ public class JDBCItemDAO implements ItemDAO {
             String query = queryBuilderFactory
                     .select()
                     .from(tableName)
-                    .where(columnsToStrings.get(Columns.billId) + " = " + bill.getId())
-                    .where(columnsToStrings.get(Columns.itemId) + " = " + itemId)
+                    .where(Columns.billId.getAsString() + " = " + bill.getId())
+                    .where(Columns.itemId.getAsString() + " = " + itemId)
                     .build();
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
@@ -91,9 +101,9 @@ public class JDBCItemDAO implements ItemDAO {
             query = queryBuilderFactory
                     .update()
                     .from(tableName)
-                    .set(columnsToStrings.get(Columns.price) + " = ?")
-                    .set(columnsToStrings.get(Columns.name) + " = ?")
-                    .set(columnsToStrings.get(Columns.amount) + " = ?")
+                    .set(Columns.price.getAsString() + " = ?")
+                    .set(Columns.name.getAsString() + " = ?")
+                    .set(Columns.amount.getAsString() + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setFloat(1, item.getPrice());
@@ -116,8 +126,8 @@ public class JDBCItemDAO implements ItemDAO {
             query = queryBuilderFactory
                     .delete()
                     .from(tableName)
-                    .where(columnsToStrings.get(Columns.billId) + " = ?")
-                    .where(columnsToStrings.get(Columns.itemId) + " = ?")
+                    .where(Columns.billId.getAsString() + " = ?")
+                    .where(Columns.itemId.getAsString() + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setInt(1,item.getBillId());
@@ -133,11 +143,11 @@ public class JDBCItemDAO implements ItemDAO {
     private Item createItemFromResultSet(ResultSet resultSet) {
         Item item = new Item();
         try {
-            item.setId(resultSet.getInt(columnsToStrings.get(Columns.itemId)));
-            item.setBillId(resultSet.getInt(columnsToStrings.get(Columns.billId)));
-            item.setName(resultSet.getString(columnsToStrings.get(Columns.name)));
-            item.setPrice(resultSet.getFloat(columnsToStrings.get(Columns.price)));
-            item.setQuantity(resultSet.getInt(columnsToStrings.get(Columns.amount)));
+            item.setId(resultSet.getInt(Columns.itemId.getAsString()));
+            item.setBillId(resultSet.getInt(Columns.billId.getAsString()));
+            item.setName(resultSet.getString(Columns.name.getAsString()));
+            item.setPrice(resultSet.getFloat(Columns.price.getAsString()));
+            item.setQuantity(resultSet.getInt(Columns.amount.getAsString()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
