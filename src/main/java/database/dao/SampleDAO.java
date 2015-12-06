@@ -7,6 +7,7 @@ import database.querybuilder.QueryBuilderFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class SampleDAO<T extends Entity> {
@@ -110,7 +111,20 @@ public abstract class SampleDAO<T extends Entity> {
 
     protected abstract T createEntityFromResultSet(ResultSet rs);
 
-    protected abstract String buildUpdateQuery(T entity);
+    protected String buildUpdateQuery(T entity) {
+        try {
+            return queryBuilderFactory
+                    .update()
+                    .from(TABLE_NAME)
+                    .set(getColumnsForUpdate())
+                    .build();
+        } catch (QueryBuilder.QueryBuilderException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected abstract Collection<String> getColumnsForUpdate();
 
     protected abstract String buildInsertQuery(T entity);
 

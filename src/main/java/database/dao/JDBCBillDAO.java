@@ -4,48 +4,106 @@ import database.DBConn;
 import database.entity.Bill;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder.QueryBuilderException;
-import database.querybuilder.QueryBuilderFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.stream.Collectors;
 
-public class JDBCBillDAO implements BillDAO {
+public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
+
+    JDBCBillDAO(String tableName) {
+        super(tableName);
+    }
+
+    @Override
+    protected String getIdColumnName() {
+        return Columns.billId.getAsString();
+    }
+
+    @Override
+    protected Bill createEntityFromResultSet(ResultSet rs) {
+        Bill newBill = new Bill();
+        try {
+            newBill.setId(rs.getInt(Columns.billId.getAsString()));
+            newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
+            newBill.setManager(null);
+            newBill.setItems(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return newBill;
+    }
+
+    @Override
+    protected Collection<String> getColumnsForUpdate() {
+        List<String> cols = new ArrayList<>();
+        cols.add(Columns.isPrivate.getAsString());
+        return cols;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new JDBCBillDAO("bill").getColumnsForUpdate());
+    }
+
+    @Override
+    protected String buildInsertQuery(Bill entity) {
+        try {
+            return queryBuilderFactory
+                    .insert()
+                    .into(TABLE_NAME)
+                    .value(Columns.billId.getAsString() + "=" + entity.getId())
+                    .value(Columns.isPrivate.getAsString() +"="+entity.isPrivate())
+                    .build();
+        } catch (QueryBuilderException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void setUpdatePreparedStatementParameters(PreparedStatement ps, Bill entity) {
+
+    }
+
+    @Override
+    protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
+
+    }
 
     private enum Columns {
-        billId,
-        fbId,
-        isPrivate
-    }
+        billId ("bill_id"),
+        fbId ("fb_id"),
+        isPrivate ("private");
 
-    private static final String TABLE_NAME;
-    private static final Map<Columns, String> columnsToStrings;
-    private static final QueryBuilderFactory queryBuilderFactory;
+		private String asString;
 
-    static {
-        TABLE_NAME = "bills";
-        columnsToStrings = new HashMap<>();
-        queryBuilderFactory = new QueryBuilderFactory();
-        columnsToStrings.put(Columns.billId, "bill_id");
-        columnsToStrings.put(Columns.fbId, "fb_id");
-        columnsToStrings.put(Columns.isPrivate, "private");
-    }
+		Columns(String asString) {
+			this.asString = asString;
+		}
+
+		public String getAsString() {
+			return asString;
+		}
+	}
 
     @Override
     public List<Bill> getAllBills() {
         Connection conn = DBConn.getConnection();
-        try {
+		List<Bill> bills = null;
+		try {
             String query = queryBuilderFactory
                     .select()
                     .from(TABLE_NAME)
                     .build();
             ResultSet resultSet = conn.createStatement().executeQuery(query);
-            List<Bill> bills = new ArrayList<>();
+            bills = new ArrayList<>();
             while (resultSet.next()) {
                 bills.add(createBillObject(resultSet));
             }
@@ -53,7 +111,7 @@ public class JDBCBillDAO implements BillDAO {
         } catch (SQLException | QueryBuilderException e) {
             e.printStackTrace();
         }
-        return null;
+        return bills;
     }
 
     @Override
@@ -64,7 +122,7 @@ public class JDBCBillDAO implements BillDAO {
             String query = queryBuilderFactory
                     .select()
                     .from(TABLE_NAME)
-                    .where(columnsToStrings.get(Columns.billId) + "=" + id)
+                    .where(Columns.billId.getAsString() + "=" + id)
                     .build();
             ResultSet resultSet = conn.createStatement().executeQuery(query);
             if (resultSet.next()) {
@@ -86,8 +144,8 @@ public class JDBCBillDAO implements BillDAO {
             query = queryBuilderFactory
                     .update()
                     .from(TABLE_NAME)
-                    .set(columnsToStrings.get(Columns.isPrivate) + " = ?")
-                    .where(columnsToStrings.get(Columns.billId) + " = ?")
+                    .set(Columns.isPrivate.getAsString() + " = ?")
+                    .where(Columns.billId.getAsString() + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setBoolean(1,bill.isPrivate());
@@ -109,7 +167,7 @@ public class JDBCBillDAO implements BillDAO {
             query = queryBuilderFactory
                     .delete()
                     .from(TABLE_NAME)
-                    .where(columnsToStrings.get(Columns.billId) + " = ?")
+                    .where(Columns.billId.getAsString() + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setInt(1, bill.getId());
@@ -124,10 +182,10 @@ public class JDBCBillDAO implements BillDAO {
     private static Bill createBillObject(ResultSet resultSet) {
         Bill bill = new Bill();
         try {
-            bill.setId(resultSet.getInt("bill_id"));
+            bill.setId(resultSet.getInt(Columns.billId.getAsString()));
             bill.setItems(null);
             bill.setManager(null);
-            bill.setPrivate(resultSet.getInt("private") == 0);
+            bill.setPrivate(resultSet.getInt(Columns.isPrivate.getAsString()) == 0);
         } catch (SQLException e) {
             e.printStackTrace();
         }

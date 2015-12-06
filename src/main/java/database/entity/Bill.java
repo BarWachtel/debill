@@ -2,7 +2,7 @@ package database.entity;
 
 import java.util.List;
 
-public class Bill {
+public class Bill extends Entity {
 
     private int id;
     private User manager;
