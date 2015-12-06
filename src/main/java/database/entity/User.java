@@ -2,7 +2,7 @@ package database.entity;
 
 import java.sql.Date;
 
-public class User{
+public class User extends Entity {
 
     private int id;
     private String firstName;

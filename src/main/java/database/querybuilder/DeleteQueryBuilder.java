@@ -3,13 +3,14 @@ package database.querybuilder;
 import database.interfaces.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DeleteQueryBuilder extends ConditionalQueryBuilder implements QueryBuilder {
     private String from = null;
 
     public DeleteQueryBuilder() {
-        this.where = new ArrayList<String>();
+        this.where = new ArrayList<>();
     }
 
     public DeleteQueryBuilder from(String from) {
@@ -27,7 +28,7 @@ public class DeleteQueryBuilder extends ConditionalQueryBuilder implements Query
         return this;
     }
 
-    public DeleteQueryBuilder where(List<String> where) {
+    public DeleteQueryBuilder where(Collection<String> where) {
         this.where.addAll(where);
         return this;
     }

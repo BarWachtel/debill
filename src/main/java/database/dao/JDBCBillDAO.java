@@ -23,14 +23,17 @@ public class JDBCBillDAO implements BillDAO {
         isPrivate
     }
 
-    private static final String tableName = "bills";
-    private static final Map<Columns, String> columnsAsStrings = new HashMap<>();
-    private static final QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
+    private static final String TABLE_NAME;
+    private static final Map<Columns, String> columnsToStrings;
+    private static final QueryBuilderFactory queryBuilderFactory;
 
     static {
-        columnsAsStrings.put(Columns.billId, "bill_id");
-        columnsAsStrings.put(Columns.fbId, "fb_id");
-        columnsAsStrings.put(Columns.isPrivate, "private");
+        TABLE_NAME = "bills";
+        columnsToStrings = new HashMap<>();
+        queryBuilderFactory = new QueryBuilderFactory();
+        columnsToStrings.put(Columns.billId, "bill_id");
+        columnsToStrings.put(Columns.fbId, "fb_id");
+        columnsToStrings.put(Columns.isPrivate, "private");
     }
 
     @Override
@@ -39,7 +42,7 @@ public class JDBCBillDAO implements BillDAO {
         try {
             String query = queryBuilderFactory
                     .select()
-                    .from(tableName)
+                    .from(TABLE_NAME)
                     .build();
             ResultSet resultSet = conn.createStatement().executeQuery(query);
             List<Bill> bills = new ArrayList<>();
@@ -60,8 +63,8 @@ public class JDBCBillDAO implements BillDAO {
         try {
             String query = queryBuilderFactory
                     .select()
-                    .from(tableName)
-                    .where(columnsAsStrings.get(Columns.billId) + "=" + id)
+                    .from(TABLE_NAME)
+                    .where(columnsToStrings.get(Columns.billId) + "=" + id)
                     .build();
             ResultSet resultSet = conn.createStatement().executeQuery(query);
             if (resultSet.next()) {
@@ -82,9 +85,9 @@ public class JDBCBillDAO implements BillDAO {
         try {
             query = queryBuilderFactory
                     .update()
-                    .from(tableName)
-                    .set(columnsAsStrings.get(Columns.isPrivate) + " = ?")
-                    .where(columnsAsStrings.get(Columns.billId) + " = ?")
+                    .from(TABLE_NAME)
+                    .set(columnsToStrings.get(Columns.isPrivate) + " = ?")
+                    .where(columnsToStrings.get(Columns.billId) + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setBoolean(1,bill.isPrivate());
@@ -105,8 +108,8 @@ public class JDBCBillDAO implements BillDAO {
         try {
             query = queryBuilderFactory
                     .delete()
-                    .from(tableName)
-                    .where(columnsAsStrings.get(Columns.billId) + " = ?")
+                    .from(TABLE_NAME)
+                    .where(columnsToStrings.get(Columns.billId) + " = ?")
                     .build();
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setInt(1, bill.getId());

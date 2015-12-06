@@ -3,6 +3,7 @@ package database.querybuilder;
 import database.interfaces.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SelectQueryBuilder extends ConditionalQueryBuilder implements QueryBuilder {
@@ -10,9 +11,9 @@ public class SelectQueryBuilder extends ConditionalQueryBuilder implements Query
 	List<String> from;
 
 	public SelectQueryBuilder() {
-		this.columns = new ArrayList<String>();
-		this.where = new ArrayList<String>();
-		this.from = new ArrayList<String>();
+		this.columns = new ArrayList<>();
+		this.where = new ArrayList<>();
+		this.from = new ArrayList<>();
 	}
 
 	public SelectQueryBuilder column(String column) {
@@ -20,7 +21,7 @@ public class SelectQueryBuilder extends ConditionalQueryBuilder implements Query
 		return this;
 	}
 
-	public SelectQueryBuilder column(List<String> columns) {
+	public SelectQueryBuilder column(Collection<String> columns) {
 		this.columns.addAll(columns);
 		return this;
 	}
@@ -30,7 +31,7 @@ public class SelectQueryBuilder extends ConditionalQueryBuilder implements Query
 		return this;
 	}
 
-	public SelectQueryBuilder where(List<String> where) {
+	public SelectQueryBuilder where(Collection<String> where) {
 		this.where.addAll(where);
 		return this;
 	}
@@ -40,7 +41,7 @@ public class SelectQueryBuilder extends ConditionalQueryBuilder implements Query
 		return this;
 	}
 
-	public SelectQueryBuilder from(List<String> from) {
+	public SelectQueryBuilder from(Collection<String> from) {
 		this.from.addAll(from);
 		return this;
 	}

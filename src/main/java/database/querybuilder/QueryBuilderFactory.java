@@ -10,4 +10,5 @@ public class QueryBuilderFactory {
     public DeleteQueryBuilder delete() {
         return new DeleteQueryBuilder();
     }
+    public InsertQueryBuilder insert() {return new InsertQueryBuilder();}
 }

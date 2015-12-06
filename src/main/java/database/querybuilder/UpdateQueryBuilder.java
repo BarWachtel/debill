@@ -3,6 +3,7 @@ package database.querybuilder;
 import database.interfaces.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class UpdateQueryBuilder extends ConditionalQueryBuilder implements QueryBuilder{
@@ -10,8 +11,8 @@ public class UpdateQueryBuilder extends ConditionalQueryBuilder implements Query
     private final List<String> set;
 
     public UpdateQueryBuilder() {
-        this.where = new ArrayList<String>();
-        this.set = new ArrayList<String>();
+        this.where = new ArrayList<>();
+        this.set = new ArrayList<>();
     }
 
     public UpdateQueryBuilder from(String from) {
@@ -29,7 +30,7 @@ public class UpdateQueryBuilder extends ConditionalQueryBuilder implements Query
         return this;
     }
 
-    public UpdateQueryBuilder where(List<String> where) {
+    public UpdateQueryBuilder where(Collection<String> where) {
         this.where.addAll(where);
         return this;
     }
@@ -39,7 +40,7 @@ public class UpdateQueryBuilder extends ConditionalQueryBuilder implements Query
         return this;
     }
 
-    public UpdateQueryBuilder set(List<String> set) {
+    public UpdateQueryBuilder set(Collection<String> set) {
         this.set.addAll(set);
         return this;
     }
@@ -67,12 +68,5 @@ public class UpdateQueryBuilder extends ConditionalQueryBuilder implements Query
         appendConditions(theQuery);
 
         return theQuery.toString();
-    }
-
-    private class UpdateQueryBuilderException extends Exception {
-
-        UpdateQueryBuilderException(String message) {
-            super(message);
-        }
     }
 }
