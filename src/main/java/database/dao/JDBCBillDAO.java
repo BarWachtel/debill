@@ -18,9 +18,28 @@ import java.util.stream.Collectors;
 
 public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
-    JDBCBillDAO(String tableName) {
-        super(tableName);
+	static {
+		TABLE_NAME = "bills";
+	}
+
+    JDBCBillDAO(){
     }
+
+	private enum Columns {
+		billId ("bill_id"),
+		fbId ("fb_id"),
+		isPrivate ("private");
+
+		private String asString;
+
+		Columns(String asString) {
+			this.asString = asString;
+		}
+
+		public String getAsString() {
+			return asString;
+		}
+	}
 
     @Override
     protected String getIdColumnName() {
@@ -50,13 +69,14 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     }
 
     public static void main(String[] args) {
-        System.out.println(new JDBCBillDAO("bill").getColumnsForUpdate());
+        System.out.println(new JDBCBillDAO().getColumnsForUpdate());
     }
 
     @Override
     protected String buildInsertQuery(Bill entity) {
+		String query = null;
         try {
-            return queryBuilderFactory
+            query = queryBuilderFactory
                     .insert()
                     .into(TABLE_NAME)
                     .value(Columns.billId.getAsString() + "=" + entity.getId())
@@ -65,6 +85,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
         } catch (QueryBuilderException e) {
             e.printStackTrace();
         }
+		return query;
     }
 
     @Override
@@ -77,24 +98,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     }
 
-    private enum Columns {
-        billId ("bill_id"),
-        fbId ("fb_id"),
-        isPrivate ("private");
-
-		private String asString;
-
-		Columns(String asString) {
-			this.asString = asString;
-		}
-
-		public String getAsString() {
-			return asString;
-		}
-	}
-
-    @Override
-    public List<Bill> getAllBills() {
+    public static List<Bill> getAllBills() {
         Connection conn = DBConn.getConnection();
 		List<Bill> bills = null;
 		try {
@@ -114,8 +118,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
         return bills;
     }
 
-    @Override
-    public Bill getBill(int id) {
+    public static Bill getBill(int id) {
         Connection conn = DBConn.getConnection();
         Bill bill = null;
         try {

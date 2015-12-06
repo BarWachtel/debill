@@ -1,6 +1,7 @@
 package api.controller;
 
 import database.dao.JDBCBillDAO;
+import database.dao.SampleDAO;
 import database.entity.Bill;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class BillController {
 	}
 
 	public static Bill get(int id) {
-		Bill bill = JDBCBillDAO.get(id);
+		Bill bill = JDBCBillDAO.getBill(id);
 		return bill;
 	}
 }

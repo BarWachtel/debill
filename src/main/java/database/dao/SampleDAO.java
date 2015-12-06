@@ -1,6 +1,7 @@
 package database.dao;
 
 import database.DBConn;
+import database.entity.Bill;
 import database.entity.Entity;
 import database.interfaces.QueryBuilder;
 import database.querybuilder.QueryBuilderFactory;
@@ -12,15 +13,18 @@ import java.util.List;
 
 public abstract class SampleDAO<T extends Entity> {
 
-    protected final String TABLE_NAME;
-    protected final QueryBuilderFactory queryBuilderFactory;
+    protected static String TABLE_NAME = null;
+    protected static QueryBuilderFactory queryBuilderFactory;
 
-    SampleDAO(String tableName) {
-        this.TABLE_NAME = tableName;
-        this.queryBuilderFactory = new QueryBuilderFactory();
+    SampleDAO() {
     }
 
-    protected List<T> getAllEntities() {
+	static {
+		SampleDAO.queryBuilderFactory = new QueryBuilderFactory();
+	}
+
+
+	protected List<T> getAllEntities() {
         Connection conn = DBConn.getConnection();
         List<T> entities = new ArrayList<>();
         try {

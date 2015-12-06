@@ -7,6 +7,7 @@ import database.interfaces.UserDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
@@ -15,8 +16,11 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
     private static final String COL_FIRST_NAME = "first_name";
     private static final String COL_LAST_NAME = "last_name";
 
+	static {
+		TABLE_NAME = "users";
+	}
+
     public JDBCUserDAO() {
-        super("users");
     }
 
     @Override
@@ -73,7 +77,11 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
         return null;
     }
 
-    @Override
+	@Override protected Collection<String> getColumnsForUpdate() {
+		return null;
+	}
+
+	@Override
     protected String buildInsertQuery(User entity) {
         try {
             return queryBuilderFactory
