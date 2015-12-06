@@ -1,6 +1,8 @@
+debill_app.iml
 debill.iml
 out/
 .idea/
 target/
 db_credentials.txt
 DatabaseCredentials
+src/main/java/generalutils/DatabaseCredentials.java
