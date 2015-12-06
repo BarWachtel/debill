@@ -1,4 +1,4 @@
-package core;
+package core.ocr;
 
 import generalutils.ocrsdk.Client;
 import generalutils.ocrsdk.ProcessingSettings;
@@ -12,9 +12,17 @@ import java.util.Vector;
 public class OcrClient {
 	private static Client restClient;
 
+	static {
+		restClient = new Client();
+		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
+		restClient.serverUrl = "http://cloud.ocrsdk.com";
+		restClient.applicationId = ClientSettings.APPLICATION_ID;
+		restClient.password = ClientSettings.PASSWORD;
+	}
+
 	public static void main(String[] args) throws Exception {
-		String imgName = "heb.png";
-		String outputTextFile = "heb.txt";
+		String imgName = "bill_he.png";
+		String outputTextFile = "bill_he.txt";
 
 		restClient = new Client();
 		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
@@ -24,16 +32,20 @@ public class OcrClient {
 
 		Vector<String> ocrArgs = new Vector<>();
 //		ocrArgs.add("recognize");
-		ocrArgs.add("--lang=hebrew");
+		ocrArgs.add("--lang=hebrew,english");
 		ocrArgs.add(imgName);
 		ocrArgs.add(outputTextFile);
 
 		performRecognition(ocrArgs);
 	}
 
+//	public String imageToText(String srcFile, String outputFile) {
+//
+//	}
+
 	private static void performRecognition(Vector<String> argList)
 			throws Exception {
-		String language = CmdLineOptions.extractRecognitionLanguage(argList);
+		String language = ArgOptions.extractRecognitionLanguage(argList);
 		String outputPath = argList.lastElement();
 		argList.remove(argList.size() - 1);
 		// argList now contains list of source images to process

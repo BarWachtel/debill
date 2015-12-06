@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class SampleDAO<T extends Entity> {
-
     protected static String TABLE_NAME = null;
     protected static QueryBuilderFactory queryBuilderFactory;
 

@@ -1,4 +1,4 @@
-package core;
+package core.ocr;
 
 /**
  * Authentication settings for Cloud OCR SDK client.

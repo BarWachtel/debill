@@ -1,10 +1,10 @@
-package core;
+package core.ocr;
 
 import generalutils.ocrsdk.ProcessingSettings;
 
 import java.util.Vector;
 
-public class CmdLineOptions {
+public class ArgOptions {
 
 		/**
 	 * Extract recognition language from command-line parameters. After
