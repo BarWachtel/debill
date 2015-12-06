@@ -6,3 +6,5 @@ target/
 db_credentials.txt
 DatabaseCredentials
 src/main/java/generalutils/DatabaseCredentials.java
+img
+txt

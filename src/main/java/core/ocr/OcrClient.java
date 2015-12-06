@@ -21,8 +21,8 @@ public class OcrClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String imgName = "bill_he.png";
-		String outputTextFile = "bill_he.txt";
+		String imgName = "img/bill_he.png";
+		String outputTextFile = "txt/bill_he.txt";
 
 		restClient = new Client();
 		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
