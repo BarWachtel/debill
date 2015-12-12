@@ -1,4 +1,11 @@
-Bar Wachtel 04/12/15 -<br/>
+##Updates --
+
+<b>Bar Wachtel 12/12/15 </b>-<br/>
+First version of the image to bill item parsing is functional,<br/>
+Use it by sending an image FILE to Core.imgToBillItems(File imgFile) <br/>
+-- check out Core.main() example<br/>
+
+<b>Bar Wachtel 04/12/15 </b>-<br/>
 I made some changes:<br/>
 i. I setup the REST servlets, its VERY important you do the following -<br/>
 File -> Project Structure -> Select all JARs, right click and select "Put into /WEB-INF/lib"
@@ -11,9 +18,11 @@ iii. Added end to end example -<br/>
 /user/ & /user/{id} <br/>
 Notice these return the Java object as JSON
 
+<hr/>
 -----------------------------------------------------------------------------------------
+##TODO List --
 
-##API (Rest (javax.ws.rs.*)
+###API (Rest (javax.ws.rs.*)
 ####Only non-authorized paths -
 	get /view/ - index (screen)
 	get /facebook - setup user session
@@ -33,10 +42,11 @@ Notice these return the Java object as JSON
 
 And more...
 
-##Logic & Redis -
+###Logic & Redis -<br/>
+See <b>updates</b>
 
 
-##Database -<br/>
+###Database -<br/>
 User (DAO)<br/>
 Bill (DAO)<br/>
 Item (DAO)<br/>

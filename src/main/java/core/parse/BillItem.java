@@ -1,4 +1,4 @@
-package core.logic;
+package core.parse;
 
 /**
  * Created by user on 06/12/2015.

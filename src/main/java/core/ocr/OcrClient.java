@@ -1,9 +1,11 @@
 package core.ocr;
 
+import generalutils.FileUtils;
 import generalutils.ocrsdk.Client;
 import generalutils.ocrsdk.ProcessingSettings;
 import generalutils.ocrsdk.Task;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -20,31 +22,45 @@ public class OcrClient {
 		restClient.password = ClientSettings.PASSWORD;
 	}
 
-	public static void main(String[] args) throws Exception {
-		String imgName = "img/minzar_crop.png";
-		String outputTextFile = "txt/minzar_crop.txt";
-
-		restClient = new Client();
-		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
-		restClient.serverUrl = "http://cloud.ocrsdk.com";
-		restClient.applicationId = ClientSettings.APPLICATION_ID;
-		restClient.password = ClientSettings.PASSWORD;
-
-		Vector<String> ocrArgs = new Vector<>();
-//		ocrArgs.add("recognize");
-		ocrArgs.add("--lang=hebrew");
-		ocrArgs.add(imgName);
-		ocrArgs.add(outputTextFile);
-
-		performRecognition(ocrArgs);
+	public static List<String> getImgLines(String imgFileName) {
+		return getImgLines(imgFileName, Language.ENGLISH, Language.HEBREW);
 	}
 
-//	public String imageToText(String srcFile, String outputFile) {
-//
-//	}
+	public static List<String> getImgLines(String imgFileName, Language... languages) {
+		String outputTextFile = imgFileName + ".txt";
+		System.out.println(outputTextFile);
+		List<String> imgLines = null;
 
-	private static void performRecognition(Vector<String> argList)
-			throws Exception {
+		Vector<String> ocrArgs = new Vector<>();
+		String lang = createLanguageArgument(languages);
+		ocrArgs.add(lang);
+		ocrArgs.add(imgFileName);
+		ocrArgs.add(outputTextFile);
+
+		try {
+			performRecognition(ocrArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		imgLines = FileUtils.readLines(outputTextFile);
+		FileUtils.removeFile(imgFileName);
+		FileUtils.removeFile(outputTextFile);
+
+		return imgLines;
+	}
+
+	private static String createLanguageArgument(Language[] languages) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("--lang=");
+		for (Language language : languages) {
+			sb.append(language.getValue()).append(',');
+		}
+		sb.deleteCharAt(sb.lastIndexOf(","));
+		return sb.toString();
+	}
+
+	private static void performRecognition(Vector<String> argList) throws Exception {
 		String language = ArgOptions.extractRecognitionLanguage(argList);
 		String outputPath = argList.lastElement();
 		argList.remove(argList.size() - 1);
@@ -66,15 +82,13 @@ public class OcrClient {
 			// Upload images via submitImage and start recognition with
 			// processDocument
 			for (int i = 0; i < argList.size(); i++) {
-				System.out.println(String.format("Uploading image %d/%d..",
-						i + 1, argList.size()));
+				System.out.println(String.format("Uploading image %d/%d..", i + 1, argList.size()));
 				String taskId = null;
 				if (task != null) {
 					taskId = task.Id;
 				}
 
-				Task result = restClient.submitImage(argList.elementAt(i),
-						taskId);
+				Task result = restClient.submitImage(argList.elementAt(i), taskId);
 				if (task == null) {
 					task = result;
 				}
@@ -92,12 +106,10 @@ public class OcrClient {
 	/**
 	 * Extract output format from extension of output file.
 	 */
-	private static ProcessingSettings.OutputFormat outputFormatByFileExt(
-			String filePath) {
+	private static ProcessingSettings.OutputFormat outputFormatByFileExt(String filePath) {
 		int extIndex = filePath.lastIndexOf('.');
 		if (extIndex < 0) {
-			System.out
-					.println("No file extension specified. Plain text will be used as output format.");
+			System.out.println("No file extension specified. Plain text will be used as output format.");
 			return ProcessingSettings.OutputFormat.txt;
 		}
 		String ext = filePath.substring(extIndex).toLowerCase();
@@ -112,14 +124,12 @@ public class OcrClient {
 		} else if (ext.equals(".rtf")) {
 			return ProcessingSettings.OutputFormat.rtf;
 		} else {
-			System.out
-					.println("Unknown output extension. Plain text will be used.");
+			System.out.println("Unknown output extension. Plain text will be used.");
 			return ProcessingSettings.OutputFormat.txt;
 		}
 	}
 
-	private static void waitAndDownloadResult(Task task, String outputPath)
-			throws Exception {
+	private static void waitAndDownloadResult(Task task, String outputPath) throws Exception {
 		task = waitForCompletion(task);
 
 		if (task.Status == Task.TaskStatus.Completed) {
@@ -127,8 +137,7 @@ public class OcrClient {
 			restClient.downloadResult(task, outputPath);
 			System.out.println("Ready");
 		} else if (task.Status == Task.TaskStatus.NotEnoughCredits) {
-			System.out.println("Not enough credits to process document. "
-					+ "Please add more pages to your application's account.");
+			System.out.println("Not enough credits to process document. " + "Please add more pages to your application's account.");
 		} else {
 			System.out.println("Task failed");
 		}
@@ -150,6 +159,25 @@ public class OcrClient {
 			task = restClient.getTaskStatus(task.Id);
 		}
 		return task;
+	}
+
+	public static void main(String[] args) throws Exception {
+		String imgName = "img/minzar_crop.png";
+		String outputTextFile = "txt/minzar_crop.txt";
+
+		restClient = new Client();
+		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
+		restClient.serverUrl = "http://cloud.ocrsdk.com";
+		restClient.applicationId = ClientSettings.APPLICATION_ID;
+		restClient.password = ClientSettings.PASSWORD;
+
+		Vector<String> ocrArgs = new Vector<>();
+		//		ocrArgs.add("recognize");
+		ocrArgs.add("--lang=hebrew,english");
+		ocrArgs.add(imgName);
+		ocrArgs.add(outputTextFile);
+
+		performRecognition(ocrArgs);
 	}
 }
 
