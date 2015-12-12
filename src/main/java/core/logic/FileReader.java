@@ -12,7 +12,7 @@ import java.util.List;
 public class FileReader {
 	public static void main(String[] args) throws IOException {
 		FileReader fileReader = new FileReader();
-		String fileName = "bill_crop.txt";
+		String fileName = "txt/bill_crop.txt";
 
 		readFile(fileName);
 	}

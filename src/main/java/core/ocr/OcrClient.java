@@ -21,8 +21,8 @@ public class OcrClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String imgName = "img/bill_he.png";
-		String outputTextFile = "txt/bill_he.txt";
+		String imgName = "img/minzar_crop.png";
+		String outputTextFile = "txt/minzar_crop.txt";
 
 		restClient = new Client();
 		// replace with 'https://cloud.ocrsdk.com' to enable secure connection
@@ -32,7 +32,7 @@ public class OcrClient {
 
 		Vector<String> ocrArgs = new Vector<>();
 //		ocrArgs.add("recognize");
-		ocrArgs.add("--lang=hebrew,english");
+		ocrArgs.add("--lang=hebrew");
 		ocrArgs.add(imgName);
 		ocrArgs.add(outputTextFile);
 
