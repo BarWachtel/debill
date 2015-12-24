@@ -4,6 +4,7 @@ import core.ocr.OcrClient;
 import core.parse.BillItem;
 import core.parse.BillParser;
 import generalutils.FileUtils;
+import generalutils.thread.ThreadLocalUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
