@@ -4,6 +4,7 @@ package generalutils.thread;
  * Created by user on 24/12/2015.
  */
 public class ThreadLocalUtil {
+	public static String USER_SESSION = "userSession";
 
 	private final static java.lang.ThreadLocal<ThreadVariables> THREAD_VARIABLES = new java.lang.ThreadLocal<ThreadVariables>() {
 

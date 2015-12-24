@@ -3,8 +3,6 @@ package api.route;
 import api.controller.BillController;
 import database.entity.Bill;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

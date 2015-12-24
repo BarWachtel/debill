@@ -4,7 +4,7 @@ import java.sql.Date;
 
 public class User extends Entity {
 
-    private int id;
+    private int id = -1;
     private String firstName;
     private String lastName;
 	private String facebookId;

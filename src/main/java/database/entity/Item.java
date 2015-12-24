@@ -1,12 +1,14 @@
 package database.entity;
 
-public class Item {
+import core.parse.ParsedBillItem;
 
-    private int id;
+public class Item extends Entity {
+
+    private int id = -1;
 	private String name;
 	private int quantity;
     private float price;
-	private int billId;
+	private int billId = -1;
 
     public Item() {
 
@@ -17,6 +19,12 @@ public class Item {
         this.quantity = quantity;
         this.price = price;
     }
+
+	public Item(ParsedBillItem parsedBillItem) {
+		this.name = parsedBillItem.getName();
+		this.price = parsedBillItem.getPrice();
+		this.quantity = parsedBillItem.getQuantity();
+	}
 
 	public String getName() {
 		return name;

@@ -2,11 +2,11 @@ package api.route;
 
 import api.controller.BillController;
 import database.entity.Bill;
+import generalutils.thread.ThreadLocalUtil;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -28,5 +28,12 @@ public class BillRoute {
 	public Bill getBill(@PathParam("id") int id) {
 		Bill bill = BillController.get(id);
 		return bill;
+	}
+
+	@POST
+	@Path("/create")
+	public void createBill(@Context HttpServletRequest request) {
+		// I need this later - see Core.handleNewBill(..)
+		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
 	}
 }

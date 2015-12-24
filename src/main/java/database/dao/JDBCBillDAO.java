@@ -10,11 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.lang.reflect.*;
-import java.util.stream.Collectors;
 
 public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
@@ -22,7 +19,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 		TABLE_NAME = "bills";
 	}
 
-    JDBCBillDAO(){
+    public JDBCBillDAO(){
     }
 
 	private enum Columns {
@@ -182,7 +179,13 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
         return result;
     }
 
-    private static Bill createBillObject(ResultSet resultSet) {
+	@Override
+	public int insertBill(Bill bill) {
+		// Should return new entity ID
+		return -1;
+	}
+
+	private static Bill createBillObject(ResultSet resultSet) {
         Bill bill = new Bill();
         try {
             bill.setId(resultSet.getInt(Columns.billId.getAsString()));

@@ -6,47 +6,47 @@ import java.util.List;
 /**
  * Created by user on 06/12/2015.
  */
-public class BillParser {
-	public BillParser() {
+public class BillTextParser {
+	public BillTextParser() {
 	}
 
-	public List<BillItem> parse(List<String> billLines) {
-		List<BillItem> billItems = new ArrayList<>();
+	public List<ParsedBillItem> parse(List<String> billLines) {
+		List<ParsedBillItem> parsedBillItems = new ArrayList<>();
 		for (String billLine : billLines) {
-			BillItem billItem = parseItem(billLine);
-			if (billItem != null) {
-				billItems.add(billItem);
+			ParsedBillItem parsedBillItem = parseItem(billLine);
+			if (parsedBillItem != null) {
+				parsedBillItems.add(parsedBillItem);
 			}
 		}
-		return billItems;
+		return parsedBillItems;
 	}
 
-	private BillItem parseItem(String billLine) {
-		BillItem billItem = null;
+	private ParsedBillItem parseItem(String billLine) {
+		ParsedBillItem parsedBillItem = null;
 		String[] billParts = billLine.split("\\s+");
 
 		String name = extractName(billParts);
 		String[] numericalParts = removeName(billParts);
 		if (numericalParts.length > 0) {
-			billItem  = new BillItem();
-			billItem.setName(name);
-			findAndSetNumericalValues(billItem, numericalParts);
+			parsedBillItem = new ParsedBillItem();
+			parsedBillItem.setName(name);
+			findAndSetNumericalValues(parsedBillItem, numericalParts);
 		}
 
-		return billItem;
+		return parsedBillItem;
 	}
 
-	private void findAndSetNumericalValues(BillItem billItem, String[] numericalParts) {
+	private void findAndSetNumericalValues(ParsedBillItem parsedBillItem, String[] numericalParts) {
 		List<Float> numbers = parseNumbers(numericalParts);
 
 		if (numbers.size() == 1) {
-			billItem.setPrice(numbers.get(0));
-			billItem.setTotal(billItem.getPrice());
-			billItem.setQuantity(1);
+			parsedBillItem.setPrice(numbers.get(0));
+			parsedBillItem.setTotal(parsedBillItem.getPrice());
+			parsedBillItem.setQuantity(1);
 		} else if (numbers.size() == 2) {
-			handleTwoNumbers(billItem, numbers);
+			handleTwoNumbers(parsedBillItem, numbers);
 		} else if (numbers.size() == 3) {
-			handleThreeNumbers(billItem, numbers);
+			handleThreeNumbers(parsedBillItem, numbers);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class BillParser {
 		return '0';
 	}
 
-	private void handleThreeNumbers(BillItem billItem, List<Float> numbers) {
+	private void handleThreeNumbers(ParsedBillItem parsedBillItem, List<Float> numbers) {
 		float total, price;
 		int quantity;
 
@@ -105,30 +105,30 @@ public class BillParser {
 		float b = numbers.get(1);
 		float c = numbers.get(2);
 
-		if (firstQuantityMiddlePriceLastTotal(a, b, c, billItem)) {
+		if (firstQuantityMiddlePriceLastTotal(a, b, c, parsedBillItem)) {
 
-		} else if (firstQuantityMiddlePriceLastTotal(a, c, b, billItem)) {
+		} else if (firstQuantityMiddlePriceLastTotal(a, c, b, parsedBillItem)) {
 
-		} else if (firstQuantityMiddlePriceLastTotal(b, c, a, billItem)) {
+		} else if (firstQuantityMiddlePriceLastTotal(b, c, a, parsedBillItem)) {
 
 		} else {
-			billItem.setPrice(a);
-			billItem.setTotal(b);
-			billItem.setQuantity((int) c);
+			parsedBillItem.setPrice(a);
+			parsedBillItem.setTotal(b);
+			parsedBillItem.setQuantity((int) c);
 		}
 	}
 
-	private boolean firstQuantityMiddlePriceLastTotal(float a, float b, float c, BillItem billItem) {
+	private boolean firstQuantityMiddlePriceLastTotal(float a, float b, float c, ParsedBillItem parsedBillItem) {
 		boolean found = false;
 		if (a * b == c) {
-			billItem.setTotal(c);
+			parsedBillItem.setTotal(c);
 
 			if (a < b) {
-				billItem.setQuantity((int) a);
-				billItem.setPrice(b);
+				parsedBillItem.setQuantity((int) a);
+				parsedBillItem.setPrice(b);
 			} else {
-				billItem.setQuantity((int) b);
-				billItem.setPrice(a);
+				parsedBillItem.setQuantity((int) b);
+				parsedBillItem.setPrice(a);
 			}
 
 			found = true;
@@ -137,7 +137,7 @@ public class BillParser {
 		return found;
 	}
 
-	private void handleTwoNumbers(BillItem billItem, List<Float> numbers) {
+	private void handleTwoNumbers(ParsedBillItem parsedBillItem, List<Float> numbers) {
 		float total, price;
 		int quantity;
 
@@ -168,9 +168,9 @@ public class BillParser {
 			}
 		}
 
-		billItem.setPrice(price);
-		billItem.setTotal(total);
-		billItem.setQuantity(quantity);
+		parsedBillItem.setPrice(price);
+		parsedBillItem.setTotal(total);
+		parsedBillItem.setQuantity(quantity);
 	}
 
 	private boolean secondIsQuantity(float a, float b) {

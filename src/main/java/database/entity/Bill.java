@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Bill extends Entity {
 
-    private int id;
+    private int id = -1;
     private User manager;
     private boolean isPrivate;
     private List<Item> items;

@@ -3,13 +3,13 @@ package core.parse;
 /**
  * Created by user on 06/12/2015.
  */
-public class BillItem {
+public class ParsedBillItem {
 	private int quantity;
 	private String name;
 	private float price;
 	private float total;
 
-	public BillItem() {
+	public ParsedBillItem() {
 	}
 
 	@Override public String toString() {
