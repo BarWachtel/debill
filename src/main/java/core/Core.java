@@ -17,9 +17,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by user on 12/12/2015.
- */
 public class Core {
 
 	public int handleNewBill(File billImageFile) {
@@ -39,8 +36,7 @@ public class Core {
 
 		bill.setPrivate(false);
 
-		JDBCBillDAO billDAO = new JDBCBillDAO();
-		int billId = billDAO.insertBill(bill);
+		int billId = JDBCBillDAO.getInstance().insertBill(bill);
 		if (billId >= 0) {
 			bill.setId(billId);
 			RedisClient.setBill(userId, bill);

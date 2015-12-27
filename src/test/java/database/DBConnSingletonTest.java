@@ -1,7 +1,7 @@
 package database;
 
 import junit.framework.TestCase;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 
