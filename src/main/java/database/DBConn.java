@@ -1,6 +1,6 @@
 package database;
 
-import generalutils.DatabaseCredentials;
+//import generalutils.DatabaseCredentials;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,7 +1,6 @@
 package database.dao;
 
 import database.DBConn;
-import database.entity.Bill;
 import database.entity.Entity;
 import database.interfaces.QueryBuilder;
 import database.querybuilder.QueryBuilderFactory;
@@ -85,6 +84,21 @@ public abstract class SampleDAO<T extends Entity> {
         return result;
     }
 
+    protected  boolean deleteEntity(int entityToDeleteID) {
+        Connection conn = DBConn.getConnection();
+        boolean result = false;
+        try {
+            String query = buildDeleteQuery(entityToDeleteID);
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, entityToDeleteID);
+            result = ps.execute();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("SampleDAO -> deleteEntry -> Exception: " + e.getMessage());
+        }
+        return result;
+    }
+
     protected String buildGetAllQuery() {
         try {
             return queryBuilderFactory
@@ -110,10 +124,6 @@ public abstract class SampleDAO<T extends Entity> {
         return null;
     }
 
-    protected abstract String getIdColumnName();
-
-    protected abstract T createEntityFromResultSet(ResultSet rs);
-
     protected String buildUpdateQuery(T entity) {
         try {
             return queryBuilderFactory
@@ -126,6 +136,23 @@ public abstract class SampleDAO<T extends Entity> {
         }
         return null;
     }
+
+    private String buildDeleteQuery(int id) {
+        try {
+            return queryBuilderFactory
+                    .delete()
+                    .from(TABLE_NAME)
+                    .where(getIdColumnName() + " = " + id)
+                    .build();
+        }catch (QueryBuilder.QueryBuilderException e) {
+            System.out.println("SampleDAO -> buildDeleteQuery -> Exception: " + e.getMessage());
+        }
+        return null;
+    }
+
+    protected abstract String getIdColumnName();
+
+    protected abstract T createEntityFromResultSet(ResultSet rs);
 
     protected abstract Collection<String> getColumnsForUpdate();
 

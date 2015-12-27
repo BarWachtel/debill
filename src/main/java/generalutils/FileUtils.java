@@ -11,11 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-/**
- * Created by user on 12/12/2015.
- */
 public class FileUtils {
 
 	public static List<String> readLines(String fileName) {

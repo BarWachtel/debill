@@ -6,17 +6,14 @@ import database.entity.Bill;
 
 import java.util.List;
 
-/**
- * Created by user on 01/12/2015.
- */
 public class BillController {
 	public static List<Bill> getAll() {
-		List<Bill> bills = JDBCBillDAO.getAllBills();
+		List<Bill> bills = JDBCBillDAO.getInstance().getAllBills();
 		return bills;
 	}
 
 	public static Bill get(int id) {
-		Bill bill = JDBCBillDAO.getBill(id);
+		Bill bill = JDBCBillDAO.getInstance().getBill(id);
 		return bill;
 	}
 }

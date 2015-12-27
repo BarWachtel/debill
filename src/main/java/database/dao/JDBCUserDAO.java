@@ -7,20 +7,39 @@ import database.interfaces.UserDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
 
-    private static final String COL_FB_UID = "fb_id";
-    private static final String COL_FIRST_NAME = "first_name";
-    private static final String COL_LAST_NAME = "last_name";
+    private static final JDBCUserDAO instance = new JDBCUserDAO();
+
+    public static JDBCUserDAO getInstance() {
+        return instance;
+    }
+
+    private JDBCUserDAO() {
+    }
 
 	static {
 		TABLE_NAME = "users";
 	}
 
-    public JDBCUserDAO() {
+    private enum Columns {
+        facebookId("fb_id"),
+        firstName("first_name"),
+        lastName("last_name");
+
+        private String asString;
+
+        Columns(String asString) {
+            this.asString = asString;
+        }
+
+        public String getAsString() {
+            return asString;
+        }
     }
 
     @Override
@@ -40,45 +59,32 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
 
     @Override
     public boolean deleteUser(User user) {
-        return deleteUser(user);
+        return deleteEntity(user.getId());
     }
 
     @Override
     protected String getIdColumnName() {
-        return COL_FB_UID;
+        return Columns.facebookId.getAsString();
     }
 
     @Override
     protected User createEntityFromResultSet(ResultSet rs) {
         User newUser = new User();
         try {
-            newUser.setId(rs.getInt(COL_FB_UID));
-            newUser.setFirstName(rs.getString(COL_FIRST_NAME));
-            newUser.setLastName(rs.getString(COL_LAST_NAME));
+            newUser.setId(rs.getInt(Columns.facebookId.getAsString()));
+            newUser.setFirstName(rs.getString(Columns.firstName.getAsString()));
+            newUser.setLastName(rs.getString(Columns.lastName.getAsString()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return newUser;
     }
 
-    @Override
-    protected String buildUpdateQuery(User entity) {
-        try {
-            return queryBuilderFactory
-                    .update()
-                    .from(TABLE_NAME)
-                    .where(COL_FB_UID + "=" + entity.getId())
-                    .set(COL_FIRST_NAME + "=" + entity.getFirstName())
-                    .set(COL_LAST_NAME + "=" + entity.getLastName())
-                    .build();
-        } catch (QueryBuilder.QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 	@Override protected Collection<String> getColumnsForUpdate() {
-		return null;
+		ArrayList<String> cols = new ArrayList<>();
+        cols.add(Columns.firstName.getAsString());
+        cols.add(Columns.lastName.getAsString());
+        return cols;
 	}
 
 	@Override
@@ -87,9 +93,9 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
             return queryBuilderFactory
                     .insert()
                     .into(TABLE_NAME)
-                    .column(COL_FB_UID)
-                    .column(COL_FIRST_NAME)
-                    .column(COL_LAST_NAME)
+                    .column(Columns.facebookId.getAsString())
+                    .column(Columns.firstName.getAsString())
+                    .column(Columns.lastName.getAsString())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();

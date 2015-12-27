@@ -10,9 +10,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-/**
- * Created by user on 03/12/2015.
- */
 @Path("/bill")
 public class BillRoute {
 	@GET

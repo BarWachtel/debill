@@ -4,6 +4,7 @@ import core.ocr.OcrClient;
 import core.parse.ParsedBillItem;
 import core.parse.BillTextParser;
 import database.dao.JDBCBillDAO;
+import database.dao.JDBCUserDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
@@ -38,9 +39,8 @@ public class Core {
 
 		bill.setPrivate(false);
 
-		JDBCBillDAO billDAO = JDBCBillDAO.getInstance();
-
-		int billId = billDAO.insertBill(bill);
+		int billId = JDBCBillDAO.getInstance().insertBill(bill);
+		
 		if (billId >= 0) {
 			bill.setId(billId);
 			RedisClient.setBillByUserId(userId, billId);

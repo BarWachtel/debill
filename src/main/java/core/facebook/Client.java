@@ -6,9 +6,6 @@ import com.restfb.types.User;
 
 import java.util.List;
 
-/**
- * Created by user on 24/12/2015.
- */
 public class Client {
 	private static final String PARAM_APP_SECRET_PROOF = "appsecret_proof";
 	private static final String APP_ID = "977010022371410";
