@@ -33,7 +33,7 @@ public class BillRoute {
 	@POST
 	@Path("/create")
 	public void createBill(@Context HttpServletRequest request) {
-		// I need this later - see Core.handleNewBill(..)
+		// I need this later - see Core.createNewBill(..)
 		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
 	}
 }

@@ -5,10 +5,11 @@ import core.parse.ParsedBillItem;
 public class Item extends Entity {
 
     private int id = -1;
-	private String name;
-	private int quantity;
-    private float price;
+	private String name = null;
+	private int quantity = -1;
+    private float price = -1;
 	private int billId = -1;
+	private int payedFor = 0;
 
     public Item() {
 
@@ -65,6 +66,25 @@ public class Item extends Entity {
     public void setPrice(float price) {
         this.price = price;
     }
+
+	public boolean update(Item updatedItem) {
+		if (updatedItem.name != null) {
+			this.name = updatedItem.name;
+		}
+
+		if (updatedItem.price >= 0) {
+			this.price = updatedItem.price;
+		}
+
+		if (updatedItem.quantity >= 0) {
+			this.quantity = updatedItem.quantity;
+		}
+
+		this.payedFor = updatedItem.payedFor;
+
+		// All updates are allowed!
+		return true;
+	}
 }
 
 /**

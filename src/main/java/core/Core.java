@@ -4,7 +4,6 @@ import core.ocr.OcrClient;
 import core.parse.ParsedBillItem;
 import core.parse.BillTextParser;
 import database.dao.JDBCBillDAO;
-import database.dao.JDBCUserDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
@@ -22,7 +21,7 @@ import java.util.List;
  */
 public class Core {
 
-	public int handleNewBill(File billImageFile) {
+	public int createNewBill(File billImageFile) {
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
 
 		HttpSession httpSession = (HttpSession) ThreadLocalUtil.get(ThreadLocalUtil.USER_SESSION);
@@ -39,14 +38,36 @@ public class Core {
 
 		bill.setPrivate(false);
 
-		JDBCBillDAO billDAO = new JDBCBillDAO();
+		JDBCBillDAO billDAO = JDBCBillDAO.getInstance();
+
 		int billId = billDAO.insertBill(bill);
 		if (billId >= 0) {
 			bill.setId(billId);
-			RedisClient.setBill(userId, bill);
+			RedisClient.setBillByUserId(userId, billId);
+			RedisClient.setBillById(billId, bill);
 		}
 
 		return billId;
+	}
+
+	private Bill getBill(int billId) {
+		Bill bill = RedisClient.getBillById(billId);
+		if (bill == null) {
+			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(billId);
+		}
+
+		return bill;
+	}
+
+	public boolean updateBill(int billId, List<Item> updatedItems) {
+		Bill bill = getBill(billId);
+		boolean success = false;
+		if ((success = bill.update(updatedItems))) {
+			RedisClient.setBillById(billId, bill);
+			JDBCBillDAO.getInstance().updateBill(bill);
+		}
+
+		return success;
 	}
 
 	private List<Item> parsedItemsToDatabaseItems(List<ParsedBillItem> parsedBillItems) {

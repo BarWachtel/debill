@@ -22,6 +22,14 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     public JDBCBillDAO(){
     }
 
+	public static JDBCBillDAO getInstance() {
+		return new JDBCBillDAO();
+	}
+
+	public Bill getOpenBillByUserId(int userId) {
+		return null;
+	}
+
 	private enum Columns {
 		billId ("bill_id"),
 		fbId ("fb_id"),

@@ -8,4 +8,5 @@ public interface BillDAO {
     boolean updateBill(Bill bill);
     boolean deleteBill(Bill bill);
 	int insertBill(Bill bill);
+	Bill getOpenBillByUserId(int userId);
 }

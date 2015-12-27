@@ -54,9 +54,31 @@ public class Bill extends Entity {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Bill id: ").append(id).append(" isPrivate: ").append(isPrivate);
-		return sb.toString();
+		return "Bill id: " + id + " isPrivate: " + isPrivate;
+	}
+
+	public boolean update(List<Item> updatedItems) {
+		boolean success = true;
+		for (Item updatedItem : updatedItems) {
+			Item toUpdate = getItem(updatedItem.getId());
+			if (!(success = toUpdate.update(updatedItem))) {
+				break;
+			}
+		}
+
+		return success;
+	}
+
+	private Item getItem(int id) {
+		Item item = null;
+		for (Item currentItem : items) {
+			if (currentItem.getId() == id) {
+				item = currentItem;
+				break;
+			}
+		}
+
+		return item;
 	}
 }
 
