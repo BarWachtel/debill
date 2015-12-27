@@ -22,15 +22,14 @@ import java.util.List;
  */
 public class Core {
 
-	public int handleNewBill(File billImageFile) {
-		System.out.println(	);
+	public int createNewBill(File billImageFile) {
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
 
 		HttpSession httpSession = (HttpSession) ThreadLocalUtil.get(ThreadLocalUtil.USER_SESSION);
 
 		Bill bill = new Bill();
 
-		int userId = (int) httpSession.getAttribute("userId");
+		int userId = (int) httpSession.getAttribute(ThreadLocalUtil.USER_ID);
 		User user = new User();
 		user.setId(userId);
 		bill.setManager(user);
@@ -40,14 +39,35 @@ public class Core {
 
 		bill.setPrivate(false);
 
-		JDBCBillDAO billDAO = new JDBCBillDAO();
-		int billId = billDAO.insertBill(bill);
-		if (billId >= 0) {
-			bill.setId(billId);
-			RedisClient.setBill(userId, bill);
+		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
+		
+		if (insertedBill.getId() >= 0) {
+			bill.setId(insertedBill.getId());
+			RedisClient.setBillByUserId(userId, insertedBill.getId());
+			RedisClient.setBillById(insertedBill.getId(), bill);
 		}
 
-		return billId;
+		return insertedBill.getId();
+	}
+
+	public boolean updateBill(int billId, List<Item> updatedItems) {
+		Bill bill = getBill(billId);
+		boolean success = false;
+		if ((success = bill.update(updatedItems))) {
+			RedisClient.setBillById(billId, bill);
+			JDBCBillDAO.getInstance().updateBill(bill);
+		}
+
+		return success;
+	}
+
+	private Bill getBill(int billId) {
+		Bill bill = RedisClient.getBillById(billId);
+		if (bill == null) {
+			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(billId);
+		}
+
+		return bill;
 	}
 
 	private List<Item> parsedItemsToDatabaseItems(List<ParsedBillItem> parsedBillItems) {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UpdateQueryBuilder extends ConditionalQueryBuilder implements QueryBuilder{
+public class UpdateQueryBuilder extends ConditionalQueryBuilder implements QueryBuilder {
     private String from = null;
     private final List<String> set;
 
@@ -61,7 +61,7 @@ public class UpdateQueryBuilder extends ConditionalQueryBuilder implements Query
         theQuery.append(" SET ");
 
         for (String _set : this.set) {
-            theQuery.append(_set).append(',');
+            theQuery.append(_set + "=?").append(',');
         }
         theQuery.deleteCharAt(theQuery.lastIndexOf(","));
 

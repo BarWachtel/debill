@@ -7,16 +7,18 @@ public class Bill extends Entity {
     private int id = -1;
     private User manager;
     private boolean isPrivate;
+    private boolean isOpen;
     private List<Item> items;
 
     public Bill() {
 
     }
 
-    public Bill(int id, User manager, boolean isPrivate, List<Item> items) {
+    public Bill(int id, User manager, boolean isPrivate, boolean isOpen, List<Item> items) {
         this.id = id;
         this.manager = manager;
         this.isPrivate = isPrivate;
+        this.isOpen = isOpen;
         this.items = items;
     }
 
@@ -44,6 +46,14 @@ public class Bill extends Entity {
         this.isPrivate = isPrivate;
     }
 
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean isOpen) {
+        this.isOpen = isOpen;
+    }
+
     public List<Item> getItems() {
         return items;
     }
@@ -52,19 +62,34 @@ public class Bill extends Entity {
         this.items = items;
     }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Bill id: ").append(id)
-                .append(" isPrivate: ").append(isPrivate);
-        for(Item i : this.getItems())
-        {
-            sb.append("Item name: ").append(i.getName())
-                    .append("Item quantity: ").append(i.getQuantity())
-                    .append("Item price: ").append(i.getPrice());
+    @Override
+    public String toString() {
+        return "Bill id: " + id + " isPrivate: " + isPrivate + " isOpen: " + isOpen;
+    }
+
+    public boolean update(List<Item> updatedItems) {
+        boolean success = true;
+        for (Item updatedItem : updatedItems) {
+            Item toUpdate = getItem(updatedItem.getId());
+            if (!(success = toUpdate.update(updatedItem))) {
+                break;
+            }
         }
-		return sb.toString();
-	}
+
+        return success;
+    }
+
+    private Item getItem(int id) {
+        Item item = null;
+        for (Item currentItem : items) {
+            if (currentItem.getId() == id) {
+                item = currentItem;
+                break;
+            }
+        }
+
+        return item;
+    }
 }
 
 /*

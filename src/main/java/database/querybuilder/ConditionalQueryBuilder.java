@@ -8,6 +8,7 @@ public abstract class ConditionalQueryBuilder {
 
     protected void appendConditions(StringBuilder queryBuilder) {
         if (this.where.size() > 0) {
+
             queryBuilder.append(" WHERE ");
 
             for (String _where : this.where) {

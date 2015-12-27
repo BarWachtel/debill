@@ -3,40 +3,96 @@ package database.dao;
 import database.DBConn;
 import database.entity.Bill;
 import database.interfaces.BillDAO;
-import database.interfaces.QueryBuilder.QueryBuilderException;
+import database.interfaces.QueryBuilder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.color.ColorSpace;
+import java.awt.image.ColorModel;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
-	static {
-		TABLE_NAME = "bills";
-	}
+    private static final JDBCBillDAO instance = new JDBCBillDAO();
 
-    public JDBCBillDAO(){
+    public static JDBCBillDAO getInstance() {
+        return instance;
     }
 
-	private enum Columns {
-		billId ("bill_id"),
-		fbId ("fb_id"),
-		isPrivate ("private");
+    static {
+        TABLE_NAME = "bills";
+    }
 
-		private String asString;
+    private JDBCBillDAO() {
+    }
 
-		Columns(String asString) {
-			this.asString = asString;
-		}
+    private enum Columns {
+        billId("bill_id"),
+        userId("user_id"),
+        isPrivate("private"),
+        isOpen("open");
 
-		public String getAsString() {
-			return asString;
-		}
-	}
+        private String asString;
+
+        Columns(String asString) {
+            this.asString = asString;
+        }
+
+        public String getAsString() {
+            return asString;
+        }
+    }
+
+    @Override
+    public List<Bill> getAllBills() {
+        return getAllEntities();
+    }
+
+    @Override
+    public Bill getBill(int id) {
+        return getEntity(id);
+    }
+
+    @Override
+    public Bill updateBill(Bill bill) {
+        return updateEntity(bill);
+    }
+
+    @Override
+    public boolean deleteBill(Bill bill) {
+        return deleteEntity(bill.getId());
+    }
+
+    @Override
+    public Bill insertBill(Bill bill) {
+		bill.setId(7);
+        return bill;
+    }
+
+    @Override
+    public Bill getOpenBillByUserId(int userId) {
+        Connection conn = DBConn.getConnection();
+        Bill openBillByUserId = null;
+        try {
+            String query = queryBuilderFactory
+                    .select()
+                    .from(TABLE_NAME)
+                    .where(Columns.isOpen.getAsString() + "=?")
+                    .where(Columns.userId.getAsString() + "=?")
+                    .build();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setBoolean(1, true);
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                openBillByUserId = createEntityFromResultSet(rs);
+            }
+        } catch (SQLException | QueryBuilder.QueryBuilderException ee) {
+            ee.printStackTrace();
+        }
+        return openBillByUserId;
+    }
 
     @Override
     protected String getIdColumnName() {
@@ -48,7 +104,9 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
         Bill newBill = new Bill();
         try {
             newBill.setId(rs.getInt(Columns.billId.getAsString()));
+            newBill.setId(rs.getInt(Columns.userId.getAsString()));
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
+
             newBill.setManager(null);
             newBill.setItems(null);
         } catch (SQLException e) {
@@ -60,141 +118,41 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     @Override
     protected Collection<String> getColumnsForUpdate() {
-        List<String> cols = new ArrayList<>();
-        cols.add(Columns.isPrivate.getAsString());
-        return cols;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new JDBCBillDAO().getColumnsForUpdate());
+        ArrayList<String> colsForUpdate = new ArrayList<>();
+        colsForUpdate.add(Columns.isPrivate.getAsString());
+        colsForUpdate.add(Columns.isOpen.getAsString());
+        return colsForUpdate;
     }
 
     @Override
-    protected String buildInsertQuery(Bill entity) {
-		String query = null;
-        try {
-            query = queryBuilderFactory
-                    .insert()
-                    .into(TABLE_NAME)
-                    .value(Columns.billId.getAsString() + "=" + entity.getId())
-                    .value(Columns.isPrivate.getAsString() +"="+entity.isPrivate())
-                    .build();
-        } catch (QueryBuilderException e) {
-            e.printStackTrace();
-        }
-		return query;
+    protected Collection<String> getColumnsForInsert() {
+        ArrayList<String> colsForInsert = new ArrayList<>();
+        colsForInsert.add(Columns.isPrivate.getAsString());
+        colsForInsert.add(Columns.isOpen.getAsString());
+        return colsForInsert;
     }
 
     @Override
     protected void setUpdatePreparedStatementParameters(PreparedStatement ps, Bill entity) {
-
+        try {
+            ps.setBoolean(1, entity.isPrivate());
+            ps.setBoolean(2, entity.isOpen());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
-
-    }
-
-    public static List<Bill> getAllBills() {
-        Connection conn = DBConn.getConnection();
-		List<Bill> bills = null;
-		try {
-            String query = queryBuilderFactory
-                    .select()
-                    .from(TABLE_NAME)
-                    .build();
-            ResultSet resultSet = conn.createStatement().executeQuery(query);
-            bills = new ArrayList<>();
-            while (resultSet.next()) {
-                bills.add(createBillObject(resultSet));
-            }
-            conn.close();
-        } catch (SQLException | QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return bills;
-    }
-
-    public static Bill getBill(int id) {
-        Connection conn = DBConn.getConnection();
-        Bill bill = null;
         try {
-            String query = queryBuilderFactory
-                    .select()
-                    .from(TABLE_NAME)
-                    .where(Columns.billId.getAsString() + "=" + id)
-                    .build();
-            ResultSet resultSet = conn.createStatement().executeQuery(query);
-            if (resultSet.next()) {
-                bill = createBillObject(resultSet);
-            }
-            conn.close();
-        } catch (QueryBuilderException | SQLException e) {
-            e.printStackTrace();
-        }
-        return bill;
-    }
-
-    @Override
-    public boolean updateBill(Bill bill) {
-        Connection conn = DBConn.getConnection();
-        String query;
-        int resultSet = 0;
-        try {
-            query = queryBuilderFactory
-                    .update()
-                    .from(TABLE_NAME)
-                    .set(Columns.isPrivate.getAsString() + " = ?")
-                    .where(Columns.billId.getAsString() + " = ?")
-                    .build();
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setBoolean(1,bill.isPrivate());
-            preparedStatement.setInt(2,bill.getId());
-            resultSet = preparedStatement.executeUpdate();
-            conn.close();
-        } catch (SQLException | QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return resultSet == 1;
-    }
-
-    @Override
-    public boolean deleteBill(Bill bill) {
-        Connection conn = DBConn.getConnection();
-        String query;
-        boolean result = false;
-        try {
-            query = queryBuilderFactory
-                    .delete()
-                    .from(TABLE_NAME)
-                    .where(Columns.billId.getAsString() + " = ?")
-                    .build();
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setInt(1, bill.getId());
-            result = preparedStatement.execute();
-            conn.close();
-        } catch (SQLException | QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-	@Override
-	public int insertBill(Bill bill) {
-		// Should return new entity ID
-		return -1;
-	}
-
-	private static Bill createBillObject(ResultSet resultSet) {
-        Bill bill = new Bill();
-        try {
-            bill.setId(resultSet.getInt(Columns.billId.getAsString()));
-            bill.setItems(null);
-            bill.setManager(null);
-            bill.setPrivate(resultSet.getInt(Columns.isPrivate.getAsString()) == 0);
+            ps.setBoolean(1, entity.isPrivate());
+            ps.setBoolean(2, true); // Set the new bill isOpen value to True by default
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return bill;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new JDBCBillDAO().getColumnsForUpdate());
     }
 }

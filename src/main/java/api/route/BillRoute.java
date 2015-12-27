@@ -12,9 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-/**
- * Created by user on 03/12/2015.
- */
 @Path("/bill")
 public class BillRoute {
 	@GET
@@ -35,7 +32,7 @@ public class BillRoute {
 	@POST
 	@Path("/create")
 	public void createBill(@Context HttpServletRequest request) {
-		// I need this later - see Core.handleNewBill(..)
+		// I need this later - see Core.createNewBill(..)
 		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
 	}
 

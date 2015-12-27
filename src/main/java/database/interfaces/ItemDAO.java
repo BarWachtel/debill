@@ -6,8 +6,9 @@ import database.entity.Item;
 import java.util.List;
 
 public interface ItemDAO {
-    //List<Item> getAllItems(Bill bill);
-   // Item getItem(Bill bill, int itemId);
-    boolean updateItem(Item item);
+    List<Item> getAllItems(Bill bill);
+    Item getItem(int itemId);
+    Item updateItem(Item item);
     boolean deleteItem(Item item);
+    Item insertItem(Item item);
 }
