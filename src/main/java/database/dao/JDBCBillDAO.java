@@ -1,11 +1,9 @@
 package database.dao;
 
-import database.DBConn;
 import database.entity.Bill;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder.QueryBuilderException;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +63,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     }
 
     @Override
-    public int insertBill(Bill bill) {
+    public Bill insertBill(Bill bill) {
         return insertBill(bill);
     }
 

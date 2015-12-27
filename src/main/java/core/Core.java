@@ -39,15 +39,15 @@ public class Core {
 
 		bill.setPrivate(false);
 
-		int billId = JDBCBillDAO.getInstance().insertBill(bill);
+		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
-		if (billId >= 0) {
-			bill.setId(billId);
-			RedisClient.setBillByUserId(userId, billId);
-			RedisClient.setBillById(billId, bill);
+		if (insertedBill.getId() >= 0) {
+			bill.setId(insertedBill.getId());
+			RedisClient.setBillByUserId(userId, insertedBill.getId());
+			RedisClient.setBillById(insertedBill.getId(), bill);
 		}
 
-		return billId;
+		return insertedBill.getId();
 	}
 
 	public boolean updateBill(int billId, List<Item> updatedItems) {
