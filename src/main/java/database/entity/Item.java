@@ -9,7 +9,7 @@ public class Item extends Entity {
 	private int quantity = -1;
     private float price = -1;
 	private int billId = -1;
-	private int payedFor = 0;
+	private int numPayedFor = 0;
 
     public Item() {
 
@@ -80,7 +80,7 @@ public class Item extends Entity {
 			this.quantity = updatedItem.quantity;
 		}
 
-		this.payedFor = updatedItem.payedFor;
+		this.numPayedFor = updatedItem.numPayedFor;
 
 		// All updates are allowed!
 		return true;

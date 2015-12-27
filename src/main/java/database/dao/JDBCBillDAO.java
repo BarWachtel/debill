@@ -66,7 +66,8 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     @Override
     public Bill insertBill(Bill bill) {
-        return insertBill(bill);
+		bill.setId(7);
+        return bill;
     }
 
     @Override
