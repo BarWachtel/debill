@@ -1,7 +1,6 @@
 package database.dao;
 
 import database.entity.User;
-import database.interfaces.QueryBuilder;
 import database.interfaces.UserDAO;
 
 import java.sql.PreparedStatement;
@@ -27,7 +26,7 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
 	}
 
     private enum Columns {
-        facebookId("fb_id"),
+        userId("user_id"),
         firstName("first_name"),
         lastName("last_name");
 
@@ -53,7 +52,7 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
     }
 
     @Override
-    public boolean updateUser(User user) {
+    public User updateUser(User user) {
         return updateEntity(user);
     }
 
@@ -63,15 +62,20 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
     }
 
     @Override
+    public User insertUser(User user) {
+        return insertEntity(user);
+    }
+
+    @Override
     protected String getIdColumnName() {
-        return Columns.facebookId.getAsString();
+        return Columns.userId.getAsString();
     }
 
     @Override
     protected User createEntityFromResultSet(ResultSet rs) {
         User newUser = new User();
         try {
-            newUser.setId(rs.getInt(Columns.facebookId.getAsString()));
+            newUser.setId(rs.getInt(Columns.userId.getAsString()));
             newUser.setFirstName(rs.getString(Columns.firstName.getAsString()));
             newUser.setLastName(rs.getString(Columns.lastName.getAsString()));
         } catch (SQLException e) {
@@ -81,26 +85,18 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
     }
 
 	@Override protected Collection<String> getColumnsForUpdate() {
-		ArrayList<String> cols = new ArrayList<>();
-        cols.add(Columns.firstName.getAsString());
-        cols.add(Columns.lastName.getAsString());
-        return cols;
+		ArrayList<String> colsForUpdate = new ArrayList<>();
+        colsForUpdate.add(Columns.firstName.getAsString());
+        colsForUpdate.add(Columns.lastName.getAsString());
+        return colsForUpdate;
 	}
 
-	@Override
-    protected String buildInsertQuery(User entity) {
-        try {
-            return queryBuilderFactory
-                    .insert()
-                    .into(TABLE_NAME)
-                    .column(Columns.facebookId.getAsString())
-                    .column(Columns.firstName.getAsString())
-                    .column(Columns.lastName.getAsString())
-                    .build();
-        } catch (QueryBuilder.QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @Override
+    protected Collection<String> getColumnsForInsert() {
+        List<String> colsForInsert = new ArrayList<>();
+        colsForInsert.add(Columns.firstName.getAsString());
+        colsForInsert.add(Columns.lastName.getAsString());
+        return colsForInsert;
     }
 
     @Override
@@ -116,9 +112,8 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
     @Override
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, User entity) {
         try{
-            ps.setInt(1, Integer.parseInt(entity.getFacebookId()));
-            ps.setString(2, entity.getFirstName());
-            ps.setString(3, entity.getLastName());
+            ps.setString(1, entity.getFirstName());
+            ps.setString(2, entity.getLastName());
         } catch (SQLException e) {
             e.printStackTrace();
         }

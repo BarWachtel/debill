@@ -3,10 +3,13 @@ package database.dao;
 import database.entity.Bill;
 import database.entity.Item;
 import database.interfaces.ItemDAO;
-import database.interfaces.QueryBuilder.QueryBuilderException;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
 
@@ -51,13 +54,18 @@ public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
     }
 
     @Override
-    public boolean updateItem(Item item) {
+    public Item updateItem(Item item) {
         return updateEntity(item);
     }
 
     @Override
     public boolean deleteItem(Item item) {
         return deleteEntity(item.getId());
+    }
+
+    @Override
+    public Item insertItem(Item item) {
+        return insertEntity(item);
     }
 
     @Override
@@ -82,36 +90,29 @@ public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
 
     @Override
     protected Collection<String> getColumnsForUpdate() {
-        ArrayList cols = new ArrayList();
+        ArrayList<String> cols = new ArrayList<>();
+        cols.add(Columns.name.getAsString());
         cols.add(Columns.price.getAsString());
         cols.add(Columns.quantity.getAsString());
         return cols;
     }
 
     @Override
-    protected String buildInsertQuery(Item entity) {
-        String query = null;
-        try {
-            query = queryBuilderFactory
-                    .insert()
-                    .into(TABLE_NAME)
-                    .column(Columns.itemId.getAsString())
-                    .column(Columns.billId.getAsString())
-                    .column(Columns.name.getAsString())
-                    .column(Columns.price.getAsString())
-                    .column(Columns.quantity.getAsString())
-                    .build();
-        } catch (QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return query;
+    protected Collection<String> getColumnsForInsert() {
+        List<String> colsForInsert = new ArrayList<>();
+        colsForInsert.add(Columns.billId.getAsString());
+        colsForInsert.add(Columns.name.getAsString());
+        colsForInsert.add(Columns.price.getAsString());
+        colsForInsert.add(Columns.quantity.getAsString());
+        return colsForInsert;
     }
 
     @Override
     protected void setUpdatePreparedStatementParameters(PreparedStatement ps, Item entity) {
         try {
-            ps.setFloat(1, entity.getPrice());
-            ps.setInt(2, entity.getQuantity());
+            ps.setString(1, entity.getName());
+            ps.setFloat(2, entity.getPrice());
+            ps.setInt(3, entity.getQuantity());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -7,7 +7,7 @@ import java.util.List;
 public interface BillDAO {
     List<Bill> getAllBills();
     Bill getBill(int id);
-    boolean updateBill(Bill bill);
+    Bill updateBill(Bill bill);
     boolean deleteBill(Bill bill);
 	Bill insertBill(Bill bill);
 	Bill getOpenBillByUserId(int userId);

@@ -41,20 +41,12 @@ public class RedisClient {
 		return "BILLID:" + billId;
 	}
 
-	public static String get(String key) {
-		return redisClient.get(key);
-	}
-
-	public static String set(String key, String value) {
-		return redisClient.set(key, value);
-	}
-
 	public static void main(String[] args) {
 		redisClient.set("test", "ya bababa");
 		System.out.println(redisClient.get("test"));
 
 		User user = new User(5, "baz", "wachtel");
-		Bill bill = new Bill(7, user, true, null);
+		Bill bill = new Bill(7, user, true, true, null);
 		RedisClient.setBillById(user.getId(), bill);
 
 		Bill aNewBill = RedisClient.getBillById(user.getId());

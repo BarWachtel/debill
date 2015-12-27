@@ -8,6 +8,7 @@ import java.util.List;
 public interface ItemDAO {
     List<Item> getAllItems(Bill bill);
     Item getItem(int itemId);
-    boolean updateItem(Item item);
+    Item updateItem(Item item);
     boolean deleteItem(Item item);
+    Item insertItem(Item item);
 }

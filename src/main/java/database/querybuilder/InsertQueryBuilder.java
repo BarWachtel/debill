@@ -32,16 +32,6 @@ public class InsertQueryBuilder implements QueryBuilder{
         return this;
     }
 
-    public InsertQueryBuilder value(String value) {
-        this.values.add(value);
-        return this;
-    }
-
-    public InsertQueryBuilder value(Collection<String> value) {
-        this.values.addAll(value);
-        return this;
-    }
-
     @Override
     public String build() throws QueryBuilderException {
 
