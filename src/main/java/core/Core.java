@@ -29,7 +29,7 @@ public class Core {
 
 		Bill bill = new Bill();
 
-		int userId = (int) httpSession.getAttribute("userId");
+		int userId = (int) httpSession.getAttribute(ThreadLocalUtil.USER_ID);
 		User user = new User();
 		user.setId(userId);
 		bill.setManager(user);
