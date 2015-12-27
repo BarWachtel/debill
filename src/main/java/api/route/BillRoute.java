@@ -1,13 +1,15 @@
 package api.route;
-
 import api.controller.BillController;
+import api.controller.ItemController;
 import database.entity.Bill;
+import database.entity.Item;
 import generalutils.thread.ThreadLocalUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -36,4 +38,36 @@ public class BillRoute {
 		// I need this later - see Core.handleNewBill(..)
 		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
 	}
+
+	@GET
+	@Path("/{billId}/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Item getItem(@PathParam("billId") int i_billId,@PathParam("id") int id) {
+		Bill bill = BillController.get(i_billId);
+		Item item= ItemController.getItem(bill, id);
+		return item;
+	}
+
+	@GET
+	@Path("/{billId}/items")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Item> getAllBillItems(@PathParam("billId") int i_billId) {
+		Bill bill = BillController.get(i_billId);
+		List<Item> items = ItemController.getAllBillItems(bill);
+		return items;
+	}
+
+
+	//TODEL
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/check")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consumeJSON(Bill i_BillJason) {
+		String output = i_BillJason.toString();
+	return Response.status(200).entity(output).build();
+
+	}
+
+
 }

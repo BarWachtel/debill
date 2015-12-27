@@ -23,7 +23,7 @@ public class RedisClient {
 		// userId == key
 		// bill == value
 
-		redisClient.set(SerializationUtils.serialize(userIdAsKey(userId)), SerializationUtils.serialize(bill));
+		//redisClient.set(SerializationUtils.serialize(userIdAsKey(userId)), SerializationUtils.serialize(bill));
 	}
 
 	public static Bill getBill(int userId) {
@@ -35,7 +35,14 @@ public class RedisClient {
 	private static String userIdAsKey(int userId) {
 		return "USERID:" + userId;
 	}
-
+//	public static void main(String[] args) {
+//		Jedis redisClient = new Jedis("localhost", 6379);
+//		try {
+//			DriverManager.getConnection("jdbc:mysql://localhost", "root", "dmitri1928351991");
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	public static String get(String key) {
 		return redisClient.get(key);
 	}

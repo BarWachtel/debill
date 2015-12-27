@@ -48,8 +48,8 @@ public class JDBCItemDAO implements ItemDAO {
 //        columnsToStrings.put(Columns.amount, "amount");
     }
 
-    @Override
-    public List<Item> getAllItems(Bill bill) {
+   // @Override
+    public static List<Item> getAllItems(Bill bill) {
         Connection conn = DBConn.getConnection();
         List<Item> items = new ArrayList<>();
         try {
@@ -69,8 +69,8 @@ public class JDBCItemDAO implements ItemDAO {
         return items;
     }
 
-    @Override
-    public Item getItem(Bill bill, int itemId) {
+   // @Override
+    public static Item getItem(Bill bill, int itemId) {
         Connection conn = DBConn.getConnection();
         Item item = null;
         try {
@@ -140,7 +140,7 @@ public class JDBCItemDAO implements ItemDAO {
         return result;
     }
 
-    private Item createItemFromResultSet(ResultSet resultSet) {
+    private static Item createItemFromResultSet(ResultSet resultSet) {
         Item item = new Item();
         try {
             item.setId(resultSet.getInt(Columns.itemId.getAsString()));

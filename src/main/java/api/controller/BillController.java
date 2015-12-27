@@ -1,8 +1,10 @@
 package api.controller;
 
 import database.dao.JDBCBillDAO;
+import database.dao.JDBCItemDAO;
 import database.dao.SampleDAO;
 import database.entity.Bill;
+import database.entity.Item;
 
 import java.util.List;
 
@@ -19,6 +21,8 @@ public class BillController {
 		Bill bill = JDBCBillDAO.getBill(id);
 		return bill;
 	}
+
+
 }
 
 

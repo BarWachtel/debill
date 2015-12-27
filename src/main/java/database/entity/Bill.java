@@ -55,7 +55,14 @@ public class Bill extends Entity {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Bill id: ").append(id).append(" isPrivate: ").append(isPrivate);
+		sb.append("Bill id: ").append(id)
+                .append(" isPrivate: ").append(isPrivate);
+        for(Item i : this.getItems())
+        {
+            sb.append("Item name: ").append(i.getName())
+                    .append("Item quantity: ").append(i.getQuantity())
+                    .append("Item price: ").append(i.getPrice());
+        }
 		return sb.toString();
 	}
 }

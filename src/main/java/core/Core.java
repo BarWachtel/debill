@@ -23,6 +23,7 @@ import java.util.List;
 public class Core {
 
 	public int handleNewBill(File billImageFile) {
+		System.out.println(	);
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
 
 		HttpSession httpSession = (HttpSession) ThreadLocalUtil.get(ThreadLocalUtil.USER_SESSION);
