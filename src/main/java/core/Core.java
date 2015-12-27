@@ -50,15 +50,6 @@ public class Core {
 		return billId;
 	}
 
-	private Bill getBill(int billId) {
-		Bill bill = RedisClient.getBillById(billId);
-		if (bill == null) {
-			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(billId);
-		}
-
-		return bill;
-	}
-
 	public boolean updateBill(int billId, List<Item> updatedItems) {
 		Bill bill = getBill(billId);
 		boolean success = false;
@@ -68,6 +59,15 @@ public class Core {
 		}
 
 		return success;
+	}
+
+	private Bill getBill(int billId) {
+		Bill bill = RedisClient.getBillById(billId);
+		if (bill == null) {
+			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(billId);
+		}
+
+		return bill;
 	}
 
 	private List<Item> parsedItemsToDatabaseItems(List<ParsedBillItem> parsedBillItems) {
