@@ -5,9 +5,10 @@ import database.entity.Bill;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder;
 
-import java.awt.color.ColorSpace;
-import java.awt.image.ColorModel;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,8 +67,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     @Override
     public Bill insertBill(Bill bill) {
-		bill.setId(7);
-        return bill;
+        return insertEntity(bill);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
             newBill.setId(rs.getInt(Columns.billId.getAsString()));
             newBill.setId(rs.getInt(Columns.userId.getAsString()));
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
-
+            newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
             newBill.setItems(null);
         } catch (SQLException e) {
@@ -127,6 +127,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     @Override
     protected Collection<String> getColumnsForInsert() {
         ArrayList<String> colsForInsert = new ArrayList<>();
+        colsForInsert.add(Columns.userId.getAsString());
         colsForInsert.add(Columns.isPrivate.getAsString());
         colsForInsert.add(Columns.isOpen.getAsString());
         return colsForInsert;
@@ -143,12 +144,20 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     }
 
     @Override
+    /**
+     * @param entity the new bill, should contain user with id.
+     */
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
-        try {
-            ps.setBoolean(1, entity.isPrivate());
-            ps.setBoolean(2, true); // Set the new bill isOpen value to True by default
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (entity.getManager() != null) {
+            try {
+                ps.setInt(1, entity.getManager().getId());
+                ps.setBoolean(2, entity.isPrivate());
+                ps.setBoolean(3, true); // Set the new bill isOpen value to True by default
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else {
+            System.out.println("JDBCBillDAO -> setInsertPreparedStatementParameters -> manager == null");
         }
     }
 
