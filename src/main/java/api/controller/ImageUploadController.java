@@ -2,40 +2,74 @@ package api.controller;
 
 import com.sun.jersey.core.header.ContentDisposition;
 import core.Core;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
+import javax.servlet.ServletContext;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
-/**
- * Created by Dima on 27/12/2015.
- */
 public class ImageUploadController {
+    private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/path/to/uploads/";
 
 
-    public static String saveFile(String i_fileName, InputStream i_fileInputStream) {
-        Core core = new Core();
+    public static String saveFile(InputStream fileInputStream,ContentDisposition headerOfFilePart) {
+        String status =  "file saved to ";
 
-        File imageFile = saveFile(i_fileInputStream);
-        core.handleNewBill(imageFile);
-        String output = "File saved to server location using FormDataMultiPart : " ;
-        return output;
-    }
-
-    private static File saveFile(InputStream uploadedInputStream) {
-
-        File uploads = new File(System.getProperty("upload.location"));
-        File file = new File(uploads, "somefilename.ext");
-
+        byte[] bytes = new byte[0];
         try {
-            Files.copy(uploadedInputStream, file.toPath());
+            bytes = IOUtils.toByteArray(fileInputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        String fileName = SERVER_UPLOAD_LOCATION_FOLDER + headerOfFilePart.getFileName();
+        File sFile = null;
+        try {
+            sFile = writeFile(bytes,fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String output;
+        output = "saved to " + fileName;
+
+        System.out.println("fileName :" +output);
+        //System.out.println("savedPath :" +savedPath);
+
+
+//        //**for check
+//        String s = "C://Users/Dima/Desktop/Upload_Files/";
+//        InputStream targetStream = null;
+//        System.out.println("fileName :" +fileName);
+//        try {
+//            targetStream = FileUtils.openInputStream(sFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            writeFile(IOUtils.toByteArray(targetStream),s + headerOfFilePart.getFileName());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        //for check
+
+        status = status+ sFile.getAbsolutePath();
+        Core c;
+        c = new Core();
+        c.createNewBill(sFile);
+
+        return status;
+    }
+
+    private static File writeFile(byte[] content, String filename) throws IOException {
+        File file;
+        FileUtils.writeByteArrayToFile(new File(filename), content);
+        file = generalutils.FileUtils.loadFile(filename);
         return file;
     }
 }
