@@ -2,12 +2,14 @@ package database.dao;
 
 import database.DBConn;
 import database.entity.Bill;
+import database.entity.Item;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder;
 
-import java.awt.color.ColorSpace;
-import java.awt.image.ColorModel;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,8 +68,33 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     @Override
     public Bill insertBill(Bill bill) {
-		bill.setId(7);
+        return insertEntity(bill);
+    }
+
+    @Override
+    public Bill insertEntity(Bill bill) {
+        if (bill.getManager() != null) {
+            Connection conn = DBConn.getConnection();
+            try {
+                String query = buildInsertQuery();
+                PreparedStatement ps = conn.prepareStatement(query);
+                setInsertPreparedStatementParameters(ps, bill);
+                ResultSet rs = ps.executeQuery();
+                bill.setId(createEntityFromResultSet(rs).getId());
+                conn.close();
+                insertItemsOfBill(bill);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return bill;
+    }
+
+    private void insertItemsOfBill(Bill bill) {
+        for (Item item : bill.getItems()) {
+            item.setBillId(bill.getId());
+            JDBCItemDAO.getInstance().insertItem(item);
+        }
     }
 
     @Override
@@ -106,7 +133,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
             newBill.setId(rs.getInt(Columns.billId.getAsString()));
             newBill.setId(rs.getInt(Columns.userId.getAsString()));
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
-
+            newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
             newBill.setItems(null);
         } catch (SQLException e) {
@@ -127,6 +154,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     @Override
     protected Collection<String> getColumnsForInsert() {
         ArrayList<String> colsForInsert = new ArrayList<>();
+        colsForInsert.add(Columns.userId.getAsString());
         colsForInsert.add(Columns.isPrivate.getAsString());
         colsForInsert.add(Columns.isOpen.getAsString());
         return colsForInsert;
@@ -143,10 +171,14 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
     }
 
     @Override
+    /**
+     * @param entity the new bill, should contain user with id.
+     */
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
         try {
-            ps.setBoolean(1, entity.isPrivate());
-            ps.setBoolean(2, true); // Set the new bill isOpen value to True by default
+            ps.setInt(1, entity.getManager().getId());
+            ps.setBoolean(2, entity.isPrivate());
+            ps.setBoolean(3, true); // Set the new bill isOpen value to True by default
         } catch (SQLException e) {
             e.printStackTrace();
         }
