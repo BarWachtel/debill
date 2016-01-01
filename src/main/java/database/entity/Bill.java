@@ -90,6 +90,11 @@ public class Bill extends Entity {
 
         return item;
     }
+
+    @Override
+    public int getID() {
+        return id;
+    }
 }
 
 /*

@@ -23,6 +23,7 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
 
 	static {
 		TABLE_NAME = "users";
+        ID_COLUMN_NAME = Columns.userId.getAsString();
 	}
 
     private enum Columns {

@@ -12,21 +12,22 @@ import java.util.List;
 
 public abstract class SampleDAO<T extends Entity> {
     protected static String TABLE_NAME = null;
+    protected static final String SQL_GET_ALL_QUERY;
     protected static QueryBuilderFactory queryBuilderFactory;
 
     SampleDAO() {
     }
 
-	static {
-		SampleDAO.queryBuilderFactory = new QueryBuilderFactory();
-	}
+    static {
+        SampleDAO.queryBuilderFactory = new QueryBuilderFactory();
+        SQL_GET_ALL_QUERY = buildGetAllQueryString();
+    }
 
-
-	protected List<T> getAllEntities() {
+    protected List<T> getAllEntities() {
         Connection conn = DBConn.getConnection();
         List<T> entities = new ArrayList<>();
         try {
-            String query = buildGetAllQuery();
+            String query = SQL_GET_ALL_QUERY;
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
@@ -42,9 +43,10 @@ public abstract class SampleDAO<T extends Entity> {
         Connection conn = DBConn.getConnection();
         T entity = null;
         try {
-            String query = buildGetEntityQuery(entityID);
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
+            String query = buildGetEntityByIdQuery();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, entityID);
+            ResultSet rs = ps.executeQuery(query);
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
             }
@@ -54,15 +56,26 @@ public abstract class SampleDAO<T extends Entity> {
         return entity;
     }
 
+    private String buildGetEntityByIdQuery() {
+        try {
+            return queryBuilderFactory.select().from(TABLE_NAME).where(getIdColumnName() + "=?").build();
+        } catch (QueryBuilder.QueryBuilderException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected T updateEntity(T entity) {
         Connection conn = DBConn.getConnection();
         T entityToReturn = null;
         try {
-            String query = buildUpdateQuery(entity);
+            String query = buildUpdateQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             setUpdatePreparedStatementParameters(ps, entity);
-            ResultSet rs = ps.executeQuery();
-            entityToReturn = createEntityFromResultSet(rs);
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                entityToReturn = getEntity(entity.getID());
+            }
             conn.close();
         } catch (SQLException e) {
             System.out.println("SampleDAO -> updateEntity -> Exception: " + e.getMessage());
@@ -70,23 +83,26 @@ public abstract class SampleDAO<T extends Entity> {
         return entityToReturn;
     }
 
-    protected T insertEntity(T entity) {
+    protected void insertEntity(T entity) {
         Connection conn = DBConn.getConnection();
-        T newEntity = null;
         try {
-            String query = buildInsertQuery(entity);
-            PreparedStatement ps = conn.prepareStatement(query);
+            String query = buildInsertQuery();
+            PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             setInsertPreparedStatementParameters(ps, entity);
-            ResultSet rs = ps.executeQuery();
-            newEntity = createEntityFromResultSet(rs);
+            int affectedRows = ps.executeUpdate();
+            if(affectedRows > 0) {
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    entity.setID(generatedKeys.getInt(1));
+                }
+            }
             conn.close();
         } catch (SQLException e) {
             System.out.println("SampleDAO -> insertEntity -> Exception: " + e.getMessage());
         }
-        return newEntity ;
     }
 
-    protected  boolean deleteEntity(int entityToDeleteID) {
+    protected boolean deleteEntity(int entityToDeleteID) {
         Connection conn = DBConn.getConnection();
         boolean result = false;
         try {
@@ -101,32 +117,19 @@ public abstract class SampleDAO<T extends Entity> {
         return result;
     }
 
-    protected String buildGetAllQuery() {
+    protected static String buildGetAllQueryString() {
         try {
             return queryBuilderFactory
                     .select()
                     .from(TABLE_NAME)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleDAO -> buildGetAllQuery -> Exception: " + e.getMessage());
+            System.out.println("SampleDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
         }
         return null;
     }
 
-    protected String buildGetEntityQuery(int id) {
-        try {
-            return queryBuilderFactory
-                    .select()
-                    .from(TABLE_NAME)
-                    .where(getIdColumnName() + " = " + id)
-                    .build();
-        } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleDAO -> buildGetEntityQuery -> Exception: " + e.getMessage());
-        }
-        return null;
-    }
-
-    protected String buildUpdateQuery(T entity) {
+    protected String buildUpdateQuery() {
         try {
             return queryBuilderFactory
                     .update()
@@ -139,8 +142,7 @@ public abstract class SampleDAO<T extends Entity> {
         return null;
     }
 
-    protected String buildInsertQuery(T entity)
-    {
+    protected String buildInsertQuery() {
         String query = null;
         try {
             query = queryBuilderFactory
@@ -161,7 +163,7 @@ public abstract class SampleDAO<T extends Entity> {
                     .from(TABLE_NAME)
                     .where(getIdColumnName() + " = " + id)
                     .build();
-        }catch (QueryBuilder.QueryBuilderException e) {
+        } catch (QueryBuilder.QueryBuilderException e) {
             System.out.println("SampleDAO -> buildDeleteQuery -> Exception: " + e.getMessage());
         }
         return null;

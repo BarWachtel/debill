@@ -4,7 +4,6 @@ import core.parse.ParsedBillItem;
 
 public class Item extends Entity {
 
-    private int id = -1;
 	private String name = null;
 	private int quantity = -1;
     private float price = -1;

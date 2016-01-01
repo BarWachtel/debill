@@ -60,6 +60,11 @@ public class User extends Entity {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    @Override
+    public int getID() {
+        return id;
+    }
 }
 
 /**

@@ -23,6 +23,7 @@ public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
 
     static {
         TABLE_NAME = "items";
+        ID_COLUMN_NAME = Columns.itemId.getAsString();
     }
 
     private enum Columns {

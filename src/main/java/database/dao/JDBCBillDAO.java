@@ -6,10 +6,7 @@ import database.entity.Item;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,26 +65,33 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
 
     @Override
     public Bill insertBill(Bill bill) {
-        return insertEntity(bill);
+        insertEntity(bill);
+        return bill;
     }
 
     @Override
-    public Bill insertEntity(Bill bill) {
+    public void insertEntity(Bill bill) {
         if (bill.getManager() != null) {
             Connection conn = DBConn.getConnection();
             try {
                 String query = buildInsertQuery();
-                PreparedStatement ps = conn.prepareStatement(query);
+                PreparedStatement ps = conn.prepareStatement(query, Statement.NO_GENERATED_KEYS);
                 setInsertPreparedStatementParameters(ps, bill);
-                ResultSet rs = ps.executeQuery();
-                bill.setId(createEntityFromResultSet(rs).getId());
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows > 0) {
+                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        bill.setId(generatedKeys.getInt(1));
+                    }
+                }
                 conn.close();
-                insertItemsOfBill(bill);
+                if (bill.getItems() != null) {
+                    insertItemsOfBill(bill);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return bill;
     }
 
     private void insertItemsOfBill(Bill bill) {
