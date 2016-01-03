@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
+public abstract class EntityDAO<T extends Entity> extends SampleDAO<T> {
 
     //protected static String TABLE_NAME = null;
     protected static final String SQL_GET_ALL_QUERY;
     protected static QueryBuilderFactory queryBuilderFactory;
 
-    SampleEntityDAO() {
+    EntityDAO() {
     }
 
     static {
-        SampleEntityDAO.queryBuilderFactory = new QueryBuilderFactory();
+        EntityDAO.queryBuilderFactory = new QueryBuilderFactory();
         SQL_GET_ALL_QUERY = buildGetAllQueryString();
     }
 
@@ -31,7 +31,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                     .from(TABLE_NAME)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleEntityDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
         }
         return null;
     }
@@ -47,7 +47,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                 entities.add(createEntityFromResultSet(rs));
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> getAllEntities -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> getAllEntities -> Exception: " + e.getMessage());
         }
         return entities;
     }
@@ -64,7 +64,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                 entity = createEntityFromResultSet(rs);
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> getEntity -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> getEntity -> Exception: " + e.getMessage());
         }
         return entity;
     }
@@ -90,7 +90,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                 entityToReturn = getEntity(entity.getID());
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> updateEntity -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> updateEntity -> Exception: " + e.getMessage());
         }
         return entityToReturn;
     }
@@ -109,7 +109,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> insertEntity -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> insertEntity -> Exception: " + e.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
             ps.setInt(1, entityToDeleteID);
             result = ps.execute();
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> deleteEntry -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> deleteEntry -> Exception: " + e.getMessage());
         }
         return result;
     }
@@ -135,7 +135,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                     .set(getColumnsForUpdate())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleEntityDAO -> buildUpdateQuery -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> buildUpdateQuery -> Exception: " + e.getMessage());
         }
         return null;
     }
@@ -149,7 +149,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                     .column(getColumnsForInsert())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleEntityDAO -> buildInsertQuery -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> buildInsertQuery -> Exception: " + e.getMessage());
         }
         return query;
     }
@@ -162,7 +162,7 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                     .where(getIdColumnName() + " = " + id)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
-            System.out.println("SampleEntityDAO -> buildDeleteQuery -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> buildDeleteQuery -> Exception: " + e.getMessage());
         }
         return null;
     }

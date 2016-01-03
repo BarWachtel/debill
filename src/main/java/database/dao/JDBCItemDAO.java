@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCItemDAO extends SampleEntityDAO<Item> implements ItemDAO {
+public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
 
     private static final JDBCItemDAO instance = new JDBCItemDAO();
 
@@ -55,7 +55,7 @@ public class JDBCItemDAO extends SampleEntityDAO<Item> implements ItemDAO {
                 items.add(createEntityFromResultSet(rs));
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> getAllEntities -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> getAllEntities -> Exception: " + e.getMessage());
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }
