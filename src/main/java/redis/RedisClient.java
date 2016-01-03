@@ -12,7 +12,7 @@ public class RedisClient {
 	private static Jedis redisClient = new Jedis(redisHost, redisPort);
 
 	// Lets hide complexity of Jedis by only exposing the methods we use ;]
-	public static void setBillById(int billId, Bill bill) {
+	public static void setItemHashmapByBillId(int billId, Bill bill) {
 		// userId == key
 		// bill == value
 
@@ -47,7 +47,7 @@ public class RedisClient {
 
 		User user = new User(5, "baz", "wachtel");
 		Bill bill = new Bill(7, user, true, true, null);
-		RedisClient.setBillById(user.getId(), bill);
+		RedisClient.setItemHashmapByBillId(user.getId(), bill);
 
 		Bill aNewBill = RedisClient.getBillById(user.getId());
 
