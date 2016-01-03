@@ -89,7 +89,6 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
             if (affectedRows > 0) {
                 entityToReturn = getEntity(entity.getID());
             }
-            conn.close();
         } catch (SQLException e) {
             System.out.println("SampleEntityDAO -> updateEntity -> Exception: " + e.getMessage());
         }
@@ -109,7 +108,6 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
                     entity.setID(generatedKeys.getInt(1));
                 }
             }
-            conn.close();
         } catch (SQLException e) {
             System.out.println("SampleEntityDAO -> insertEntity -> Exception: " + e.getMessage());
         }
@@ -123,7 +121,6 @@ public abstract class SampleEntityDAO<T extends Entity> extends SampleDAO<T> {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityToDeleteID);
             result = ps.execute();
-            conn.close();
         } catch (SQLException e) {
             System.out.println("SampleEntityDAO -> deleteEntry -> Exception: " + e.getMessage());
         }

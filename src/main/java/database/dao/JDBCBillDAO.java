@@ -84,7 +84,6 @@ public class JDBCBillDAO extends SampleEntityDAO<Bill> implements BillDAO {
                         bill.setId(generatedKeys.getInt(1));
                     }
                 }
-                conn.close();
                 if (bill.getItems() != null) {
                     insertItemsOfBill(bill);
                 }
