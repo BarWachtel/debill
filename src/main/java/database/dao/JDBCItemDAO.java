@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
+public class JDBCItemDAO extends SampleEntityDAO<Item> implements ItemDAO {
 
     private static final JDBCItemDAO instance = new JDBCItemDAO();
 
@@ -23,7 +23,6 @@ public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
 
     static {
         TABLE_NAME = "items";
-        ID_COLUMN_NAME = Columns.itemId.getAsString();
     }
 
     private enum Columns {
@@ -66,7 +65,8 @@ public class JDBCItemDAO extends SampleDAO<Item> implements ItemDAO {
 
     @Override
     public Item insertItem(Item item) {
-        return insertEntity(item);
+        insertEntity(item);
+        return item;
     }
 
     @Override

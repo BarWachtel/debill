@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
+public class JDBCBillDAO extends SampleEntityDAO<Bill> implements BillDAO {
 
     private static final JDBCBillDAO instance = new JDBCBillDAO();
 
@@ -75,7 +75,7 @@ public class JDBCBillDAO extends SampleDAO<Bill> implements BillDAO {
             Connection conn = DBConn.getConnection();
             try {
                 String query = buildInsertQuery();
-                PreparedStatement ps = conn.prepareStatement(query, Statement.NO_GENERATED_KEYS);
+                PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                 setInsertPreparedStatementParameters(ps, bill);
                 int affectedRows = ps.executeUpdate();
                 if (affectedRows > 0) {
