@@ -136,11 +136,10 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
     @Override
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Item entity) {
         try {
-            ps.setInt(1, entity.getId());
-            ps.setInt(2, entity.getBillId());
-            ps.setString(3, entity.getName());
-            ps.setFloat(4, entity.getPrice());
-            ps.setInt(5, entity.getQuantity());
+            ps.setInt(1, entity.getBillId());
+            ps.setString(2, entity.getName());
+            ps.setFloat(3, entity.getPrice());
+            ps.setInt(4, entity.getQuantity());
         } catch (SQLException e) {
             e.printStackTrace();
         }
