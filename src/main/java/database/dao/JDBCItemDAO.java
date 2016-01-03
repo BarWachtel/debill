@@ -1,12 +1,11 @@
 package database.dao;
 
-import database.entity.Bill;
+import database.DBConn;
 import database.entity.Item;
 import database.interfaces.ItemDAO;
+import database.interfaces.QueryBuilder;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,8 +43,23 @@ public class JDBCItemDAO extends SampleEntityDAO<Item> implements ItemDAO {
     }
 
     @Override
-    public List<Item> getAllItems(Bill bill) {
-        return getAllEntities();
+    public List<Item> getAllItems(int billId) {
+        Connection conn = DBConn.getConnection();
+        List<Item> items = new ArrayList<>();
+        try {
+            String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString()+"=?").build();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, billId);
+            ResultSet rs = ps.executeQuery(query);
+            while (rs.next()) {
+                items.add(createEntityFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("SampleEntityDAO -> getAllEntities -> Exception: " + e.getMessage());
+        } catch (QueryBuilder.QueryBuilderException e) {
+            e.printStackTrace();
+        }
+        return items;
     }
 
     @Override
