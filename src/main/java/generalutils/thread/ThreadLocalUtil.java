@@ -1,5 +1,7 @@
 package generalutils.thread;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by user on 24/12/2015.
  */
@@ -12,8 +14,7 @@ public class ThreadLocalUtil {
 		/**
 		 * @see java.lang.ThreadLocal#initialValue()
 		 */
-		@Override
-		protected ThreadVariables initialValue() {
+		@Override protected ThreadVariables initialValue() {
 			return new ThreadVariables();
 		}
 	};
@@ -38,6 +39,10 @@ public class ThreadLocalUtil {
 
 	public static void destroy() {
 		THREAD_VARIABLES.remove();
+	}
+
+	public static HttpSession getUserSession() {
+		return (HttpSession) get(ThreadLocalUtil.USER_SESSION);
 	}
 }
 

@@ -1,11 +1,7 @@
 package database;
 
-/**
- * Created by yotam on 25/12/2015.
- */
 public class DatabaseCredentials {
-
-    public static String DB_NAME;
-    public static String USER_NAME;
-    public static String PASSWORD;
+	public static final String DB_NAME = "debill_schema";
+	public static final String USER_NAME = "bazza";
+	public static final String PASSWORD = "bazza";
 }
