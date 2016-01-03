@@ -87,7 +87,7 @@ public class JDBCGroupDAO extends SampleDAO<Group> implements GroupDAO {
                 updatedGroup = getGroupUsersByBillId(billId);
             }
         } catch (SQLException e) {
-            System.out.println("SampleEntityDAO -> insertEntity -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> insertEntity -> Exception: " + e.getMessage());
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }

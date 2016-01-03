@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCUserDAO extends SampleEntityDAO<User> implements UserDAO {
+public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     private static final JDBCUserDAO instance = new JDBCUserDAO();
 

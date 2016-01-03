@@ -1,8 +1,10 @@
-debill_app.iml
 out/
 .idea/
-target/
-db_credentials.txt
 src/main/java/database/DatabaseCredentials.java
-img
-txt
+docs/
+Dump20151204/
+debill_schema_dump/
+META-INF/
+mysql/
+*.iml
+Thumbs.db

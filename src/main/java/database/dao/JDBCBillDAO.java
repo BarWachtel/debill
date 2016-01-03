@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCBillDAO extends SampleEntityDAO<Bill> implements BillDAO {
+public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     private static final JDBCBillDAO instance = new JDBCBillDAO();
 
