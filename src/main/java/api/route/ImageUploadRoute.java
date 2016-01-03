@@ -30,7 +30,7 @@ private static final String SAVE_DIR = "uploadFiles";
         ContentDisposition headerOfFilePart = filePart.getContentDisposition();
         InputStream fileInputStream = filePart.getValueAs(InputStream.class);
 
-        String output = ImageUploadController.saveFile(fileInputStream,headerOfFilePart);
+        String output = ImageUploadController.saveFile(fileInputStream, headerOfFilePart.getFileName());
         return Response.status(200).entity(output).build();
     }
 }
