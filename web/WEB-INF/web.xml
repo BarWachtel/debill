@@ -23,4 +23,9 @@
         <servlet-name>apiRoutes</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+
+    <context-param>
+        <param-name>upload.location</param-name>
+        <param-value>/path/to/uploads</param-value>
+    </context-param>
 </web-app>

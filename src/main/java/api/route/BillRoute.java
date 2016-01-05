@@ -65,6 +65,4 @@ public class BillRoute {
 	return Response.status(200).entity(output).build();
 
 	}
-
-
 }

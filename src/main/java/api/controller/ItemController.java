@@ -10,12 +10,12 @@ import java.util.List;
 public class ItemController {
 
     public static Item getItem(Bill i_bill,int id) {
-       Item item = JDBCItemDAO.getItem(i_bill, id);
+       Item item = JDBCItemDAO.getInstance().getItem(id);
        return item;
     }
 
     public static List<Item> getAllBillItems(Bill i_bill) {
-        List<Item> items = JDBCItemDAO.getAllItems(i_bill);
+        List<Item> items = JDBCItemDAO.getInstance().getAllItems(i_bill);
         return items;
     }
 

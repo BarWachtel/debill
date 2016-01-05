@@ -82,6 +82,7 @@ public class Core {
 
 	private List<ParsedBillItem> imgToBillItems(File billImageFile) {
 		String imgFileName = FileUtils.saveBinaryFile(billImageFile);
+
 		List<String> billLines = OcrClient.getImgLines(imgFileName);
 
 		BillTextParser billParser = new BillTextParser();
