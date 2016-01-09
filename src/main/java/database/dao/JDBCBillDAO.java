@@ -60,7 +60,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     @Override
     public boolean deleteBill(Bill bill) {
-        return deleteEntity(bill.getId());
+        return deleteEntity(bill.getID());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
                 if (affectedRows > 0) {
                     ResultSet generatedKeys = ps.getGeneratedKeys();
                     if (generatedKeys.next()) {
-                        bill.setId(generatedKeys.getInt(1));
+                        bill.setID(generatedKeys.getInt(1));
                     }
                 }
                 if (bill.getItems() != null) {
@@ -95,7 +95,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     private void insertItemsOfBill(Bill bill) {
         for (Item item : bill.getItems()) {
-            item.setBillId(bill.getId());
+            item.setBillId(bill.getID());
             JDBCItemDAO.getInstance().insertItem(item);
         }
     }
@@ -133,8 +133,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     protected Bill createEntityFromResultSet(ResultSet rs) {
         Bill newBill = new Bill();
         try {
-            newBill.setId(rs.getInt(Columns.billId.getAsString()));
-            newBill.setId(rs.getInt(Columns.userId.getAsString()));
+            newBill.setID(rs.getInt(Columns.billId.getAsString()));
+            newBill.setID(rs.getInt(Columns.userId.getAsString()));
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
             newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
@@ -179,7 +179,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
      */
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
         try {
-            ps.setInt(1, entity.getManager().getId());
+            ps.setInt(1, entity.getManager().getID());
             ps.setBoolean(2, entity.isPrivate());
             ps.setBoolean(3, true); // Set the new bill isOpen value to True by default
         } catch (SQLException e) {

@@ -11,7 +11,7 @@ public class RedisClient {
 
 	private static Jedis redisClient = new Jedis(redisHost, redisPort);
 
-	// Lets hide complexity of Jedis by only exposing the methods we use ;]
+	// Hide complexity of Jedis by only exposing the methods we use ;]
 	public static void setBillById(int billId, Bill bill) {
 		// userId == key
 		// bill == value
@@ -21,8 +21,7 @@ public class RedisClient {
 
 	public static Bill getBillById(int billId) {
 		byte[] billBytes = redisClient.get(SerializationUtils.serialize(billIdAsKey(billId)));
-		Bill bill = (Bill) SerializationUtils.deserialize(billBytes);
-		return bill;
+		return SerializationUtils.deserialize(billBytes);
 	}
 
 	public static void setBillByUserId(int userId, int billId) {
@@ -47,9 +46,9 @@ public class RedisClient {
 
 		User user = new User(5, "baz", "wachtel");
 		Bill bill = new Bill(7, user, true, true, null);
-		RedisClient.setBillById(user.getId(), bill);
+		RedisClient.setBillById(user.getID(), bill);
 
-		Bill aNewBill = RedisClient.getBillById(user.getId());
+		Bill aNewBill = RedisClient.getBillById(user.getID());
 
 		System.out.println(aNewBill.toString());
 	}

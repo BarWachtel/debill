@@ -31,7 +31,7 @@ public class Core {
 
 		int userId = (int) httpSession.getAttribute(ThreadLocalUtil.USER_ID);
 		User user = new User();
-		user.setId(userId);
+		user.setID(userId);
 		bill.setManager(user);
 
 		List<Item> items = parsedItemsToDatabaseItems(parsedBillItems);
@@ -41,13 +41,13 @@ public class Core {
 
 		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
-		if (insertedBill.getId() >= 0) {
-			bill.setId(insertedBill.getId());
-			RedisClient.setBillByUserId(userId, insertedBill.getId());
-			RedisClient.setBillById(insertedBill.getId(), bill);
+		if (insertedBill.getID() >= 0) {
+			bill.setID(insertedBill.getID());
+			RedisClient.setBillByUserId(userId, insertedBill.getID());
+			RedisClient.setBillById(insertedBill.getID(), bill);
 		}
 
-		return insertedBill.getId();
+		return insertedBill.getID();
 	}
 
 	public boolean updateBill(int billId, List<Item> updatedItems) {

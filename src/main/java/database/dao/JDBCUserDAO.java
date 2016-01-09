@@ -58,7 +58,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     public boolean deleteUser(User user) {
-        return deleteEntity(user.getId());
+        return deleteEntity(user.getID());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     protected User createEntityFromResultSet(ResultSet rs) {
         User newUser = new User();
         try {
-            newUser.setId(rs.getInt(Columns.userId.getAsString()));
+            newUser.setID(rs.getInt(Columns.userId.getAsString()));
             newUser.setFirstName(rs.getString(Columns.firstName.getAsString()));
             newUser.setLastName(rs.getString(Columns.lastName.getAsString()));
         } catch (SQLException e) {

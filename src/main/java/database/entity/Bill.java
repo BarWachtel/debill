@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Bill extends Entity {
 
-    private int id = -1;
     private User manager;
     private boolean isPrivate;
     private boolean isOpen;
@@ -15,19 +14,11 @@ public class Bill extends Entity {
     }
 
     public Bill(int id, User manager, boolean isPrivate, boolean isOpen, List<Item> items) {
-        this.id = id;
+        super(id);
         this.manager = manager;
         this.isPrivate = isPrivate;
         this.isOpen = isOpen;
         this.items = items;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public User getManager() {
