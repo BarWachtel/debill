@@ -1,6 +1,5 @@
 package api.route;
 import java.io.InputStream;
-import javax.servlet.ServletContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -15,7 +14,6 @@ import api.service.SessionService;
 import com.sun.jersey.core.header.ContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
-import generalutils.thread.ThreadLocalUtil;
 
 @Path("/files")
 
@@ -32,8 +30,8 @@ private static final String SAVE_DIR = "uploadFiles";
         ContentDisposition headerOfFilePart = filePart.getContentDisposition();
         InputStream fileInputStream = filePart.getValueAs(InputStream.class);
 
-		SessionService.AddSessionToLocalStore(request);
-		SessionService.AddUserIdToSession(1);
+		SessionService.addSessionToLocalStore(request);
+		SessionService.setUserId(1);
 
         String output = ImageUploadController.saveFile(fileInputStream, headerOfFilePart.getFileName());
         return Response.status(200).entity(output).build();
