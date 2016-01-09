@@ -21,7 +21,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     private JDBCUserDAO() {
     }
 
-	static {
+    static {
 		TABLE_NAME = "users";
 	}
 

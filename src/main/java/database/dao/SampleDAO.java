@@ -2,13 +2,36 @@ package database.dao;
 
 import database.DBConn;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public abstract class SampleDAO {
 
     protected static String TABLE_NAME = null;
+
+    public SampleDAO() {
+        if(!isTableExists()) {
+            createTable();
+        }
+    }
+
+    protected static String getTableName() {
+        return TABLE_NAME;
+    }
+
+    public boolean isTableExists() {
+        Connection connection = DBConn.getConnection();
+        boolean tableExists = false;
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet resultSet = metaData.getTables(null, null, TABLE_NAME, null);
+            if(resultSet.next()) {
+                tableExists = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tableExists;
+    }
 
     public int createTable() {
         Connection connection = DBConn.getConnection();

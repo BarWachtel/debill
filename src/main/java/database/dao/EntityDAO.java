@@ -27,7 +27,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .select()
-                    .from(TABLE_NAME)
+                    .from(getTableName())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             System.out.println("EntityDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
@@ -70,7 +70,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     private String buildGetEntityByIdQuery() {
         try {
-            return queryBuilderFactory.select().from(TABLE_NAME).where(getIdColumnName() + "=?").build();
+            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "=?").build();
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }
@@ -130,7 +130,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .update()
-                    .from(TABLE_NAME)
+                    .from(getTableName())
                     .set(getColumnsForUpdate())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -144,7 +144,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             query = queryBuilderFactory
                     .insert()
-                    .into(TABLE_NAME)
+                    .into(getTableName())
                     .column(getColumnsForInsert())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -157,7 +157,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .delete()
-                    .from(TABLE_NAME)
+                    .from(getTableName())
                     .where(getIdColumnName() + " = " + id)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
