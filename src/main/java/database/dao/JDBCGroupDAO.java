@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JDBCGroupDAO extends SampleDAO<Group> implements GroupDAO {
+public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
 
     private static final JDBCGroupDAO instance = new JDBCGroupDAO();
     private static final QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
@@ -23,6 +23,20 @@ public class JDBCGroupDAO extends SampleDAO<Group> implements GroupDAO {
 
     static {
         TABLE_NAME = "bills_groups";
+    }
+
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `bills_groups` (\n" +
+                "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `bill_id` int(11) NOT NULL,\n" +
+                "  `user_id` int(11) NOT NULL,\n" +
+                "  PRIMARY KEY (`group_id`,`bill_id`,`user_id`),\n" +
+                "  KEY `fk_bills_group_bills_bill_id_idx` (`bill_id`),\n" +
+                "  KEY `fk_bills_group_users_user_id_idx` (`user_id`),\n" +
+                "  CONSTRAINT `fk_bills_group_bills_bill_id` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`bill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,\n" +
+                "  CONSTRAINT `fk_bills_group_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
 
     private enum Columns {

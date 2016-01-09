@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class EntityDAO<T extends Entity> extends SampleDAO<T> {
+public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
-    //protected static String TABLE_NAME = null;
     protected static final String SQL_GET_ALL_QUERY;
     protected static QueryBuilderFactory queryBuilderFactory;
 

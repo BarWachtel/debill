@@ -25,6 +25,16 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 		TABLE_NAME = "users";
 	}
 
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `users` (\n" +
+                "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `first_name` varchar(45) DEFAULT NULL,\n" +
+                "  `last_name` varchar(45) DEFAULT NULL,\n" +
+                "  PRIMARY KEY (`user_id`)\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    }
+
     private enum Columns {
         userId("user_id"),
         firstName("first_name"),

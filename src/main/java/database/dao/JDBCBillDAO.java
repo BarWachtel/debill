@@ -26,6 +26,19 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     private JDBCBillDAO() {
     }
 
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `bills` (\n" +
+                "  `bill_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `user_id` int(11) NOT NULL,\n" +
+                "  `private` tinyint(1) NOT NULL,\n" +
+                "  `open` tinyint(1) NOT NULL,\n" +
+                "  PRIMARY KEY (`bill_id`),\n" +
+                "  KEY `fk_users_fb_id_idx` (`user_id`),\n" +
+                "  CONSTRAINT `fk_bills_users_bill_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    }
+
     private enum Columns {
         billId("bill_id"),
         userId("user_id"),
