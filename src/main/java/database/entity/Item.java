@@ -42,14 +42,6 @@ public class Item extends Entity {
 		this.billId = billId;
 	}
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getQuantity() {
         return quantity;
     }

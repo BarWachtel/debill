@@ -11,32 +11,29 @@ public class RedisClient {
 
 	private static Jedis redisClient = new Jedis(redisHost, redisPort);
 
-	// Lets hide complexity of Jedis by only exposing the methods we use ;]
 	public static void setItemHashmapByBillId(int billId, Bill bill) {
-		// userId == key
-		// bill == value
-
-		redisClient.set(SerializationUtils.serialize(billIdAsKey(billId)), SerializationUtils.serialize(bill));
+		redisClient.set(SerializationUtils.serialize(generateBillIdAsKey(billId)),
+				SerializationUtils.serialize(bill));
 	}
 
 	public static Bill getBillById(int billId) {
-		byte[] billBytes = redisClient.get(SerializationUtils.serialize(billIdAsKey(billId)));
+		byte[] billBytes = redisClient.get(SerializationUtils.serialize(generateBillIdAsKey(billId)));
 		return SerializationUtils.deserialize(billBytes);
 	}
 
 	public static void setBillByUserId(int userId, int billId) {
-		redisClient.set(getUserIdAsKey(userId), String.valueOf(billId));
+		redisClient.set(generateUserIdAsKey(userId), String.valueOf(billId));
 	}
 
 	public static int getBillByUserId(int userId) {
-		return Integer.valueOf(redisClient.get(getUserIdAsKey(userId)));
+		return Integer.valueOf(redisClient.get(generateUserIdAsKey(userId)));
 	}
 
-	private static String getUserIdAsKey(int userId) {
+	private static String generateUserIdAsKey(int userId) {
 		return "USERID:" + userId;
 	}
 
-	private static String billIdAsKey(int billId) {
+	private static String generateBillIdAsKey(int billId) {
 		return "BILLID:" + billId;
 	}
 

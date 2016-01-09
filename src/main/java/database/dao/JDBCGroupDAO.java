@@ -25,20 +25,6 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
         TABLE_NAME = "bills_groups";
     }
 
-    @Override
-    protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `bills_groups` (\n" +
-                "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                "  `bill_id` int(11) NOT NULL,\n" +
-                "  `user_id` int(11) NOT NULL,\n" +
-                "  PRIMARY KEY (`group_id`,`bill_id`,`user_id`),\n" +
-                "  KEY `fk_bills_group_bills_bill_id_idx` (`bill_id`),\n" +
-                "  KEY `fk_bills_group_users_user_id_idx` (`user_id`),\n" +
-                "  CONSTRAINT `fk_bills_group_bills_bill_id` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`bill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,\n" +
-                "  CONSTRAINT `fk_bills_group_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
-    }
-
     private enum Columns {
         groupId("group_id"),
         billId("bill_id"),
@@ -56,6 +42,20 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
     }
 
     private JDBCGroupDAO() {
+    }
+
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `bills_groups` (\n" +
+                "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `bill_id` int(11) NOT NULL,\n" +
+                "  `user_id` int(11) NOT NULL,\n" +
+                "  PRIMARY KEY (`group_id`,`bill_id`,`user_id`),\n" +
+                "  KEY `fk_bills_group_bills_bill_id_idx` (`bill_id`),\n" +
+                "  KEY `fk_bills_group_users_user_id_idx` (`user_id`),\n" +
+                "  CONSTRAINT `fk_bills_group_bills_bill_id` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`bill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,\n" +
+                "  CONSTRAINT `fk_bills_group_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
 
     @Override

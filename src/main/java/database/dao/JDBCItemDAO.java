@@ -88,7 +88,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
 
     @Override
     public boolean deleteItem(Item item) {
-        return deleteEntity(item.getId());
+        return deleteEntity(item.getID());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
     protected Item createEntityFromResultSet(ResultSet rs) {
         Item newItem = new Item();
         try {
-            newItem.setId(rs.getInt(Columns.itemId.getAsString()));
+            newItem.setID(rs.getInt(Columns.itemId.getAsString()));
             newItem.setBillId(rs.getInt(Columns.billId.getAsString()));
             newItem.setName(rs.getString(Columns.name.getAsString()));
             newItem.setPrice(rs.getFloat(Columns.price.getAsString()));

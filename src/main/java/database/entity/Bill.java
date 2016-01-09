@@ -61,7 +61,7 @@ public class Bill extends Entity {
     public boolean update(List<Item> updatedItems) {
         boolean success = true;
         for (Item updatedItem : updatedItems) {
-            Item toUpdate = getItem(updatedItem.getId());
+            Item toUpdate = getItem(updatedItem.getID());
             if (!(success = toUpdate.update(updatedItem))) {
                 break;
             }
@@ -73,7 +73,7 @@ public class Bill extends Entity {
     private Item getItem(int id) {
         Item item = null;
         for (Item currentItem : items) {
-            if (currentItem.getId() == id) {
+            if (currentItem.getID() == id) {
                 item = currentItem;
                 break;
             }
