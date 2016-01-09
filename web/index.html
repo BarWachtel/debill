@@ -7,51 +7,35 @@
     <script src="js/index.js"></script>
     <title>index.html</title>
 </head>
-<body>
-    <p>llalalalal</p>
+<br>
+    <p>Send and recieve json example</p>
     <form action="rest/files/upload" method="POST" enctype="multipart/form-data">
         <p>
             Select a file : <input type="file" name="file" size="50" />
         </p>
         <input type="submit" value="Upload It" />
     </form>
-    <p>llalalalal12</p>
     <p><a href="http://localhost:8080/loginPage.html">Go to Login Page</a></p>
 
-    <p id="billdemo"></p>
-    <p id="billdemo2"></p>
-    <p id="billdemo3"></p>
-    <p id="succ"></p>
-
-    <button type="button" id ="sendBill">sendBillToServer</button>
-    <script>
-        var bill = '{"items":['
-                +'{"itemName":"GoldStar","quantity":"1" },'
-                +'{"itemName":"cola","quantity":"2" },'
-                +'{"itemName":"Heineken","quantity":"3" }]}';
-
-
-        var obj = JSON.parse(bill);
-        document.getElementById("billdemo").innerHTML =
-                obj.items[1].itemName + " " + obj.items[1].quantity;
-
-        var billObj = new Object();
-        billObj.bill_id ="123";
-        billObj.fb_id ="456";
-        billObj.isPrivate = "true";
-        billObj.items = obj.items;
-
-        billObj.prototype.toString = function billToString(){
-           var ret =  "Bill id:" + billObj.bill_id +
-            "Bill fb id: " + billObj.fb_id +
-            "Bill fb is Private: " + billObj.isPrivate;
-            return ret;
-        };
-
-        document.getElementById("billdemo2").innerHTML =
-                (billObj.items).length.toString();
-        document.getElementById("billdemo3").innerHTML =
-               billObj.toString();
-         </script>
+    <p>date:</p>
+    <p id="date_demo"></p></br>
+    <p>users:</p>
+    <p id="users_demo"></p></br>
+    <p>items:</p>
+    <p id="items_demo"></p></br>
+    <p>manager:</p>
+    <p id="manager_demo"></p>
+    <button type="button" id ="isertManager">isertManager</button>
+    <p>bill:</p>
+    <p id="bill_demo"></p>
+    <button type="button" id ="sendBill">insertBillAfterInsertManager</button>
+    <p>group:</p>
+   <p id="group_demo"></p>
+   <br/>
+   <br/>
+   <button type="button" id ="getAllBills">getAllBills</button>
+    <br/>
+    <p id="success"></p>
+    <p id="error"></p>
 </body>
 </html>

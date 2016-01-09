@@ -1,18 +1,16 @@
 package core;
 
+import api.service.SessionService;
 import core.ocr.OcrClient;
 import core.parse.ParsedBillItem;
 import core.parse.BillTextParser;
 import database.dao.JDBCBillDAO;
-import database.dao.JDBCUserDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
 import generalutils.FileUtils;
-import generalutils.thread.ThreadLocalUtil;
 import redis.RedisClient;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +23,11 @@ public class Core {
 	public int createNewBill(File billImageFile) {
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
 
-		HttpSession httpSession = (HttpSession) ThreadLocalUtil.get(ThreadLocalUtil.USER_SESSION);
 
 		Bill bill = new Bill();
 
-		int userId = (int) httpSession.getAttribute(ThreadLocalUtil.USER_ID);
+		int userId = SessionService.getUserId();
+
 		User user = new User();
 		user.setId(userId);
 		bill.setManager(user);
@@ -37,14 +35,14 @@ public class Core {
 		List<Item> items = parsedItemsToDatabaseItems(parsedBillItems);
 		bill.setItems(items);
 
-		bill.setPrivate(false);
+		bill.setPrivate(false); // Default
 
 		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
 		if (insertedBill.getId() >= 0) {
 			bill.setId(insertedBill.getId());
 			RedisClient.setBillByUserId(userId, insertedBill.getId());
-			RedisClient.setBillById(insertedBill.getId(), bill);
+			RedisClient.setItemHashmapByBillId(insertedBill.getId(), bill);
 		}
 
 		return insertedBill.getId();
@@ -54,7 +52,7 @@ public class Core {
 		Bill bill = getBill(billId);
 		boolean success = false;
 		if ((success = bill.update(updatedItems))) {
-			RedisClient.setBillById(billId, bill);
+			RedisClient.setItemHashmapByBillId(billId, bill);
 			JDBCBillDAO.getInstance().updateBill(bill);
 		}
 

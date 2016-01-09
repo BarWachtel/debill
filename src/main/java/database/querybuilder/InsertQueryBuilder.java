@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class InsertQueryBuilder implements QueryBuilder{
+public class InsertQueryBuilder implements QueryBuilder {
 
     private List<String> columns;
     private List<String> values;
@@ -35,7 +35,7 @@ public class InsertQueryBuilder implements QueryBuilder{
     @Override
     public String build() throws QueryBuilderException {
 
-        if(columns.size() == 0) {
+        if (columns.size() == 0) {
             throw new QueryBuilderException("COLS is empty");
         }
 
@@ -45,7 +45,7 @@ public class InsertQueryBuilder implements QueryBuilder{
         theQuery.append(into);
         theQuery.append("(");
 
-        for(String _col : columns) {
+        for (String _col : columns) {
             theQuery.append(_col);
             theQuery.append(",");
         }
@@ -55,11 +55,18 @@ public class InsertQueryBuilder implements QueryBuilder{
         theQuery.append(" values ");
 
         if (values.size() > 0) {
-            for(String _val : values) {
+            for (String _val : values) {
                 theQuery.append(_val);
                 theQuery.append(",");
             }
             theQuery.deleteCharAt(theQuery.lastIndexOf(","));
+        } else {
+            theQuery.append("(");
+            for (int i = 0; i < columns.size(); i++) {
+                theQuery.append("?,");
+            }
+            theQuery.deleteCharAt(theQuery.lastIndexOf(","));
+            theQuery.append(")");
         }
 
         return theQuery.toString();

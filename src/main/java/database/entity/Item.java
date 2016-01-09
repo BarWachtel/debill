@@ -4,7 +4,6 @@ import core.parse.ParsedBillItem;
 
 public class Item extends Entity {
 
-    private int id = -1;
 	private String name = null;
 	private int quantity = -1;
     private float price = -1;
@@ -20,6 +19,15 @@ public class Item extends Entity {
         this.quantity = quantity;
         this.price = price;
     }
+
+    public Item(String name,int quantity,float price,int billId,int numPayedFor ) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+        this.billId = billId;
+        this.numPayedFor = numPayedFor;
+    }
+
 
 	public Item(ParsedBillItem parsedBillItem) {
 		this.name = parsedBillItem.getName();

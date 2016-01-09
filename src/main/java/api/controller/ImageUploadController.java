@@ -17,7 +17,7 @@ public class ImageUploadController {
     private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/path/to/uploads/";
 
 
-    public static String saveFile(InputStream fileInputStream,ContentDisposition headerOfFilePart) {
+    public static String saveFile(InputStream fileInputStream, String fileName) {
         String status =  "file saved to ";
 
         byte[] bytes = new byte[0];
@@ -27,15 +27,15 @@ public class ImageUploadController {
             e.printStackTrace();
         }
 
-        String fileName = SERVER_UPLOAD_LOCATION_FOLDER + headerOfFilePart.getFileName();
+        String _fileName = SERVER_UPLOAD_LOCATION_FOLDER + fileName;
         File sFile = null;
         try {
-            sFile = writeFile(bytes,fileName);
+            sFile = writeFile(bytes,_fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
         String output;
-        output = "saved to " + fileName;
+        output = "saved to " + _fileName;
 
         System.out.println("fileName :" +output);
         //System.out.println("savedPath :" +savedPath);
@@ -59,9 +59,10 @@ public class ImageUploadController {
 //        //for check
 
         status = status+ sFile.getAbsolutePath();
-        Core c;
-        c = new Core();
-        c.createNewBill(sFile);
+        //sending image to parser
+//        Core c;
+//        c = new Core();
+//        c.createNewBill(sFile);
 
         return status;
     }

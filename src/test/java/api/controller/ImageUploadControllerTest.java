@@ -22,6 +22,6 @@ public class ImageUploadControllerTest extends TestCase {
         System.setProperty("upload.location", "/");
 
         InputStream in = new FileInputStream(imgFile);
-        //ImageUploadController.saveFile("text.png",in);
+        ImageUploadController.saveFile(in, "text.png");
     }
 }

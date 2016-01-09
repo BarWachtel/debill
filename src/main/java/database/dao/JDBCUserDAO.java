@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
+public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     private static final JDBCUserDAO instance = new JDBCUserDAO();
 
@@ -63,7 +63,8 @@ public class JDBCUserDAO extends SampleDAO<User> implements UserDAO {
 
     @Override
     public User insertUser(User user) {
-        return insertEntity(user);
+        insertEntity(user);
+        return user;
     }
 
     @Override
