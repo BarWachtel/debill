@@ -3,6 +3,7 @@ package database.dao;
 import database.DBConn;
 import database.entity.Bill;
 import database.entity.Item;
+import database.entity.User;
 import database.interfaces.BillDAO;
 import database.interfaces.QueryBuilder;
 
@@ -147,10 +148,10 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
         Bill newBill = new Bill();
         try {
             newBill.setID(rs.getInt(Columns.billId.getAsString()));
-            newBill.setID(rs.getInt(Columns.userId.getAsString()));
+            User user = JDBCUserDAO.getInstance().getUser(rs.getInt(Columns.userId.getAsString()));
+            newBill.setManager(user);
             newBill.setIsPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
             newBill.setIsOpen(rs.getBoolean(Columns.isOpen.getAsString()));
-            newBill.setManager(null);
             newBill.addItems(null);
         } catch (SQLException e) {
             e.printStackTrace();

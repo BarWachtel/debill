@@ -34,7 +34,10 @@ public class LoginRoute {
         }
         String decoded = new String(bytes);
         StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
-
+        String userid, password;
+        if(tokenizer.hasMoreTokens()) {
+            userid = tokenizer.nextToken();
+        }
     }
 
     @GET

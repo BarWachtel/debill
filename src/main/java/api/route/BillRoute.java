@@ -3,26 +3,14 @@ package api.route;
 import api.controller.BillController;
 import api.controller.ItemController;
 import api.controller.UserController;
-import com.google.gson.Gson;
 import database.dao.JDBCBillDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
-import generalutils.thread.ThreadLocalUtil;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.JSONObject;
-import javax.servlet.http.HttpServletRequest;
+
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.awt.*;
-import java.util.ArrayList;
-import java.sql.Date;
-import java.util.Iterator;
 import java.util.List;
-import static java.lang.Math.toIntExact;
 
 @Path("/bill") public class BillRoute {
 	@GET @Produces(MediaType.APPLICATION_JSON)
