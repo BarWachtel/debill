@@ -20,6 +20,15 @@ public class Item extends Entity {
         this.price = price;
     }
 
+    public Item(String name,int quantity,float price,int billId,int numPayedFor ) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+        this.billId = billId;
+        this.numPayedFor = numPayedFor;
+    }
+
+
 	public Item(ParsedBillItem parsedBillItem) {
 		this.name = parsedBillItem.getName();
 		this.price = parsedBillItem.getPrice();

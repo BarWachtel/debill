@@ -28,7 +28,7 @@ public class Core {
 
 		List<Item> items = parsedItemsToDatabaseItems(parsedBillItems);
 		bill.addItems(items);
-		bill.setPrivate(false); // Default
+		bill.setIsPrivate(false); // Default
 		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
 		if (insertedBill.getID() >= 0) {
@@ -73,6 +73,7 @@ public class Core {
 
 	private List<ParsedBillItem> imgToBillItems(File billImageFile) {
 		String imgFileName = FileUtils.saveBinaryFile(billImageFile);
+
 		List<String> billLines = OcrClient.getImgLines(imgFileName);
 
 		BillTextParser billParser = new BillTextParser();

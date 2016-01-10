@@ -42,7 +42,7 @@ public class SessionFilter implements Filter {
             }
 
             if (!allowedRequest) {
-                HttpSession session = httpServletRequest.getSession();
+                HttpSession session = httpServletRequest.getSession(false);
                 if (session == null) {
                     httpServletRequest.getRequestDispatcher(sessionExpired).forward(request, response);
                 } else {

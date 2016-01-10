@@ -34,6 +34,12 @@ public class User extends Entity {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    public User(int id, String firstName, String lastName,String facebookId) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.facebookId = facebookId;
+    }
 
 
     public String getFirstName() {

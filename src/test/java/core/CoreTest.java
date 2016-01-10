@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CoreTest extends TestCase {
 
