@@ -5,7 +5,6 @@ import java.util.List;
 
 public class BillSummary extends Entity {
     private Bill bill;
-    private int quantity;
     private final List<ItemSummary> itemSummaryList;
 
     public BillSummary() {
@@ -18,14 +17,6 @@ public class BillSummary extends Entity {
 
     public void setBill(Bill bill) {
         this.bill = bill;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public void addItemSummary(ItemSummary itemSummary) {
