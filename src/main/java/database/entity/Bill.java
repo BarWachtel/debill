@@ -6,8 +6,8 @@ import java.util.List;
 public class Bill extends Entity {
 
     private User manager;
-    private Boolean isPrivate;
-    private Boolean isOpen;
+    private boolean isPrivate;
+    private boolean isOpen;
     private List<Item> items;
 
     public Bill() {
