@@ -4,6 +4,7 @@ import api.controller.BillController;
 import api.controller.ItemController;
 import api.controller.UserController;
 import com.google.gson.Gson;
+import database.dao.JDBCBillDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
@@ -62,83 +63,87 @@ import static java.lang.Math.toIntExact;
 
 
 	@POST
-	@Path("/addNewBill")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JSONObject consumeJSON(String  inputJsonObj) throws Exception{
-
-	System.out.println("in addNewBill");
-
-		JSONParser jsonParser = new JSONParser();
-		JSONObject jsonObject = (JSONObject) jsonParser.parse(inputJsonObj);
-		Bill  bill;
-		List<Item> billItems = new ArrayList<Item>();
-		User userManager;
-		Bill resultBill;
-		int billID = toIntExact((Long) jsonObject.get("id"));
-		System.out.println("bill id is: " + billID);
-
-		JSONObject billManager = (JSONObject) jsonObject.get("User");
-		int  managerId = toIntExact((Long) billManager.get("id"));
-		String firstName = (String) billManager.get("firstName");
-		String lastName = (String) billManager.get("lastName");
-		String facebookId = (String) billManager.get("facebookId");
-		userManager =  new User(managerId,firstName,lastName,facebookId);
-		System.out.println(
-				"managerId: " + managerId +
-				"firstName: " + firstName +
-				"lastName: " + lastName +
-				"facebookId: " + facebookId
-
-		);
-		JSONObject creationTime =  (JSONObject) billManager.get("creationTime");
-		int day = toIntExact((Long) creationTime.get("day"));
-		int month = toIntExact((Long) creationTime.get("month"));
-		int year = toIntExact((Long) creationTime.get("year"));
-
-
-		System.out.println(
-				"creationTime: " +
-						"day: " + day +
-						"month: " + month +
-						"year: " + year
-
-		);
-		boolean isPrivate = Boolean.parseBoolean((String) jsonObject.get("isPrivate"));
-		boolean isOpen = Boolean.parseBoolean((String) jsonObject.get("isOpen"));
-		System.out.println(
-				"bill booleans: " +
-						"isPrivate: " + isPrivate +
-						"isOpen: " + isOpen
-
-		);
-		JSONArray items = (JSONArray) jsonObject.get("items");
-		Iterator i = items.iterator();
-		while (i.hasNext()) {
-			JSONObject innerObj = (JSONObject) i.next();
-			String itemName = (String)innerObj.get("name");
-			int quantity = toIntExact((Long) innerObj.get("quantity"));
-			float price = (float)((Long)innerObj.get("price"));
-			int billId = toIntExact((Long)innerObj.get("billId"));
-			int numPaidFor = toIntExact((Long)innerObj.get("numPaidFor"));
-			Item item =  new Item(itemName,quantity,price,billId,numPaidFor);
-			billItems.add(item);
-			System.out.println(
-					"name: "+ itemName +
-					"quantity: " + quantity +
-					"price: " + price +
-					"billId: " + billId +
-					"numPaidFor: " + numPaidFor
-			);
-
-		}
-
-		bill = new Bill(-1,userManager,isPrivate,isOpen,billItems);
-		resultBill = BillController.insertBill(bill);
-		Gson gson = new Gson();
-		String jsonRes = gson.toJson(resultBill);
-		JSONParser jsonParser2 = new JSONParser();
-		JSONObject jsonObjectRes = (JSONObject) jsonParser2.parse(jsonRes);
-		return jsonObjectRes;
+	public Bill consumeJSON(Bill bill) throws Exception {
+		Bill billWithId = JDBCBillDAO.getInstance().insertBill(bill);
+		return billWithId;
 	}
 }
+
+/**
+ *
+ System.out.println("in addNewBill");
+
+ JSONParser jsonParser = new JSONParser();
+ JSONObject jsonObject = (JSONObject) jsonParser.parse(inputJsonObj);
+ Bill  bill;
+ List<Item> billItems = new ArrayList<Item>();
+ User userManager;
+ Bill resultBill;
+ int billID = toIntExact((Long) jsonObject.get("id"));
+ System.out.println("bill id is: " + billID);
+
+ JSONObject billManager = (JSONObject) jsonObject.get("User");
+ int  managerId = toIntExact((Long) billManager.get("id"));
+ String firstName = (String) billManager.get("firstName");
+ String lastName = (String) billManager.get("lastName");
+ String facebookId = (String) billManager.get("facebookId");
+ userManager =  new User(managerId,firstName,lastName,facebookId);
+ System.out.println(
+ "managerId: " + managerId +
+ "firstName: " + firstName +
+ "lastName: " + lastName +
+ "facebookId: " + facebookId
+
+ );
+ JSONObject creationTime =  (JSONObject) billManager.get("creationTime");
+ int day = toIntExact((Long) creationTime.get("day"));
+ int month = toIntExact((Long) creationTime.get("month"));
+ int year = toIntExact((Long) creationTime.get("year"));
+
+
+ System.out.println(
+ "creationTime: " +
+ "day: " + day +
+ "month: " + month +
+ "year: " + year
+
+ );
+ boolean getIsPrivate = Boolean.parseBoolean((String) jsonObject.get("getIsPrivate"));
+ boolean getIsOpen = Boolean.parseBoolean((String) jsonObject.get("getIsOpen"));
+ System.out.println(
+ "bill booleans: " +
+ "getIsPrivate: " + getIsPrivate +
+ "getIsOpen: " + getIsOpen
+
+ );
+ JSONArray items = (JSONArray) jsonObject.get("items");
+ Iterator i = items.iterator();
+ while (i.hasNext()) {
+ JSONObject innerObj = (JSONObject) i.next();
+ String itemName = (String)innerObj.get("name");
+ int quantity = toIntExact((Long) innerObj.get("quantity"));
+ float price = (float)((Long)innerObj.get("price"));
+ int billId = toIntExact((Long)innerObj.get("billId"));
+ int numPaidFor = toIntExact((Long)innerObj.get("numPaidFor"));
+ Item item =  new Item(itemName,quantity,price,billId,numPaidFor);
+ billItems.add(item);
+ System.out.println(
+ "name: "+ itemName +
+ "quantity: " + quantity +
+ "price: " + price +
+ "billId: " + billId +
+ "numPaidFor: " + numPaidFor
+ );
+
+ }
+
+ bill = new Bill(-1,userManager,getIsPrivate,getIsOpen,billItems);
+ resultBill = BillController.insertBill(bill);
+ Gson gson = new Gson();
+ String jsonRes = gson.toJson(resultBill);
+ JSONParser jsonParser2 = new JSONParser();
+ JSONObject jsonObjectRes = (JSONObject) jsonParser2.parse(jsonRes);
+ return jsonObjectRes;
+ */

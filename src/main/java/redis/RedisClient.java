@@ -93,10 +93,14 @@ public class RedisClient {
     }
 
     private void setEachItemInHashMap(Bill bill) {
-        bill.getItems().forEach(this::setItem);
+        for (Item item : bill.getItems()) {
+			this.setItem(item);
+		}
     }
 
     public void removeAllItems(Bill bill) {
-        bill.getItems().forEach(this::removeItem);
+		for (Item item : bill.getItems()) {
+			this.removeItem(item);
+		}
     }
 }

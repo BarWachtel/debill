@@ -148,8 +148,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
         try {
             newBill.setID(rs.getInt(Columns.billId.getAsString()));
             newBill.setID(rs.getInt(Columns.userId.getAsString()));
-            newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
-            newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
+            newBill.setIsPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
+            newBill.setIsOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
             newBill.addItems(null);
         } catch (SQLException e) {
@@ -179,8 +179,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     @Override
     protected void setUpdatePreparedStatementParameters(PreparedStatement ps, Bill entity) {
         try {
-            ps.setBoolean(1, entity.isPrivate());
-            ps.setBoolean(2, entity.isOpen());
+            ps.setBoolean(1, entity.getIsPrivate());
+            ps.setBoolean(2, entity.getIsOpen());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -193,8 +193,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
         try {
             ps.setInt(1, entity.getManager().getID());
-            ps.setBoolean(2, entity.isPrivate());
-            ps.setBoolean(3, true); // Set the new bill isOpen value to True by default
+            ps.setBoolean(2, entity.getIsPrivate());
+            ps.setBoolean(3, true); // Set the new bill getIsOpen value to True by default
         } catch (SQLException e) {
             e.printStackTrace();
         }

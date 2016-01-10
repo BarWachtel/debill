@@ -28,7 +28,7 @@ public class Core {
 
 		List<Item> items = parsedItemsToDatabaseItems(parsedBillItems);
 		bill.addItems(items);
-		bill.setPrivate(false); // Default
+		bill.setIsPrivate(false); // Default
 		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
 		if (insertedBill.getID() >= 0) {
