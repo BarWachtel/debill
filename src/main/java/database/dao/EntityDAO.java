@@ -11,7 +11,6 @@ import java.util.*;
 
 public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
-    protected static final String SQL_GET_ALL_QUERY;
     protected static QueryBuilderFactory queryBuilderFactory;
 
     EntityDAO() {
@@ -19,14 +18,13 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     static {
         EntityDAO.queryBuilderFactory = new QueryBuilderFactory();
-        SQL_GET_ALL_QUERY = buildGetAllQueryString();
     }
 
     protected List<T> getAllEntities() {
         Connection conn = DBConn.getConnection();
         List<T> entities = new ArrayList<>();
         try {
-            String query = SQL_GET_ALL_QUERY;
+            String query = buildGetAllQueryString();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
@@ -45,7 +43,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
             String query = buildGetEntityByIdQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityID);
-            ResultSet rs = ps.executeQuery(query);
+			ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
             }
@@ -104,7 +102,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         return result;
     }
 
-    protected static String buildGetAllQueryString() {
+    protected String buildGetAllQueryString() {
         try {
             return queryBuilderFactory
                     .select()
@@ -118,7 +116,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     private String buildGetEntityByIdQuery() {
         try {
-            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "=?").build();
+            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "= ?").build();
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }
