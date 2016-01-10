@@ -61,6 +61,14 @@ import static java.lang.Math.toIntExact;
 	}
 
 
+	@POST @Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Bill addBill(Bill i_bill) {
+		Bill bill  = BillController.insertBill(i_bill);
+		return bill;
+	}
+
 	@POST
 	@Path("/addNewBill")
 	@Consumes(MediaType.APPLICATION_JSON)
