@@ -26,4 +26,12 @@ public class UserController {
         List<User> users = JDBCUserDAO.getInstance().getAllUsers();
         return users;
     }
+
+	public static User getUser(int id) {
+		return JDBCUserDAO.getInstance().getUser(id);
+	}
+
+	public static User getUser(String username) {
+		return JDBCUserDAO.getInstance().getUser(username);
+	}
 }

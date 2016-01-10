@@ -70,8 +70,9 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         return entityToReturn;
     }
 
-    protected void insertEntity(T entity) {
+    protected T insertEntity(T entity) {
         Connection conn = DBConn.getConnection();
+		T entityToReturn = null;
         try {
             String query = buildInsertQuery();
             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -81,11 +82,14 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if(generatedKeys.next()) {
                     entity.setID(generatedKeys.getInt(1));
+					entityToReturn = entity;
                 }
             }
         } catch (SQLException e) {
             System.out.println("EntityDAO -> insertEntity -> Exception: " + e.getMessage());
         }
+
+		return entityToReturn;
     }
 
     protected boolean deleteEntity(int entityToDeleteID) {
@@ -115,13 +119,17 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
     }
 
     private String buildGetEntityByIdQuery() {
-        try {
-            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "= ?").build();
-        } catch (QueryBuilder.QueryBuilderException e) {
-            e.printStackTrace();
-        }
-        return null;
+		return buildGetEntityByColumnName(getIdColumnName());
     }
+
+	protected String buildGetEntityByColumnName(String columnName) {
+		try {
+			return queryBuilderFactory.select().from(getTableName()).where(columnName + " = ?").build();
+		} catch (QueryBuilder.QueryBuilderException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
     protected String buildUpdateQuery() {
         try {

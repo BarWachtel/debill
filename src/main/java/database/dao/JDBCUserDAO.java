@@ -1,8 +1,10 @@
 package database.dao;
 
+import database.DBConn;
 import database.entity.User;
 import database.interfaces.UserDAO;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,16 +31,18 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     protected String generateSqlCreateTableQuery() {
         return "CREATE TABLE `users` (\n" +
                 "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                "  `first_name` varchar(45) DEFAULT NULL,\n" +
-                "  `last_name` varchar(45) DEFAULT NULL,\n" +
+                "  `username` varchar(45) DEFAULT NULL,\n" +
+				"  `password` varchar(45) DEFAULT NULL,\n" +
                 "  PRIMARY KEY (`user_id`)\n" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
 
-    private enum Columns {
+
+
+	private enum Columns {
         userId("user_id"),
-        firstName("first_name"),
-        lastName("last_name");
+        username("username"),
+        password("password");
 
         private String asString;
 
@@ -61,6 +65,25 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
         return getEntity(id);
     }
 
+	@Override
+	public User getUser(String username) {
+		Connection conn = DBConn.getConnection();
+		User user = null;
+		try {
+			String query = buildGetEntityByColumnName(Columns.username.getAsString());
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				user = createEntityFromResultSet(rs);
+			}
+		} catch (SQLException e) {
+			System.out.println("EntityDAO -> getEntity -> Exception: " + e.getMessage());
+		}
+
+		return user;
+	}
+
     @Override
     public User updateUser(User user) {
         return updateEntity(user);
@@ -73,8 +96,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     public User insertUser(User user) {
-        insertEntity(user);
-        return user;
+		return insertEntity(user);
     }
 
     @Override
@@ -87,8 +109,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
         User newUser = new User();
         try {
             newUser.setID(rs.getInt(Columns.userId.getAsString()));
-            newUser.setFirstName(rs.getString(Columns.firstName.getAsString()));
-            newUser.setLastName(rs.getString(Columns.lastName.getAsString()));
+            newUser.setUsername(rs.getString(Columns.username.getAsString()));
+            newUser.setPassword(rs.getString(Columns.password.getAsString()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -97,24 +119,24 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
 	@Override protected Collection<String> getColumnsForUpdate() {
 		ArrayList<String> colsForUpdate = new ArrayList<>();
-        colsForUpdate.add(Columns.firstName.getAsString());
-        colsForUpdate.add(Columns.lastName.getAsString());
+        colsForUpdate.add(Columns.username.getAsString());
+        colsForUpdate.add(Columns.password.getAsString());
         return colsForUpdate;
 	}
 
     @Override
     protected Collection<String> getColumnsForInsert() {
         List<String> colsForInsert = new ArrayList<>();
-        colsForInsert.add(Columns.firstName.getAsString());
-        colsForInsert.add(Columns.lastName.getAsString());
+        colsForInsert.add(Columns.username.getAsString());
+        colsForInsert.add(Columns.password.getAsString());
         return colsForInsert;
     }
 
     @Override
     protected void setUpdatePreparedStatementParameters(PreparedStatement ps, User entity) {
         try {
-            ps.setString(1, entity.getFirstName());
-            ps.setString(2, entity.getLastName());
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getPassword());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -123,8 +145,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     @Override
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, User entity) {
         try{
-            ps.setString(1, entity.getFirstName());
-            ps.setString(2, entity.getLastName());
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getPassword());
         } catch (SQLException e) {
             e.printStackTrace();
         }

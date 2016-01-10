@@ -1,16 +1,15 @@
 package api.route;
 
-import api.service.SessionFilter;
+import api.controller.LoginController;
+import api.route.pojo.request.UserLoginDetails;
+import api.route.pojo.response.JsonResponse;
 import api.service.SessionService;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -20,8 +19,19 @@ import java.util.StringTokenizer;
  */
 @Path("/login")
 public class LoginRoute {
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public JsonResponse userLogin(UserLoginDetails userLoginDetails, @Context HttpServletRequest request) {
+		SessionService.addSessionToLocalStore(request);
+		JsonResponse jsonResponse = new JsonResponse();
+		jsonResponse.setSuccess(LoginController.login(userLoginDetails));
+		return jsonResponse;
+	}
+
     @POST
-    public void userLogin(@Context HttpServletRequest request, @PathParam("user_id") int userId) {
+	@Path("whatsThisYotamy?")
+    public void userLoginMaybe(@Context HttpServletRequest request, @PathParam("user_id") int userId) {
         SessionService.addSessionToLocalStore(request);
         SessionService.setUserId(userId);
         String header = request.getHeader("authorization");
@@ -41,7 +51,8 @@ public class LoginRoute {
     }
 
     @GET
-    public Response getUserId() {
-        return Response.status(200).entity(SessionService.getUserId()).build();
+    public String getUserId(@Context HttpServletRequest request) {
+		return String.valueOf(SessionService.getUserIdFromRequest(request));
+//        return Response.status(200).entity(SessionService.getUserIdFromRequest(request)).build();
     }
 }

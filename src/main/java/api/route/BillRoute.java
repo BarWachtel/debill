@@ -43,7 +43,7 @@ import static java.lang.Math.toIntExact;
 		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
 	}
 
-	@GET @Path("/{billId}/{id}") @Produces(MediaType.APPLICATION_JSON)
+	@GET @Path("/{billId}/item/{id}") @Produces(MediaType.APPLICATION_JSON)
 	public Item getItem(@PathParam("billId") int i_billId, @PathParam("id") int id) {
 		Item item = ItemController.getItem(id);
 		return item;
@@ -66,16 +66,14 @@ import static java.lang.Math.toIntExact;
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bill addBill(Bill i_bill) {
-		Bill bill  = BillController.insertBill(i_bill);
-		return bill;
+		return BillController.insertBill(i_bill);
 	}
 
    @POST @Path("/update")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    public Bill updateBill(Bill i_bill) {
-    Bill bill  = BillController.updateBill(i_bill);
-    return bill;
+	   return BillController.updateBill(i_bill);
    }
 
 
@@ -83,8 +81,7 @@ import static java.lang.Math.toIntExact;
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bill insertBill(Bill bill) throws Exception {
-		Bill billWithId = JDBCBillDAO.getInstance().insertBill(bill);
-		return billWithId;
+		return BillController.insertBill(bill);
 	}
 }
 

@@ -27,8 +27,14 @@ public class UserRoute {
         return users;
     }
 
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User getUser(@PathParam("id") int id) {
+		return UserController.getUser(id);
+	}
 
-    @POST
+	@POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public User insertUser(User user) throws Exception {

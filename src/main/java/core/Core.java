@@ -20,7 +20,7 @@ public class Core {
 	public Bill createNewBill(File billImageFile) {
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
 		Bill bill = new Bill();
-		int userId = SessionService.getUserId();
+		int userId = SessionService.getUserIdFromStoredSession();
 		User user = new User(); // Should get the user from DB
 
 		user.setID(userId);
