@@ -2,6 +2,7 @@ package api.route;
 
 import api.service.SessionFilter;
 import api.service.SessionService;
+import database.dao.JDBCUserDAO;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,7 @@ import java.util.StringTokenizer;
 public class LoginRoute {
     @POST
     public void userLogin(@Context HttpServletRequest request, @PathParam("user_id") int userId) {
-        SessionService.addSessionToLocalStore(request);
-        SessionService.setUserId(userId);
+
         String header = request.getHeader("authorization");
         String data = header.substring(header.indexOf("") + 1);
         byte[] bytes = null;
@@ -34,9 +34,20 @@ public class LoginRoute {
         }
         String decoded = new String(bytes);
         StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
-        String userid, password;
-        if(tokenizer.hasMoreTokens()) {
-            userid = tokenizer.nextToken();
+        String userid = null, password;
+        if (tokenizer.hasMoreElements()) {
+            userid = (String) tokenizer.nextElement();
+        }
+        if (tokenizer.hasMoreElements()) {
+            password = (String) tokenizer.nextElement();
+        }
+
+        boolean validated = JDBCUserDAO.getInstance().validateUser(userid, password);
+        if (validated) {
+            SessionService.addSessionToLocalStore(request);
+            SessionService.setUserId(userId);
+        } else {
+            //TODO - needs to send data that informs the client that the login failed
         }
     }
 
