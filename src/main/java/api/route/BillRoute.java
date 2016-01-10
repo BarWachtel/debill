@@ -73,7 +73,7 @@ import static java.lang.Math.toIntExact;
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Bill consumeJSON(Bill bill) throws Exception {
+	public Bill insertBill(Bill bill) throws Exception {
 		Bill billWithId = JDBCBillDAO.getInstance().insertBill(bill);
 		return billWithId;
 	}
