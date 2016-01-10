@@ -3,14 +3,26 @@ package api.route;
 import api.controller.BillController;
 import api.controller.ItemController;
 import api.controller.UserController;
+import com.google.gson.Gson;
 import database.dao.JDBCBillDAO;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
-
+import generalutils.thread.ThreadLocalUtil;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.awt.*;
+import java.util.ArrayList;
+import java.sql.Date;
+import java.util.Iterator;
 import java.util.List;
+import static java.lang.Math.toIntExact;
 
 @Path("/bill") public class BillRoute {
 	@GET @Produces(MediaType.APPLICATION_JSON)
@@ -25,7 +37,13 @@ import java.util.List;
 		return bill;
 	}
 
-	@GET @Path("/{billId}/item/{id}") @Produces(MediaType.APPLICATION_JSON)
+	@POST @Path("/create")
+	public void createBill(@Context HttpServletRequest request) {
+		// I need this later - see Core.createNewBill(..)
+		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
+	}
+
+	@GET @Path("/{billId}/{id}") @Produces(MediaType.APPLICATION_JSON)
 	public Item getItem(@PathParam("billId") int i_billId, @PathParam("id") int id) {
 		Item item = ItemController.getItem(id);
 		return item;
@@ -43,10 +61,28 @@ import java.util.List;
 		return users;
 	}
 
+
+	@POST @Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Bill addBill(Bill i_bill) {
+		Bill bill  = BillController.insertBill(i_bill);
+		return bill;
+	}
+
+   @POST @Path("/update")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   public Bill updateBill(Bill i_bill) {
+    Bill bill  = BillController.updateBill(i_bill);
+    return bill;
+   }
+
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Bill createBill(Bill bill) throws Exception {
+	public Bill insertBill(Bill bill) throws Exception {
 		Bill billWithId = JDBCBillDAO.getInstance().insertBill(bill);
 		return billWithId;
 	}
