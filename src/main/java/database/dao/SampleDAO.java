@@ -14,7 +14,7 @@ public abstract class SampleDAO {
         }
     }
 
-    protected static String getTableName() {
+    protected String getTableName() {
         return TABLE_NAME;
     }
 
