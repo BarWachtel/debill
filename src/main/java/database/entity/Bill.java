@@ -29,19 +29,19 @@ public class Bill extends Entity {
         this.manager = manager;
     }
 
-    public boolean isPrivate() {
+    public boolean getIsPrivate() {
         return isPrivate;
     }
 
-    public void setPrivate(boolean isPrivate) {
+    public void setIsPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
     }
 
-    public boolean isOpen() {
+    public boolean getIsOpen() {
         return isOpen;
     }
 
-    public void setOpen(boolean isOpen) {
+    public void setIsOpen(boolean isOpen) {
         this.isOpen = isOpen;
     }
 
@@ -59,7 +59,7 @@ public class Bill extends Entity {
 
     @Override
     public String toString() {
-        return "Bill id: " + id + " isPrivate: " + isPrivate + " isOpen: " + isOpen;
+        return "Bill id: " + id + " getIsPrivate: " + isPrivate + " getIsOpen: " + isOpen;
     }
 
     public boolean update(List<Item> updatedItems) {
