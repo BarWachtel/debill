@@ -24,8 +24,16 @@
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
-    <context-param>
-        <param-name>upload.location</param-name>
-        <param-value>/path/to/uploads</param-value>
-    </context-param>
+    <filter>
+        <filter-name>SessionFilter</filter-name>
+        <filter-class>api.service.SessionFilter</filter-class>
+        <init-param>
+            <param-name>avoid-urls</param-name>
+            <param-value>view</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
 </web-app>
