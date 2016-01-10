@@ -18,9 +18,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
         return instance;
     }
 
-    private JDBCItemDAO() {}
-
-    static {
+    private JDBCItemDAO() {
         TABLE_NAME = "items";
     }
 
@@ -64,12 +62,13 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
             String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString()+"=?").build();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, billId);
-            ResultSet rs = ps.executeQuery(query);
+            System.out.println(ps.toString());
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 items.add(createEntityFromResultSet(rs));
             }
         } catch (SQLException e) {
-            System.out.println("EntityDAO -> getAllEntities -> Exception: " + e.getMessage());
+            System.out.println("EntityDAO -> getAllItems -> Exception: " + e.getMessage());
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }

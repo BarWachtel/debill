@@ -6,16 +6,12 @@ import java.sql.*;
 
 public abstract class SampleDAO {
 
-    protected static String TABLE_NAME = null;
+    protected String TABLE_NAME = null;
 
     public SampleDAO() {
         if(!isTableExists()) {
             createTable();
         }
-    }
-
-    protected String getTableName() {
-        return TABLE_NAME;
     }
 
     public boolean isTableExists() {

@@ -13,9 +13,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-/**
- * Created by user on 03/01/2016.
- */
 @Path("/login")
 public class LoginRoute {
     @POST

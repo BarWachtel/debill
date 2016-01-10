@@ -19,11 +19,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     }
 
     private JDBCUserDAO() {
+        TABLE_NAME = "users";
     }
-
-    static {
-		TABLE_NAME = "users";
-	}
 
     @Override
     protected String generateSqlCreateTableQuery() {

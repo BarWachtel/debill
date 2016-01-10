@@ -13,9 +13,6 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     protected static QueryBuilderFactory queryBuilderFactory;
 
-    EntityDAO() {
-    }
-
     static {
         EntityDAO.queryBuilderFactory = new QueryBuilderFactory();
     }
@@ -43,7 +40,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
             String query = buildGetEntityByIdQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityID);
-			ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
             }
@@ -106,7 +103,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .select()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             System.out.println("EntityDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
@@ -116,7 +113,11 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     private String buildGetEntityByIdQuery() {
         try {
-            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "= ?").build();
+            return queryBuilderFactory
+                    .select()
+                    .from(TABLE_NAME)
+                    .where(getIdColumnName() + "= ?")
+                    .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }
@@ -127,7 +128,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .update()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .set(getColumnsForUpdate())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -141,7 +142,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             query = queryBuilderFactory
                     .insert()
-                    .into(getTableName())
+                    .into(TABLE_NAME)
                     .column(getColumnsForInsert())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -154,7 +155,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
         try {
             return queryBuilderFactory
                     .delete()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .where(getIdColumnName() + " = " + id)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {

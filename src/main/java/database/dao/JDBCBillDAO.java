@@ -20,11 +20,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
         return instance;
     }
 
-    static {
-        TABLE_NAME = "bills";
-    }
-
     private JDBCBillDAO() {
+        TABLE_NAME = "bills";
     }
 
     @Override

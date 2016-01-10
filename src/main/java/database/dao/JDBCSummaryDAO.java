@@ -27,7 +27,6 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
     }
 
     static {
-        TABLE_NAME = "bills_summary";
     }
 
     private enum Columns {
@@ -49,6 +48,7 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
     }
 
     private JDBCSummaryDAO() {
+        TABLE_NAME = "bills_summary";
     }
 
     @Override

@@ -6,24 +6,7 @@ public class User extends Entity {
 
     private String firstName;
     private String lastName;
-	private String facebookId;
-	private Date creationTime;
-
-	public Date getCreationTime() {
-		return creationTime;
-	}
-
-	public void setCreationTime(Date creationTime) {
-		this.creationTime = creationTime;
-	}
-
-	public String getFacebookId() {
-		return facebookId;
-	}
-
-	public void setFacebookId(String facebookId) {
-		this.facebookId = facebookId;
-	}
+    private String password;
 
 	public User() {
 
@@ -34,13 +17,6 @@ public class User extends Entity {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-    public User(int id, String firstName, String lastName,String facebookId) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.facebookId = facebookId;
-    }
-
 
     public String getFirstName() {
         return firstName;
@@ -61,6 +37,10 @@ public class User extends Entity {
     @Override
     public int getID() {
         return id;
+    }
+
+    public boolean comparePassword(String password) {
+        return this.password.equals(password);
     }
 }
 

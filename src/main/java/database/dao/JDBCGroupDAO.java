@@ -21,10 +21,6 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
         return instance;
     }
 
-    static {
-        TABLE_NAME = "bills_groups";
-    }
-
     private enum Columns {
         groupId("group_id"),
         billId("bill_id"),
@@ -42,6 +38,7 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
     }
 
     private JDBCGroupDAO() {
+        TABLE_NAME = "bills_groups";
     }
 
     @Override
@@ -63,19 +60,20 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
         Connection conn = DBConn.getConnection();
         Group selectedGroup = new Group();
         try {
-            String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString() + "=?").build();
+            String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString() + "= ?").build();
             PreparedStatement ps = conn.prepareStatement(query, Statement.NO_GENERATED_KEYS);
             ps.setInt(1, billId);
             ResultSet rs = ps.executeQuery();
             if (rs.first()) {
                 Bill bill = JDBCBillDAO.getInstance().getBill(rs.getInt(Columns.billId.getAsString()));
                 selectedGroup.setBill(bill);
+                do {
+                    List<User> users = new ArrayList<>();
+                    User user = JDBCUserDAO.getInstance().getUser(rs.getInt(Columns.userId.getAsString()));
+                    users.add(user);
+                } while (rs.next());
             }
-            do {
-                List<User> users = new ArrayList<>();
-                User user = JDBCUserDAO.getInstance().getUser(rs.getInt(Columns.userId.getAsString()));
-                users.add(user);
-            } while (rs.next());
+
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         } catch (SQLException e) {
