@@ -70,6 +70,15 @@ import static java.lang.Math.toIntExact;
 		return bill;
 	}
 
+   @POST @Path("/update")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   public Bill updateBill(Bill i_bill) {
+    Bill bill  = BillController.updateBill(i_bill);
+    return bill;
+   }
+
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
