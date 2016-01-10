@@ -12,16 +12,16 @@ import java.io.InputStream;
  */
 public class ImageUploadControllerTest extends TestCase {
 
-    public void testSaveFile() throws Exception {
-        String imgName = "img/text.png";
-        File imgFile = FileUtils.loadFile(imgName);
-
-        imgFile.setReadable(true);
-        imgFile.setWritable(true);
-        imgFile.setExecutable(true);
-        System.setProperty("upload.location", "/");
-
-        InputStream in = new FileInputStream(imgFile);
-        ImageUploadController.saveFile(in, "text.png");
-    }
+//    public void testSaveFile() throws Exception {
+//        String imgName = "img/text.png";
+//        File imgFile = FileUtils.loadFile(imgName);
+//
+//        imgFile.setReadable(true);
+//        imgFile.setWritable(true);
+//        imgFile.setExecutable(true);
+//        System.setProperty("upload.location", "/");
+//
+//        InputStream in = new FileInputStream(imgFile);
+//        ImageUploadController.saveFile(in, "text.png");
+//    }
 }

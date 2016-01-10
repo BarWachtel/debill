@@ -19,19 +19,19 @@ import java.util.Objects;
 
 public class CoreTest extends TestCase {
 
-	@Ignore
-	@Test
-	public void testCreateNewBill() throws Exception {
-		Core core = new Core();
-		File imgFile = FileUtils.loadFile("img/bill_crop.png");
-		HttpSession httpSession = new MyHttpSession();
-		httpSession.setAttribute(ThreadLocalUtil.USER_ID, 0);
-		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, httpSession);
-
-		int billId = core.createNewBill(imgFile);
-		Assert.assertNotNull(RedisClient.getBillById(billId));
-
-	}
+//	@Ignore
+//	@Test
+//	public void testCreateNewBill() throws Exception {
+//		Core core = new Core();
+//		File imgFile = FileUtils.loadFile("img/bill_crop.png");
+//		HttpSession httpSession = new MyHttpSession();
+//		httpSession.setAttribute(ThreadLocalUtil.USER_ID, 0);
+//		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, httpSession);
+//
+//		int billId = core.createNewBill(imgFile);
+//		Assert.assertNotNull(RedisClient.getBillById(billId));
+//
+//	}
 
 	public class MyHttpSession implements HttpSession {
 		private Map<String, Object> myStuff = new HashMap<>();
