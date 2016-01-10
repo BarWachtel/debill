@@ -28,4 +28,7 @@
         <param-name>upload.location</param-name>
         <param-value>/path/to/uploads</param-value>
     </context-param>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>
