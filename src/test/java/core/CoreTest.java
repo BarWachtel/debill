@@ -1,5 +1,6 @@
 package core;
 
+import database.entity.Bill;
 import generalutils.FileUtils;
 import generalutils.thread.ThreadLocalUtil;
 import junit.framework.TestCase;
@@ -27,9 +28,9 @@ public class CoreTest extends TestCase {
 		httpSession.setAttribute(ThreadLocalUtil.USER_ID, 0);
 		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, httpSession);
 
-		int billId = core.createNewBill(imgFile);
-		Assert.assertNotNull(RedisClient.getBillById(billId));
-
+		Bill bill = core.createNewBill(imgFile);
+		Assert.assertNotNull(bill);
+		RedisClient.getInstance().setBillByUserId(bill);
 	}
 
 	public class MyHttpSession implements HttpSession {

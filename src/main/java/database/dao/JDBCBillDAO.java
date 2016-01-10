@@ -151,7 +151,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
             newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
-            newBill.setItems(null);
+            newBill.addItems(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
