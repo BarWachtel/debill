@@ -49,6 +49,9 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
 
     private JDBCSummaryDAO() {
         TABLE_NAME = "bills_summary";
+        if(!isTableExists()) {
+            createTable();
+        }
     }
 
     @Override

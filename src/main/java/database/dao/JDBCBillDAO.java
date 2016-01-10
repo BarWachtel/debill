@@ -22,6 +22,9 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     private JDBCBillDAO() {
         TABLE_NAME = "bills";
+        if(!isTableExists()) {
+            createTable();
+        }
     }
 
     @Override

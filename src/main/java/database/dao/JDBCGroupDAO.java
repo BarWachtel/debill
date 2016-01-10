@@ -39,6 +39,9 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
 
     private JDBCGroupDAO() {
         TABLE_NAME = "bills_groups";
+        if(!isTableExists()) {
+            createTable();
+        }
     }
 
     @Override

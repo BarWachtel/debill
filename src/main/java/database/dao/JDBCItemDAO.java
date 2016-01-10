@@ -20,6 +20,9 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
 
     private JDBCItemDAO() {
         TABLE_NAME = "items";
+        if(!isTableExists()) {
+            createTable();
+        }
     }
 
     @Override

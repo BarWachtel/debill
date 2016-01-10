@@ -8,12 +8,6 @@ public abstract class SampleDAO {
 
     protected String TABLE_NAME = null;
 
-    public SampleDAO() {
-        if(!isTableExists()) {
-            createTable();
-        }
-    }
-
     public boolean isTableExists() {
         Connection connection = DBConn.getConnection();
         boolean tableExists = false;
@@ -31,15 +25,15 @@ public abstract class SampleDAO {
 
     public int createTable() {
         Connection connection = DBConn.getConnection();
-        int successs = 0;
+        int success = 0;
         try {
             Statement st = connection.createStatement();
             String sql = generateSqlCreateTableQuery();
-            successs = st.executeUpdate(sql);
+            success = st.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return successs;
+        return success;
     }
 
     protected abstract String generateSqlCreateTableQuery();

@@ -20,6 +20,9 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     private JDBCUserDAO() {
         TABLE_NAME = "users";
+        if(!isTableExists()) {
+            createTable();
+        }
     }
 
     @Override
