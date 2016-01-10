@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Bill extends Entity {
 
-    private int id = -1;
     private User manager;
     private boolean isPrivate;
     private boolean isOpen;
@@ -15,19 +14,11 @@ public class Bill extends Entity {
     }
 
     public Bill(int id, User manager, boolean isPrivate, boolean isOpen, List<Item> items) {
-        this.id = id;
+        super(id);
         this.manager = manager;
         this.isPrivate = isPrivate;
         this.isOpen = isOpen;
         this.items = items;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public User getManager() {
@@ -58,8 +49,12 @@ public class Bill extends Entity {
         return items;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void addItem(Item item) {
+        this.items.add(item);
+    }
+
+    public void addItems(List<Item> items) {
+        this.items.addAll(items);
     }
 
     @Override
@@ -70,7 +65,7 @@ public class Bill extends Entity {
     public boolean update(List<Item> updatedItems) {
         boolean success = true;
         for (Item updatedItem : updatedItems) {
-            Item toUpdate = getItem(updatedItem.getId());
+            Item toUpdate = getItem(updatedItem.getID());
             if (!(success = toUpdate.update(updatedItem))) {
                 break;
             }
@@ -82,7 +77,7 @@ public class Bill extends Entity {
     private Item getItem(int id) {
         Item item = null;
         for (Item currentItem : items) {
-            if (currentItem.getId() == id) {
+            if (currentItem.getID() == id) {
                 item = currentItem;
                 break;
             }

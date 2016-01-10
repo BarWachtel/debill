@@ -45,7 +45,10 @@ import java.util.List;
 	}
 
 	//TODEL
-	@POST @Consumes(MediaType.APPLICATION_JSON) @Path("/check") @Produces(MediaType.APPLICATION_JSON)
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/check")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response consumeJSON(Bill i_BillJason) {
 		String output = i_BillJason.toString();
 		return Response.status(200).entity(output).build();

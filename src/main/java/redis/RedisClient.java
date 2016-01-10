@@ -1,56 +1,102 @@
 package redis;
 
 import database.entity.Bill;
-import database.entity.User;
-import org.apache.commons.lang3.SerializationUtils;
+import database.entity.Item;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RedisClient {
-	private static String redisHost = "localhost";
-	private static int redisPort = 6379;
+    private static String redisHost = "localhost";
+    private static int redisPort = 6379;
+    private static Jedis jedis = new Jedis(redisHost, redisPort);
 
-	private static Jedis redisClient = new Jedis(redisHost, redisPort);
+    private static final String USER_KEY = "user:";
+    private static final String BILL_KEY = "bill:";
+    private static final String ITEM_KEY = "item:";
 
-	// Lets hide complexity of Jedis by only exposing the methods we use ;]
-	public static void setItemHashmapByBillId(int billId, Bill bill) {
-		// userId == key
-		// bill == value
+    private RedisClient() {
+    }
 
-		redisClient.set(SerializationUtils.serialize(billIdAsKey(billId)), SerializationUtils.serialize(bill));
-	}
+    private static final RedisClient instance = new RedisClient();
 
-	public static Bill getBillById(int billId) {
-		byte[] billBytes = redisClient.get(SerializationUtils.serialize(billIdAsKey(billId)));
-		Bill bill = (Bill) SerializationUtils.deserialize(billBytes);
-		return bill;
-	}
+    public static RedisClient getInstance() {
+        return instance;
+    }
 
-	public static void setBillByUserId(int userId, int billId) {
-		redisClient.set(getUserIdAsKey(userId), String.valueOf(billId));
-	}
+    /**
+     * This method gets a user ID, and use it as the key for a bill.
+     * The value returns from Redis is a LIST with all the bill's items' IDs.
+     * For each item id, we use it as a key to Redis and get a Hashmap value of the item.
+     *
+     * @param userId - The user who opened the bill
+     * @return Bill object with manager and items
+     */
+    public Bill getBillByUserId(int userId) {
+        String userIdKey = USER_KEY + userId;
+        int billId = Integer.parseInt(jedis.get(userIdKey));
+        String key = userIdKey + BILL_KEY + billId;
+        Bill bill = new Bill();
+        Long listLen = jedis.llen(key);
+        List<String> itemsIDs = jedis.lrange(key, 0, listLen - 1);
+        for (String itemID : itemsIDs) {
+            int itemIdAsInt = Integer.parseInt(itemID);
+            Item item = getItem(billId, itemIdAsInt);
+            bill.addItem(item);
+        }
+        return bill;
+    }
 
-	public static int getBillByUserId(int userId) {
-		return Integer.valueOf(redisClient.get(getUserIdAsKey(userId)));
-	}
+    public void setBillByUserId(Bill bill) {
+        String key = USER_KEY + bill.getManager().getID();
+        jedis.set(key, String.valueOf(bill.getID()));
+    }
 
-	private static String getUserIdAsKey(int userId) {
-		return "USERID:" + userId;
-	}
+    public Item getItem(int billId, int itemId) {
+        String itemKey = BILL_KEY + billId + ITEM_KEY + itemId;
+        Map<String, String> itemProperties = jedis.hgetAll(itemKey);
+        Item item = new Item();
+        item.setID(itemId);
+        item.setBillId(billId);
+        item.setName(itemProperties.get("name"));
+        item.setPrice(Float.parseFloat(itemProperties.get("price")));
+        item.setQuantity(Integer.parseInt(itemProperties.get("quantity")));
+        return item;
+    }
 
-	private static String billIdAsKey(int billId) {
-		return "BILLID:" + billId;
-	}
+    public void setItem(Item item) {
+        String itemKey = BILL_KEY + item.getBillId() + ITEM_KEY + item.getID();
+        Map<String, String> itemProperties = new HashMap<>();
+        itemProperties.put("name", item.getName());
+        itemProperties.put("price", Float.toString(item.getPrice()));
+        itemProperties.put("quantity", Integer.toString(item.getQuantity()));
+        jedis.hmset(itemKey, itemProperties);
+    }
 
-	public static void main(String[] args) {
-		redisClient.set("test", "ya bababa");
-		System.out.println(redisClient.get("test"));
+    public Long removeItem(Item item) {
+        String itemKey = BILL_KEY + item.getBillId() + ITEM_KEY + item.getID();
+        return jedis.hdel(itemKey);
+    }
 
-		User user = new User(5, "baz", "wachtel");
-		Bill bill = new Bill(7, user, true, true, null);
-		RedisClient.setItemHashmapByBillId(user.getId(), bill);
+    public void setItemsOfBill(Bill bill) {
+        setListOfItemsIDs(bill);
+        setEachItemInHashMap(bill);
+    }
 
-		Bill aNewBill = RedisClient.getBillById(user.getId());
+    private void setListOfItemsIDs(Bill bill) {
+        String key = BILL_KEY + bill.getID();
+        for (Item item : bill.getItems()) {
+            jedis.lpush(key, Integer.toString(item.getID()));
+        }
+    }
 
-		System.out.println(aNewBill.toString());
-	}
+    private void setEachItemInHashMap(Bill bill) {
+        bill.getItems().forEach(this::setItem);
+    }
+
+    public void removeAllItems(Bill bill) {
+        bill.getItems().forEach(this::removeItem);
+    }
 }

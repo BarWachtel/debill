@@ -1,9 +1,50 @@
 package database.dao;
 
-/**
- * Created by yotam on 03/01/2016.
- */
-public class SampleDAO<T>  {
+import database.DBConn;
+
+import java.sql.*;
+
+public abstract class SampleDAO {
 
     protected static String TABLE_NAME = null;
+
+    public SampleDAO() {
+        if(!isTableExists()) {
+            createTable();
+        }
+    }
+
+    protected static String getTableName() {
+        return TABLE_NAME;
+    }
+
+    public boolean isTableExists() {
+        Connection connection = DBConn.getConnection();
+        boolean tableExists = false;
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet resultSet = metaData.getTables(null, null, TABLE_NAME, null);
+            if(resultSet.next()) {
+                tableExists = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tableExists;
+    }
+
+    public int createTable() {
+        Connection connection = DBConn.getConnection();
+        int successs = 0;
+        try {
+            Statement st = connection.createStatement();
+            String sql = generateSqlCreateTableQuery();
+            successs = st.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return successs;
+    }
+
+    protected abstract String generateSqlCreateTableQuery();
 }

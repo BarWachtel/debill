@@ -21,9 +21,19 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     private JDBCUserDAO() {
     }
 
-	static {
+    static {
 		TABLE_NAME = "users";
 	}
+
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `users` (\n" +
+                "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `first_name` varchar(45) DEFAULT NULL,\n" +
+                "  `last_name` varchar(45) DEFAULT NULL,\n" +
+                "  PRIMARY KEY (`user_id`)\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    }
 
     private enum Columns {
         userId("user_id"),
@@ -58,7 +68,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     public boolean deleteUser(User user) {
-        return deleteEntity(user.getId());
+        return deleteEntity(user.getID());
     }
 
     @Override
@@ -76,7 +86,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     protected User createEntityFromResultSet(ResultSet rs) {
         User newUser = new User();
         try {
-            newUser.setId(rs.getInt(Columns.userId.getAsString()));
+            newUser.setID(rs.getInt(Columns.userId.getAsString()));
             newUser.setFirstName(rs.getString(Columns.firstName.getAsString()));
             newUser.setLastName(rs.getString(Columns.lastName.getAsString()));
         } catch (SQLException e) {
