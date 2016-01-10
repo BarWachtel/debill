@@ -22,4 +22,6 @@ public class Group extends Entity {
     public void setBill(Bill bill) {
         this.bill = bill;
     }
+
+    public List<User> getUsers() { return users;}
 }

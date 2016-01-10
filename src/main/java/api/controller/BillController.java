@@ -16,7 +16,10 @@ public class BillController {
 		return bill;
 	}
 
-
+	public static Bill insertBill(Bill i_bill) {
+		Bill bill = JDBCBillDAO.getInstance().insertBill(i_bill);
+		return bill;
+	}
 }
 
 

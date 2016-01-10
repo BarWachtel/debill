@@ -59,9 +59,10 @@ public class ImageUploadController {
 //        //for check
 
         status = status+ sFile.getAbsolutePath();
-        Core c;
-        c = new Core();
-        c.createNewBill(sFile);
+        //sending image to parser
+//        Core c;
+//        c = new Core();
+//        c.createNewBill(sFile);
 
         return status;
     }
