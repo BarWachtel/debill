@@ -61,7 +61,6 @@ import static java.lang.Math.toIntExact;
 	}
 
 
-	//TODEL
 	@POST
 	@Path("/addNewBill")
 	@Consumes(MediaType.APPLICATION_JSON)

@@ -29,21 +29,21 @@ public class UserRoute {
     }
 
     @POST
-    @Path("/addBillManager")
+    @Path("/user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public JSONObject consumeJSON(String  inputJsonObj) throws Exception{
         System.out.println("in addBillMAnager");
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(inputJsonObj);
-        User userManager;
+        User user;
 
         //JSONObject billManager = (JSONObject) jsonObject.get("User");
         int  managerId = toIntExact((Long) jsonObject.get("id"));
         String firstName = (String) jsonObject.get("firstName");
         String lastName = (String) jsonObject.get("lastName");
         String facebookId = (String) jsonObject.get("facebookId");
-        userManager =  new User(managerId,firstName,lastName,facebookId);
+        user =  new User(managerId,firstName,lastName,facebookId);
         System.out.println(
                 "managerId: " + managerId +
                         "firstName: " + firstName +
@@ -52,7 +52,7 @@ public class UserRoute {
 
         );
 
-        User resultUser = UserController.insertUser(userManager);
+        User resultUser = UserController.insertUser(user);
         Gson gson = new Gson();
         String jsonRes = gson.toJson(resultUser);
         JSONParser jsonParser2 = new JSONParser();

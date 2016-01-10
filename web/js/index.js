@@ -1,6 +1,7 @@
 
 var bill1;
 var user1;
+var billSummary1;
 $(function(){
 
 
@@ -66,12 +67,42 @@ $(function(){
 
     var group1 = new group(usersArray,bill1);
 
+
+    function itemSummary(i_user,i_item,i_paidForQuantitByUser)
+    {
+        this.user = i_user;
+        this.item = i_item;
+        this.paidForQuantitByUser = i_paidForQuantitByUser;
+    }
+
+    var itemSummary1 = new itemSummary(user1,item1,1);
+    var itemSummary2 = new itemSummary(user2,item2,1);
+    var itemSummary3 = new itemSummary(user1,item2,1);
+    var itemSummary4 = new itemSummary(user3,item3,1);
+
+    var itemsSummaryArray = new Array();
+    itemsSummaryArray.push(itemSummary1);
+    itemsSummaryArray.push(itemSummary2);
+    itemsSummaryArray.push(itemSummary3);
+    itemsSummaryArray.push(itemSummary4);
+
+    function billSummary(i_bill,i_itemSummary)
+    {
+        this.bill = i_bill;
+        this.itemSummary = i_itemSummary;
+    }
+
+    billSummary1 = new billSummary(bill1,itemsSummaryArray);
+
+
     document.getElementById("date_demo").innerHTML = JSON.stringify(date);
     document.getElementById("users_demo").innerHTML = JSON.stringify(usersArray);
     document.getElementById("items_demo").innerHTML = JSON.stringify(itemsArray);
     document.getElementById("bill_demo").innerHTML = JSON.stringify(bill1);
     document.getElementById("group_demo").innerHTML = JSON.stringify(group1);
     document.getElementById("manager_demo").innerHTML = JSON.stringify(user1);
+    //document.getElementById("itemSummary_demo").innerHTML = JSON.stringify(itemSummary1);
+    //document.getElementById("billSummary_demo").innerHTML = JSON.stringify(billSummary1);
 });
 
 $(function() {
@@ -99,7 +130,7 @@ $(function() {
 $(function() {
     $("#isertManager").click(function(){
         $.ajax({
-            url:"http://localhost:8080/rest/user/addBillManager",
+            url:"http://localhost:8080/rest/user/user",
             method: "POST",
             data:JSON.stringify(user1),
             dataType:'json',
