@@ -1,5 +1,6 @@
 package database.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bill extends Entity {
@@ -10,7 +11,7 @@ public class Bill extends Entity {
     private List<Item> items;
 
     public Bill() {
-
+		items = new ArrayList<>();
     }
 
     public Bill(int id, User manager, boolean isPrivate, boolean isOpen, List<Item> items) {
@@ -18,8 +19,11 @@ public class Bill extends Entity {
         this.manager = manager;
         this.isPrivate = isPrivate;
         this.isOpen = isOpen;
+		if (items == null) {
+			items = new ArrayList<>();
+		}
         this.items = items;
-    }
+	}
 
     public User getManager() {
         return manager;
@@ -54,7 +58,9 @@ public class Bill extends Entity {
     }
 
     public void addItems(List<Item> items) {
-        this.items.addAll(items);
+		if (items != null) {
+			this.items.addAll(items);
+		}
     }
 
     @Override
