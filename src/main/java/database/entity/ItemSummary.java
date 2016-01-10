@@ -4,12 +4,12 @@ public class ItemSummary extends Entity {
 
     private User user;
     private Item item;
-    private int quantity;
+    private int paidForQuantityByUser;
 
     public ItemSummary(User user, Item item, int quantity) {
         this.user = user;
         this.item = item;
-        this.quantity = quantity;
+        this.paidForQuantityByUser = quantity;
     }
 
     public User getUser() {
@@ -28,12 +28,12 @@ public class ItemSummary extends Entity {
         this.item = item;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getPaidForQuantityByUser() {
+        return paidForQuantityByUser;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setPaidForQuantityByUser(int paidForQuantityByUser) {
+        this.paidForQuantityByUser = paidForQuantityByUser;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ItemSummary extends Entity {
         if (itemNotValid) {
             return false;
         }
-        if (this.quantity != other.quantity) {
+        if (this.paidForQuantityByUser != other.paidForQuantityByUser) {
             return false;
         }
         return true;
@@ -64,7 +64,7 @@ public class ItemSummary extends Entity {
         int hash = 3;
         hash = 53 * hash + (this.user != null ? this.user.getID() : 0);
         hash = 53 * hash + (this.item != null ? this.item.getID() : 0);
-        hash = 53 * hash + this.quantity;
+        hash = 53 * hash + this.paidForQuantityByUser;
         return hash;
 
     }

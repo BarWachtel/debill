@@ -1,11 +1,11 @@
 package database.interfaces;
 
 import database.entity.ItemSummary;
-import database.entity.Summary;
+import database.entity.BillSummary;
 
 public interface SummaryDAO {
-    Summary getSummaryByBillId(int billId);
-    Summary getSummaryByBillIdAndUserId(int billId, int userId);
+    BillSummary getSummaryByBillId(int billId);
+    BillSummary getSummaryByBillIdAndUserId(int billId, int userId);
     ItemSummary addItemToSummary(ItemSummary itemSummary);
     boolean deleteItemFromSummary(ItemSummary itemSummary);
 

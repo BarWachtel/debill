@@ -3,7 +3,7 @@ package database.dao;
 import database.DBConn;
 import database.entity.Item;
 import database.entity.ItemSummary;
-import database.entity.Summary;
+import database.entity.BillSummary;
 import database.entity.User;
 import database.interfaces.QueryBuilder;
 import database.interfaces.SummaryDAO;
@@ -52,9 +52,9 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
     }
 
     @Override
-    public Summary getSummaryByBillId(int billId) {
+    public BillSummary getSummaryByBillId(int billId) {
         Connection connection = DBConn.getConnection();
-        Summary summary = new Summary();
+        BillSummary summary = new BillSummary();
         try {
             String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString() + "=?").build();
             PreparedStatement ps = connection.prepareStatement(query);
@@ -68,9 +68,9 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
     }
 
     @Override
-    public Summary getSummaryByBillIdAndUserId(int billId, int userId) {
+    public BillSummary getSummaryByBillIdAndUserId(int billId, int userId) {
         Connection connection = DBConn.getConnection();
-        Summary summary = new Summary();
+        BillSummary summary = new BillSummary();
         try {
             String query = queryBuilderFactory
                     .select()
@@ -136,7 +136,7 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
             ps.setInt(1, entity.getItem().getBillId());
             ps.setInt(2, entity.getItem().getID());
             ps.setInt(3, entity.getUser().getID());
-            ps.setInt(4, entity.getQuantity());
+            ps.setInt(4, entity.getPaidForQuantityByUser());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -160,7 +160,7 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
 
-    private void updateSummaryWithResultSet(Summary summary, ResultSet rs) {
+    private void updateSummaryWithResultSet(BillSummary summary, ResultSet rs) {
         try {
             while (rs.next()) {
                 User user = JDBCUserDAO.getInstance().getUser(rs.getInt(Columns.userId.getAsString()));

@@ -3,12 +3,12 @@ package database.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Summary extends Entity {
+public class BillSummary extends Entity {
     private Bill bill;
     private int quantity;
     private final List<ItemSummary> itemSummaryList;
 
-    public Summary() {
+    public BillSummary() {
         itemSummaryList = new ArrayList<>();
     }
 
