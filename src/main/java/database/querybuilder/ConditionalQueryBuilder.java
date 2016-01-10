@@ -15,7 +15,7 @@ public abstract class ConditionalQueryBuilder {
                 queryBuilder.append(_where).append(" AND ");
             }
             int start = queryBuilder.lastIndexOf("AND");
-            int end = start + 2;
+            int end = start + 3;
             queryBuilder.delete(start, end);
         }
     }

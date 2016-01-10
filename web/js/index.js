@@ -31,18 +31,18 @@ $(function(){
     itemsArray.push(item3);
 
 
-    function user(i_id,i_firstName, i_lastName, i_facebookId, i_creationTime) {
+    function user(i_id,i_firstName, i_lastName, i_facebookId) {
         this.id = i_id;
         this.firstName = i_firstName;
         this.lastName = i_lastName;
         this.facebookId = i_facebookId;
-        this.creationTime = i_creationTime;
+       // this.creationTime = i_creationTime;
     }
 
     var usersArray = new Array();
-    user1 = new user(1,"Dima","Poleacov","123",date);
-    var user2 = new user(1,"Bar","Wachtel","1234",date);
-    var user3 = new user(1,"Yotam","Lende","12345",date);
+    user1 = new user(1,"Dima","Poleacov","123");
+    var user2 = new user(1,"Bar","Wachtel","1234");
+    var user3 = new user(1,"Yotam","Lende","12345");
 
     usersArray.push(user1);
     usersArray.push(user2);
@@ -51,7 +51,7 @@ $(function(){
 
     function bill(i_id,i_manager, i_isPrivate, i_isOpen, i_items) {
         this.id = i_id;
-        this.User = i_manager;
+        this.manager = i_manager;
         this.isPrivate = i_isPrivate;
         this.isOpen =i_isOpen;
         this.items = i_items;
@@ -68,11 +68,11 @@ $(function(){
     var group1 = new group(usersArray,bill1);
 
 
-    function itemSummary(i_user,i_item,i_paidForQuantitByUser)
+    function itemSummary(i_user,i_item,i_paid_For)
     {
         this.user = i_user;
         this.item = i_item;
-        this.paidForQuantitByUser = i_paidForQuantitByUser;
+        this.paidFor = i_paid_For;
     }
 
     var itemSummary1 = new itemSummary(user1,item1,1);
@@ -101,14 +101,14 @@ $(function(){
     document.getElementById("bill_demo").innerHTML = JSON.stringify(bill1);
     document.getElementById("group_demo").innerHTML = JSON.stringify(group1);
     document.getElementById("manager_demo").innerHTML = JSON.stringify(user1);
-    //document.getElementById("itemSummary_demo").innerHTML = JSON.stringify(itemSummary1);
-    //document.getElementById("billSummary_demo").innerHTML = JSON.stringify(billSummary1);
+    document.getElementById("itemSummary_demo").innerHTML = JSON.stringify(itemSummary1);
+    document.getElementById("billSummary_demo").innerHTML = JSON.stringify(billSummary1);
 });
 
 $(function() {
     $("#sendBill").click(function(){
         $.ajax({
-            url:"http://localhost:8080/rest/bill/addNewBill",
+            url:"http://localhost:8080/rest/bill/add",
             method: "POST",
             data:JSON.stringify(bill1),
             dataType:'json',

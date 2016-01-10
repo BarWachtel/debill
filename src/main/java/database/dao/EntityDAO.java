@@ -43,7 +43,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
             String query = buildGetEntityByIdQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityID);
-            ResultSet rs = ps.executeQuery(query);
+			ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
             }
@@ -116,7 +116,7 @@ public abstract class EntityDAO<T extends Entity> extends SampleDAO {
 
     private String buildGetEntityByIdQuery() {
         try {
-            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "=?").build();
+            return queryBuilderFactory.select().from(getTableName()).where(getIdColumnName() + "= ?").build();
         } catch (QueryBuilder.QueryBuilderException e) {
             e.printStackTrace();
         }
