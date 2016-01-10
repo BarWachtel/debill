@@ -1,19 +1,11 @@
 package api.route;
 
 import api.controller.UserController;
-import com.google.gson.Gson;
 import database.dao.JDBCUserDAO;
-
-import database.entity.Item;
 import database.entity.User;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
