@@ -8,7 +8,7 @@
         <servlet-class>
             com.sun.jersey.spi.container.servlet.ServletContainer
         </servlet-class>
-        <init-param>
+        <init-param>c
             <param-name>com.sun.jersey.config.property.packages</param-name>
             <param-value>api.route</param-value>
         </init-param>
