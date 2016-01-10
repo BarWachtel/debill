@@ -26,6 +26,19 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     private JDBCBillDAO() {
     }
 
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `bills` (\n" +
+                "  `bill_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `user_id` int(11) NOT NULL,\n" +
+                "  `private` tinyint(1) NOT NULL,\n" +
+                "  `open` tinyint(1) NOT NULL,\n" +
+                "  PRIMARY KEY (`bill_id`),\n" +
+                "  KEY `fk_users_fb_id_idx` (`user_id`),\n" +
+                "  CONSTRAINT `fk_bills_users_bill_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    }
+
     private enum Columns {
         billId("bill_id"),
         userId("user_id"),
@@ -60,7 +73,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     @Override
     public boolean deleteBill(Bill bill) {
-        return deleteEntity(bill.getId());
+        return deleteEntity(bill.getID());
     }
 
     @Override
@@ -81,7 +94,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
                 if (affectedRows > 0) {
                     ResultSet generatedKeys = ps.getGeneratedKeys();
                     if (generatedKeys.next()) {
-                        bill.setId(generatedKeys.getInt(1));
+                        bill.setID(generatedKeys.getInt(1));
                     }
                 }
                 if (bill.getItems() != null) {
@@ -95,7 +108,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
     private void insertItemsOfBill(Bill bill) {
         for (Item item : bill.getItems()) {
-            item.setBillId(bill.getId());
+            item.setBillId(bill.getID());
             JDBCItemDAO.getInstance().insertItem(item);
         }
     }
@@ -133,12 +146,12 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
     protected Bill createEntityFromResultSet(ResultSet rs) {
         Bill newBill = new Bill();
         try {
-            newBill.setId(rs.getInt(Columns.billId.getAsString()));
-            newBill.setId(rs.getInt(Columns.userId.getAsString()));
+            newBill.setID(rs.getInt(Columns.billId.getAsString()));
+            newBill.setID(rs.getInt(Columns.userId.getAsString()));
             newBill.setPrivate(rs.getBoolean(Columns.isPrivate.getAsString()));
             newBill.setOpen(rs.getBoolean(Columns.isOpen.getAsString()));
             newBill.setManager(null);
-            newBill.setItems(null);
+            newBill.addItems(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -179,7 +192,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
      */
     protected void setInsertPreparedStatementParameters(PreparedStatement ps, Bill entity) {
         try {
-            ps.setInt(1, entity.getManager().getId());
+            ps.setInt(1, entity.getManager().getID());
             ps.setBoolean(2, entity.isPrivate());
             ps.setBoolean(3, true); // Set the new bill isOpen value to True by default
         } catch (SQLException e) {

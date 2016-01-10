@@ -24,6 +24,20 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
         TABLE_NAME = "items";
     }
 
+    @Override
+    protected String generateSqlCreateTableQuery() {
+        return "CREATE TABLE `items` (\n" +
+                "  `item_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `bill_id` int(11) NOT NULL,\n" +
+                "  `name` varchar(45) NOT NULL,\n" +
+                "  `price` float NOT NULL,\n" +
+                "  `quantity` int(11) NOT NULL,\n" +
+                "  PRIMARY KEY (`item_id`),\n" +
+                "  KEY `fk_items_bills_bill_id_idx` (`bill_id`),\n" +
+                "  CONSTRAINT `fk_items_bills_bill_id` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`bill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    }
+
     private enum Columns {
         itemId("item_id"),
         billId("bill_id"),
@@ -74,7 +88,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
 
     @Override
     public boolean deleteItem(Item item) {
-        return deleteEntity(item.getId());
+        return deleteEntity(item.getID());
     }
 
     @Override
@@ -92,7 +106,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
     protected Item createEntityFromResultSet(ResultSet rs) {
         Item newItem = new Item();
         try {
-            newItem.setId(rs.getInt(Columns.itemId.getAsString()));
+            newItem.setID(rs.getInt(Columns.itemId.getAsString()));
             newItem.setBillId(rs.getInt(Columns.billId.getAsString()));
             newItem.setName(rs.getString(Columns.name.getAsString()));
             newItem.setPrice(rs.getFloat(Columns.price.getAsString()));

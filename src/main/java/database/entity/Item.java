@@ -15,7 +15,7 @@ public class Item extends Entity {
     }
 
     public Item(int id, int quantity, float price) {
-        this.id = id;
+        super(id);
         this.quantity = quantity;
         this.price = price;
     }
@@ -50,14 +50,6 @@ public class Item extends Entity {
 	public void setBillId(int billId) {
 		this.billId = billId;
 	}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getQuantity() {
         return quantity;

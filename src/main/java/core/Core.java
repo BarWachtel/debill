@@ -15,54 +15,47 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by user on 12/12/2015.
- */
 public class Core {
 
-	public int createNewBill(File billImageFile) {
+	public Bill createNewBill(File billImageFile) {
 		List<ParsedBillItem> parsedBillItems = imgToBillItems(billImageFile);
-
-
 		Bill bill = new Bill();
-
 		int userId = SessionService.getUserId();
+		User user = new User(); // Should get the user from DB
 
-		User user = new User();
-		user.setId(userId);
+		user.setID(userId);
 		bill.setManager(user);
 
 		List<Item> items = parsedItemsToDatabaseItems(parsedBillItems);
-		bill.setItems(items);
-
+		bill.addItems(items);
 		bill.setPrivate(false); // Default
-
 		Bill insertedBill = JDBCBillDAO.getInstance().insertBill(bill);
 		
-		if (insertedBill.getId() >= 0) {
-			bill.setId(insertedBill.getId());
-			RedisClient.setBillByUserId(userId, insertedBill.getId());
-			RedisClient.setItemHashmapByBillId(insertedBill.getId(), bill);
+		if (insertedBill.getID() >= 0) {
+			bill.setID(insertedBill.getID());
+			RedisClient.getInstance().setBillByUserId(bill);
+			RedisClient.getInstance().setItemsOfBill(insertedBill);
 		}
 
-		return insertedBill.getId();
+		return insertedBill;
 	}
 
-	public boolean updateBill(int billId, List<Item> updatedItems) {
-		Bill bill = getBill(billId);
+	public boolean updateBill(int userId, List<Item> updatedItems) {
+		Bill bill = getBill(userId);
 		boolean success = false;
 		if ((success = bill.update(updatedItems))) {
-			RedisClient.setItemHashmapByBillId(billId, bill);
+			RedisClient.getInstance().removeAllItems(bill);
+			RedisClient.getInstance().setItemsOfBill(bill);
 			JDBCBillDAO.getInstance().updateBill(bill);
 		}
 
 		return success;
 	}
 
-	private Bill getBill(int billId) {
-		Bill bill = RedisClient.getBillById(billId);
+	private Bill getBill(int userId) {
+		Bill bill = RedisClient.getInstance().getBillByUserId(userId);
 		if (bill == null) {
-			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(billId);
+			bill = JDBCBillDAO.getInstance().getOpenBillByUserId(userId);
 		}
 
 		return bill;
