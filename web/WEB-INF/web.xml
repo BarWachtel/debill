@@ -24,16 +24,7 @@
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
-    <!--<filter>-->
-        <!--<filter-name>SessionFilter</filter-name>-->
-        <!--<filter-class>api.service.SessionFilter</filter-class>-->
-        <!--<init-param>-->
-            <!--<param-name>avoid-urls</param-name>-->
-            <!--<param-value>view</param-value>-->
-        <!--</init-param>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>SessionFilter</filter-name>-->
-        <!--<url-pattern>/</url-pattern>-->
-    <!--</filter-mapping>-->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>

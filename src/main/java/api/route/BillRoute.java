@@ -37,13 +37,7 @@ import static java.lang.Math.toIntExact;
 		return bill;
 	}
 
-	@POST @Path("/create")
-	public void createBill(@Context HttpServletRequest request) {
-		// I need this later - see Core.createNewBill(..)
-		ThreadLocalUtil.set(ThreadLocalUtil.USER_SESSION, request.getSession(false));
-	}
-
-	@GET @Path("/{billId}/{id}") @Produces(MediaType.APPLICATION_JSON)
+	@GET @Path("/{billId}/item/{id}") @Produces(MediaType.APPLICATION_JSON)
 	public Item getItem(@PathParam("billId") int i_billId, @PathParam("id") int id) {
 		Item item = ItemController.getItem(id);
 		return item;
@@ -61,11 +55,10 @@ import static java.lang.Math.toIntExact;
 		return users;
 	}
 
-
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Bill consumeJSON(Bill bill) throws Exception {
+	public Bill createBill(Bill bill) throws Exception {
 		Bill billWithId = JDBCBillDAO.getInstance().insertBill(bill);
 		return billWithId;
 	}

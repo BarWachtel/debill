@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 /**
  * Created by Dima on 10/01/2016.
  */
-@Path("/summary")
 public class SummaryRoute {
     @GET @Path("/{biilId}") @Produces(MediaType.APPLICATION_JSON)
     public BillSummary getSummaryByBill(@PathParam("id" ) int biilId){
@@ -27,6 +26,10 @@ public class SummaryRoute {
     {
         BillSummary billSummary = SummaryController.getSummaryByBillIDAndUserId(biilId,userId);
         return billSummary;
+
+//		"/user/{id}/bill/{id}/summary"
+
+//				"/bill/{id}/summary"
     }
 
 }
