@@ -46,7 +46,8 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
 
     @Override
     protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `bills_groups` (\n" +
+        return 	"DROP TABLE IF EXISTS 'bills_groups';\n" +
+				"CREATE TABLE `bills_groups` (\n" +
                 "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `user_id` int(11) NOT NULL,\n" +

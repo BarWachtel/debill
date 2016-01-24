@@ -29,7 +29,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `users` (\n" +
+		return 	"DROP TABLE IF EXISTS 'users';\n" +
+				"CREATE TABLE `users` (\n" +
                 "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `username` varchar(45) DEFAULT NULL,\n" +
 				"  `password` varchar(45) DEFAULT NULL,\n" +

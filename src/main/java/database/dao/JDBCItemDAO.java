@@ -26,7 +26,8 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
 
     @Override
     protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `items` (\n" +
+		return 	"DROP TABLE IF EXISTS 'items';\n" +
+		 		"CREATE TABLE `items` (\n" +
                 "  `item_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `name` varchar(45) NOT NULL,\n" +

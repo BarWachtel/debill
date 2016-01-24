@@ -5,11 +5,11 @@ import database.DBConn;
 import java.sql.*;
 
 public abstract class SampleDAO {
-
+	private static boolean IN_DEVELOPMENT = true;
     protected static String TABLE_NAME = null;
 
     public SampleDAO() {
-        if(!isTableExists()) {
+        if(!isTableExists() || IN_DEVELOPMENT) {
             createTable();
         }
     }
