@@ -40,6 +40,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
 
+
+
 	private enum Columns {
         userId("user_id"),
         username("username"),
@@ -97,7 +99,8 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     public User insertUser(User user) {
-		return insertEntity(user);
+        insertEntity(user);
+        return user;
     }
 
     @Override

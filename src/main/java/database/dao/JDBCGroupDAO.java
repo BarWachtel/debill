@@ -27,7 +27,11 @@ public class JDBCGroupDAO extends CommonDAO implements GroupDAO {
 		init();
 	}
 
-    private enum Columns {
+	@Override protected String getTableName() {
+		return TABLE_NAME;
+	}
+
+	private enum Columns {
         groupId("group_id"),
         billId("bill_id"),
         userId("user_id");
@@ -43,13 +47,9 @@ public class JDBCGroupDAO extends CommonDAO implements GroupDAO {
         }
     }
 
-	@Override protected String getTableName() {
-		return TABLE_NAME;
-	}
-
-	@Override
+    @Override
     protected String generateSqlCreateTableQuery() {
-        return  "CREATE TABLE `bills_groups` (\n" +
+        return "CREATE TABLE `bills_groups` (\n" +
                 "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `user_id` int(11) NOT NULL,\n" +

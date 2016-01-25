@@ -1,10 +1,9 @@
 package api.route;
 
-import api.controller.BillController;
 import api.controller.SummaryController;
 import database.dao.JDBCSummaryDAO;
-import database.dao.JDBCUserDAO;
-import database.entity.*;
+import database.entity.BillSummary;
+import database.entity.ItemSummary;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

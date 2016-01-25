@@ -84,7 +84,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 		return bill;
 	}
 
-	@Override public Bill insertEntity(Bill bill) {
+	@Override public void insertEntity(Bill bill) {
 		Bill insertedBill = null;
 		if (bill.getManager() != null) {
 			Connection conn = DBConn.getConnection();
@@ -107,8 +107,6 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 				e.printStackTrace();
 			}
 		}
-
-		return insertedBill;
 	}
 
 	private void insertItemsOfBill(Bill bill) {
@@ -118,11 +116,16 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 		}
 	}
 
-	@Override public Bill getOpenBillByUserId(int userId) {
+	@Override
+	public Bill getOpenBillByUserId(int userId) {
 		Connection conn = DBConn.getConnection();
 		Bill openBillByUserId = null;
 		try {
-			String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.isOpen.getAsString() + "=?").where(Columns.userId.getAsString() + "=?")
+			String query = queryBuilderFactory
+					.select()
+					.from(TABLE_NAME)
+					.where(Columns.isOpen.getAsString() + "=?")
+					.where(Columns.userId.getAsString() + "=?")
 					.build();
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setBoolean(1, true);

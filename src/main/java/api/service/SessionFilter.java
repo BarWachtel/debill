@@ -46,7 +46,7 @@ public class SessionFilter implements Filter {
                 if (session == null) {
                     httpServletRequest.getRequestDispatcher(sessionExpired).forward(request, response);
                 } else {
-                    Integer userID = SessionService.getUserIdFromStoredSession();
+                    Integer userID = SessionService.getUserId();
                     if (userID == null) {
                         httpServletResponse.sendRedirect(sessionExpired);
                     }

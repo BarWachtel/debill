@@ -35,3 +35,36 @@ public class LoginRoute {
 //        return Response.status(200).entity(SessionService.getUserIdFromRequest(request)).build();
     }
 }
+
+/**
+ * @POST
+public void userLogin(@Context HttpServletRequest request, @PathParam("user_id") int userId) {
+
+String header = request.getHeader("authorization");
+String data = header.substring(header.indexOf("") + 1);
+byte[] bytes = null;
+try {
+bytes = new BASE64Decoder().decodeBuffer(data);
+} catch (IOException e) {
+e.printStackTrace();
+}
+String decoded = new String(bytes);
+StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
+String userid = null, password;
+if (tokenizer.hasMoreElements()) {
+userid = (String) tokenizer.nextElement();
+}
+if (tokenizer.hasMoreElements()) {
+password = (String) tokenizer.nextElement();
+}
+
+boolean validated = true;
+//validated = JDBCUserDAO.getInstance().validateUser(userid, password);
+if (validated) {
+SessionService.addSessionToLocalStore(request);
+SessionService.setUserId(userId);
+} else {
+//TODO - needs to send data that informs the client that the login failed
+}
+}
+ */

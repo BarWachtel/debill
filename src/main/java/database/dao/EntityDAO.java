@@ -12,9 +12,6 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
 
     protected static QueryBuilderFactory queryBuilderFactory;
 
-    EntityDAO() {
-    }
-
     static {
         EntityDAO.queryBuilderFactory = new QueryBuilderFactory();
     }
@@ -42,7 +39,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
             String query = buildGetEntityByIdQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityID);
-			ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
             }
@@ -69,9 +66,8 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         return entityToReturn;
     }
 
-    protected T insertEntity(T entity) {
+    protected void insertEntity(T entity) {
         Connection conn = DBConn.getConnection();
-		T entityToReturn = null;
         try {
             String query = buildInsertQuery();
             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -81,14 +77,11 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if(generatedKeys.next()) {
                     entity.setID(generatedKeys.getInt(1));
-					entityToReturn = entity;
                 }
             }
         } catch (SQLException e) {
             System.out.println("EntityDAO -> insertEntity -> Exception: " + e.getMessage());
         }
-
-		return entityToReturn;
     }
 
     protected boolean deleteEntity(int entityToDeleteID) {
@@ -109,7 +102,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         try {
             return queryBuilderFactory
                     .select()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             System.out.println("EntityDAO -> buildGetAllQueryString -> Exception: " + e.getMessage());
@@ -118,23 +111,23 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
     }
 
     private String buildGetEntityByIdQuery() {
-		return buildGetEntityByColumnName(getIdColumnName());
+        try {
+            return queryBuilderFactory
+                    .select()
+                    .from(TABLE_NAME)
+                    .where(getIdColumnName() + "= ?")
+                    .build();
+        } catch (QueryBuilder.QueryBuilderException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-
-	protected String buildGetEntityByColumnName(String columnName) {
-		try {
-			return queryBuilderFactory.select().from(getTableName()).where(columnName + " = ?").build();
-		} catch (QueryBuilder.QueryBuilderException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
     protected String buildUpdateQuery() {
         try {
             return queryBuilderFactory
                     .update()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .set(getColumnsForUpdate())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -148,7 +141,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         try {
             query = queryBuilderFactory
                     .insert()
-                    .into(getTableName())
+                    .into(TABLE_NAME)
                     .column(getColumnsForInsert())
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
@@ -161,7 +154,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         try {
             return queryBuilderFactory
                     .delete()
-                    .from(getTableName())
+                    .from(TABLE_NAME)
                     .where(getIdColumnName() + " = " + id)
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
