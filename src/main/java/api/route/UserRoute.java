@@ -19,6 +19,12 @@ public class UserRoute {
         return users;
     }
 
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User getUser(@PathParam("id") int id) {
+		return UserController.getUser(id);
+	}
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

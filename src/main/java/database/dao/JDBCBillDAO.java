@@ -84,7 +84,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 		return bill;
 	}
 
-	@Override public void insertEntity(Bill bill) {
+	@Override public Bill insertEntity(Bill bill) {
 		Bill insertedBill = null;
 		if (bill.getManager() != null) {
 			Connection conn = DBConn.getConnection();
@@ -107,6 +107,8 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 				e.printStackTrace();
 			}
 		}
+
+		return insertedBill;
 	}
 
 	private void insertItemsOfBill(Bill bill) {
