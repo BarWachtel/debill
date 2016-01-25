@@ -30,8 +30,7 @@ public class UserController {
 		return JDBCUserDAO.getInstance().getUser(id);
 	}
 
-//	public static User getUser(String username) {
-//        //TODO - implement
-//		//return JDBCUserDAO.getInstance().getUser(username);
-//	}
+	public static User getUser(String username) {
+		return JDBCUserDAO.getInstance().getUser(username);
+	}
 }
