@@ -68,7 +68,6 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
         return getEntity(id);
     }
 
-	@Override
 	public User getUser(String username) {
 		Connection conn = DBConn.getConnection();
 		User user = null;
