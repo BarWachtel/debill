@@ -2,6 +2,7 @@ package api.controller;
 
 import com.sun.jersey.core.header.ContentDisposition;
 import core.Core;
+import database.entity.Bill;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -13,11 +14,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Logger;
+
 public class ImageUploadController {
-    private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/path/to/uploads/";
+//	private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/path/to/uploads/";
+	private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/uploads/";
+	static Logger log = Logger.getLogger("ImageUploadController");
 
 
-    public static String saveFile(InputStream fileInputStream, String fileName) {
+    public static Bill createBillFromImage(InputStream fileInputStream, String fileName) {
         String status =  "file saved to ";
 
         byte[] bytes = new byte[0];
@@ -38,33 +43,14 @@ public class ImageUploadController {
         output = "saved to " + _fileName;
 
         System.out.println("fileName :" +output);
-        //System.out.println("savedPath :" +savedPath);
 
+        log.info(status + sFile.getAbsolutePath());
 
-//        //**for check
-//        String s = "C://Users/Dima/Desktop/Upload_Files/";
-//        InputStream targetStream = null;
-//        System.out.println("fileName :" +fileName);
-//        try {
-//            targetStream = FileUtils.openInputStream(sFile);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            writeFile(IOUtils.toByteArray(targetStream),s + headerOfFilePart.getFileName());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        //for check
-
-        status = status+ sFile.getAbsolutePath();
         //sending image to parser
-        Core c;
-        c = new Core();
-        c.createNewBill(sFile);
+        Core core = new Core();
+        Bill bill = core.createNewBill(sFile);
 
-        return status;
+        return bill;
     }
 
     private static File writeFile(byte[] content, String filename) throws IOException {

@@ -4,12 +4,11 @@ import database.DBConn;
 import database.entity.Entity;
 import database.interfaces.QueryBuilder;
 import database.querybuilder.QueryBuilderFactory;
-import database.querybuilder.SelectQueryBuilder;
 
 import java.sql.*;
 import java.util.*;
 
-public abstract class EntityDAO<T extends Entity> extends SampleDAO {
+public abstract class EntityDAO<T extends Entity> extends CommonDAO {
 
     protected static QueryBuilderFactory queryBuilderFactory;
 

@@ -15,21 +15,23 @@ import java.util.List;
 public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 
 	private static final JDBCBillDAO instance = new JDBCBillDAO();
+	protected static String TABLE_NAME;
 
 	public static JDBCBillDAO getInstance() {
 		return instance;
 	}
 
-	static {
+	private JDBCBillDAO() {
 		TABLE_NAME = "bills";
+		init();
 	}
 
-	private JDBCBillDAO() {
+	@Override protected String getTableName() {
+		return TABLE_NAME;
 	}
 
 	@Override protected String generateSqlCreateTableQuery() {
-		return 	"DROP TABLE IF EXISTS 'bills';\n" +
-				"CREATE TABLE `bills` (\n" +
+		return 	"CREATE TABLE `bills` (\n" +
 				"  `bill_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
 				"  `user_id` int(11) NOT NULL,\n" +
 				"  `private` tinyint(1) NOT NULL,\n" +
@@ -58,7 +60,11 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 	}
 
 	@Override public List<Bill> getAllBills() {
-		return getAllEntities();
+		List<Bill> bills = getAllEntities();
+		for(Bill bill : bills) {
+			bill.populateItems();
+		}
+		return bills;
 	}
 
 	@Override public Bill getBill(int id) {

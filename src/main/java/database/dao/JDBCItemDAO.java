@@ -17,17 +17,19 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
     public static JDBCItemDAO getInstance() {
         return instance;
     }
+	protected static String TABLE_NAME;
 
-    private JDBCItemDAO() {}
+	@Override protected String getTableName() {
+		return TABLE_NAME;
+	}
+    private JDBCItemDAO() {
+		TABLE_NAME = "items";
+		init();
+	}
 
-    static {
-        TABLE_NAME = "items";
-    }
-
-    @Override
+	@Override
     protected String generateSqlCreateTableQuery() {
-		return 	"DROP TABLE IF EXISTS 'items';\n" +
-		 		"CREATE TABLE `items` (\n" +
+		return 	"CREATE TABLE `items` (\n" +
                 "  `item_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `name` varchar(45) NOT NULL,\n" +
@@ -62,10 +64,10 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
         Connection conn = DBConn.getConnection();
         List<Item> items = new ArrayList<>();
         try {
-            String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString()+"=?").build();
+            String query = queryBuilderFactory.select().from(TABLE_NAME).where(Columns.billId.getAsString()+"=?;").build();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, billId);
-            ResultSet rs = ps.executeQuery(query);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 items.add(createEntityFromResultSet(rs));
             }

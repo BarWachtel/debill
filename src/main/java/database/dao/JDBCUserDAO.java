@@ -15,30 +15,30 @@ import java.util.List;
 public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     private static final JDBCUserDAO instance = new JDBCUserDAO();
-
     public static JDBCUserDAO getInstance() {
         return instance;
     }
 
-    private JDBCUserDAO() {
-    }
+	protected static String TABLE_NAME;
 
-    static {
-		TABLE_NAME = "users";
+	@Override protected String getTableName() {
+		return TABLE_NAME;
 	}
 
-    @Override
+    private JDBCUserDAO() {
+		TABLE_NAME = "users";
+		init();
+	}
+
+	@Override
     protected String generateSqlCreateTableQuery() {
-		return 	"DROP TABLE IF EXISTS 'users';\n" +
-				"CREATE TABLE `users` (\n" +
+		return 	"CREATE TABLE `users` (\n" +
                 "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                "  `username` varchar(45) DEFAULT NULL,\n" +
+                "  `username` varchar(45) NOT NULL UNIQUE,\n" +
 				"  `password` varchar(45) DEFAULT NULL,\n" +
                 "  PRIMARY KEY (`user_id`)\n" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
     }
-
-
 
 	private enum Columns {
         userId("user_id"),

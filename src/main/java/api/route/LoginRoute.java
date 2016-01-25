@@ -29,27 +29,6 @@ public class LoginRoute {
 		return jsonResponse;
 	}
 
-    @POST
-	@Path("whatsThisYotamy?")
-    public void userLoginMaybe(@Context HttpServletRequest request, @PathParam("user_id") int userId) {
-        SessionService.addSessionToLocalStore(request);
-        SessionService.setUserId(userId);
-        String header = request.getHeader("authorization");
-        String data = header.substring(header.indexOf("") + 1);
-        byte[] bytes = null;
-        try {
-            bytes = new BASE64Decoder().decodeBuffer(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String decoded = new String(bytes);
-        StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
-        String userid, password;
-        if(tokenizer.hasMoreTokens()) {
-            userid = tokenizer.nextToken();
-        }
-    }
-
     @GET
     public String getUserId(@Context HttpServletRequest request) {
 		return String.valueOf(SessionService.getUserIdFromRequest(request));

@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
+public class JDBCGroupDAO extends CommonDAO implements GroupDAO {
 
     private static final JDBCGroupDAO instance = new JDBCGroupDAO();
     private static final QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
@@ -20,10 +20,12 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
     public static JDBCGroupDAO getInstance() {
         return instance;
     }
+	protected static String TABLE_NAME;
 
-    static {
-        TABLE_NAME = "bills_groups";
-    }
+	private JDBCGroupDAO() {
+		TABLE_NAME = "bills_groups";
+		init();
+	}
 
     private enum Columns {
         groupId("group_id"),
@@ -41,13 +43,13 @@ public class JDBCGroupDAO extends SampleDAO implements GroupDAO {
         }
     }
 
-    private JDBCGroupDAO() {
-    }
+	@Override protected String getTableName() {
+		return TABLE_NAME;
+	}
 
-    @Override
+	@Override
     protected String generateSqlCreateTableQuery() {
-        return 	"DROP TABLE IF EXISTS 'bills_groups';\n" +
-				"CREATE TABLE `bills_groups` (\n" +
+        return  "CREATE TABLE `bills_groups` (\n" +
                 "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `user_id` int(11) NOT NULL,\n" +

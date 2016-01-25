@@ -1,5 +1,7 @@
 package database.entity;
 
+import database.dao.JDBCItemDAO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +98,11 @@ public class Bill extends Entity {
     public int getID() {
         return id;
     }
+
+	public void populateItems() {
+		JDBCItemDAO itemDAO = JDBCItemDAO.getInstance();
+		this.items = itemDAO.getAllItems(this.getID());
+	}
 }
 
 /*
