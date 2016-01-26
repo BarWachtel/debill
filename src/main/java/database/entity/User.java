@@ -17,8 +17,7 @@ public class User extends Entity {
 		this.password = password;
 	}
 
-	@Override
-	public int getID() {
+	@Override public int getID() {
 		return id;
 	}
 
@@ -41,5 +40,6 @@ public class User extends Entity {
 	public boolean comparePassword(String password) {
 		return this.password.equals(password);
 	}
+
 }
 

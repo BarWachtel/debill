@@ -1,47 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="js/index.js"></script>
-    <title>index.html</title>
-</head>
-<body>
-<h1>Fuckin hell</h1>
-<br>
-    <p>Send and recieve json example</p>
-    <form action="rest/files/upload" method="POST" enctype="multipart/form-data">
-        <p>
-            Select a file : <input type="file" name="file" size="50" />
-        </p>
-        <input type="submit" value="Upload It" />
-    </form>
-    <p><a href="http://localhost:8080/loginPage.html">Go to Login Page</a></p>
+<html>
 
-    <p>date:</p>
-    <p id="date_demo"></p></br>
-    <p>users:</p>
-    <p id="users_demo"></p></br>
-    <p>items:</p>
-    <p id="items_demo"></p></br>
-    <p>manager:</p>
-    <p id="manager_demo"></p>
-    <button type="button" id ="isertManager">isertManager</button>
-    <p>bill:</p>
-    <p id="bill_demo"></p>
-    <button type="button" id ="sendBill">insertBillAfterInsertManager</button>
-    <p>group:</p>
-    <p id="group_demo"></p>
-    <p>itemSummary:</p>
-    <p id="itemSummary_demo"></p>
-    <p>billSummary:</p>
-    <p id="billSummary_demo"></p>
-   <br/>
-   <br/>
-   <button type="button" id ="getAllBills">getAllBills</button>
-    <br/>
-    <p id="success"></p>
-    <p id="error"></p>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>debill app</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+    <script src="js/main.js"></script>
+</head>
+
+<body>
+
+<div data-role="page" id="welcome">
+    <div data-role="header">
+        <h1>Debill</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <a class="ui-btn ui-corner-all" href="#login">Login</a>
+        <a class="ui-btn ui-corner-all" href="#createUser">Create User</a>
+        <br>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <h1>yes please.</h1>
+    </div>
+</div>
+
+<div data-role="page" id="main">
+    <div data-role="header">
+        <h1>Debill</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <h2>How can I help you sir?</h2>
+        <a href="#" id="joinBillButton" class="ui-btn">Join a bill</a>
+        <a href="#createBill" class="ui-btn">Create a bill</a>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <h1>yes please.</h1>
+    </div>
+</div>
+
+<div data-role="page" id="joinBill">
+    <div data-role="header">
+        <h1>Debill</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <h2>These are all the currently open bills - </h2>
+        <ul id="allBills" class="listview" data-role="listview" data-theme="b">
+
+        </ul>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l" style="margin-left: 10px">Back</a>
+    </div>
+</div>
+
+<div data-role="page" id="displayBill">
+    <div data-role="header">
+        <h1>Debill</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <h2>Select the items you wish to pay for - </h2>
+        <ul id="billItems" class="listview" data-role="listview" data-theme="b">
+
+        </ul>
+
+        <p>Total Payed For/Total</p>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l" style="margin-left: 10px">Back</a>
+    </div>
+</div>
+
+<div data-role="page" id="createBill">
+    <div data-role="header">
+        <h1>Debill</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <h2>We'll need to take a picture</h2>
+        <p>Javascript to access camera here</p>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l" style="margin-left: 10px">Back</a>
+    </div>
+</div>
+
+<div data-role="page" data-dialog="true" id="login">
+    <div data-role="header">
+        <a href="#welcome" class="ui-btn ui-icon-home ui-btn-icon-left ui-alt-icon">Home</a>
+        <!--<h1>Login</h1>-->
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <form method="post" id="loginForm">
+            <input type="text" data-clear-btn="true" name="username" placeholder="Username">
+            <input type="password" data-clear-btn="true" name="password" placeholder="Password">
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</div>
+
+<div data-role="page" data-dialog="true" id="createUser" data-title="Create User">
+    <div data-role="header">
+        <a href="#welcome" class="ui-btn ui-icon-home ui-btn-icon-left ui-alt-icon">Home</a>
+        <!--<h1>Create User</h1>-->
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <form method="post" id="createUserForm">
+            <input type="text" data-clear-btn="true" name="username" placeholder="Username">
+            <input type="password" data-clear-btn="true" name="password" placeholder="Password">
+            <input type="password" data-clear-btn="true" name="confirmPassword" placeholder="Confirm Password">
+            <input type="submit" value="Create User">
+        </form>
+    </div>
+</div>
+
+<div data-role="dialog" id="error" data-title="Error">
+    <div data-role="content">
+        <h4>The following error occured:</h4>
+        <p style="color: darkred" id="errorMsg"></p>
+        <a href="#" data-role="button" data-theme="b" data-rel="back">Back</a>
+    </div>
+</div>
+
 </body>
 </html>

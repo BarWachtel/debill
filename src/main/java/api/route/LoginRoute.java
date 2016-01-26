@@ -24,15 +24,12 @@ public class LoginRoute {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public JsonResponse userLogin(UserLoginDetails userLoginDetails, @Context HttpServletRequest request) {
 		SessionService.addSessionToLocalStore(request);
-		JsonResponse jsonResponse = new JsonResponse();
-		jsonResponse.setSuccess(LoginController.login(userLoginDetails));
-		return jsonResponse;
+		return LoginController.login(userLoginDetails);
 	}
 
     @GET
     public String getUserId(@Context HttpServletRequest request) {
 		return String.valueOf(SessionService.getUserIdFromRequest(request));
-//        return Response.status(200).entity(SessionService.getUserIdFromRequest(request)).build();
     }
 }
 

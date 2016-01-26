@@ -1,29 +1,38 @@
 package api.controller;
 
+import api.route.pojo.response.JsonResponse;
 import database.dao.JDBCBillDAO;
 import database.entity.Bill;
 
 import java.util.List;
 
 public class BillController {
-	public static List<Bill> getAll() {
+	public static JsonResponse getAll() {
 		List<Bill> bills = JDBCBillDAO.getInstance().getAllBills();
-		return bills;
+
+		JsonResponse jsonResponse = JsonResponse.ok(bills);
+		return jsonResponse;
 	}
 
-	public static Bill get(int id) {
+	public static JsonResponse get(int id) {
 		Bill bill = JDBCBillDAO.getInstance().getBill(id);
-		return bill;
+
+		JsonResponse jsonResponse = JsonResponse.ok(bill);
+		return jsonResponse;
 	}
 
-	public static Bill insertBill(Bill i_bill) {
+	public static JsonResponse insertBill(Bill i_bill) {
 		Bill bill = JDBCBillDAO.getInstance().insertBill(i_bill);
-		return bill;
+
+		JsonResponse jsonResponse = JsonResponse.okIfLegalId(bill);
+		return jsonResponse;
 	}
 
-	public static Bill updateBill(Bill i_bill) {
+	public static JsonResponse updateBill(Bill i_bill) {
 		Bill bill = JDBCBillDAO.getInstance().updateBill(i_bill);
-		return bill;
+
+		JsonResponse jsonResponse = JsonResponse.ok(bill);
+		return jsonResponse;
 	}
 }
 

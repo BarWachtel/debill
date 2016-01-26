@@ -3,6 +3,7 @@ package api.route;
 import api.controller.BillController;
 import api.controller.ItemController;
 import api.controller.UserController;
+import api.route.pojo.response.JsonResponse;
 import database.entity.Bill;
 import database.entity.Item;
 import database.entity.User;
@@ -18,26 +19,23 @@ import java.util.List;
 	//region Bill routes
 
 	@GET @Produces(MediaType.APPLICATION_JSON)
-	public List<Bill> getAllBills() {
-		List<Bill> bills = BillController.getAll();
-		return bills;
+	public JsonResponse getAllBills() {
+		return BillController.getAll();
 	}
 
 	@POST @Consumes(MediaType.APPLICATION_JSON) @Produces(MediaType.APPLICATION_JSON)
-	public Bill addBill(Bill i_bill) {
+	public JsonResponse addBill(Bill i_bill) {
 		return BillController.insertBill(i_bill);
 	}
 
 	@PUT @Consumes(MediaType.APPLICATION_JSON) @Produces(MediaType.APPLICATION_JSON)
-	public Bill updateBill(Bill i_bill) {
+	public JsonResponse updateBill(Bill i_bill) {
 		return BillController.updateBill(i_bill);
 	}
 
 	@GET @Path("/{id}") @Produces(MediaType.APPLICATION_JSON)
-	public Bill getBill(@PathParam("id") int id) {
-		System.out.println("BillRoute -> getBill with id " + id);
-		Bill bill = BillController.get(id);
-		return bill;
+	public JsonResponse getBill(@PathParam("id") int id) {
+		return BillController.get(id);
 	}
 
 	//endregion
@@ -45,30 +43,26 @@ import java.util.List;
 	//region Item routes
 
 	@GET @Path("/{billId}/item/{id}") @Produces(MediaType.APPLICATION_JSON)
-	public Item getItem(@PathParam("billId") int i_billId, @PathParam("id") int id) {
-		Item item = ItemController.getItem(id);
-		return item;
+	public JsonResponse getItem(@PathParam("billId") int i_billId, @PathParam("id") int id) {
+		return ItemController.getItem(id);
 	}
 
 	@GET @Path("/{billId}/items") @Produces(MediaType.APPLICATION_JSON)
-	public List<Item> getAllBillItems(@PathParam("billId") int i_billId) {
-		List<Item> items = ItemController.getAllBillItems(i_billId);
-		return items;
+	public JsonResponse getAllBillItems(@PathParam("billId") int i_billId) {
+		return ItemController.getAllBillItems(i_billId);
 	}
 
 	@PUT @Path("/{billId}/item/{id}") @Produces(MediaType.APPLICATION_JSON)
-	public Item updateItem(Item item) {
-		Item updatedItem = ItemController.updateItem(item);
-		return updatedItem;
+	public JsonResponse updateItem(Item item) {
+		return ItemController.updateItem(item);
 	}
 
 	//endregion
 
 	//region Bill helper routes
 	@GET @Path("/{billId}/users") @Produces(MediaType.APPLICATION_JSON)
-	public List<User> getAllBillUsers(@PathParam("billId") int i_billId) {
-		List<User> users = UserController.getBillUsers(i_billId);
-		return users;
+	public JsonResponse getAllBillUsers(@PathParam("billId") int i_billId) {
+		return UserController.getBillUsers(i_billId);
 	}
 	//endregion
 }

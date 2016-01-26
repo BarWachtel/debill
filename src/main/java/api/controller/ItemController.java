@@ -1,5 +1,6 @@
 package api.controller;
 
+import api.route.pojo.response.JsonResponse;
 import database.dao.JDBCItemDAO;
 import database.entity.Bill;
 import database.entity.Item;
@@ -8,18 +9,24 @@ import java.util.List;
 
 public class ItemController {
 
-	public static Item getItem(int item_id) {
+	public static JsonResponse getItem(int item_id) {
+		JsonResponse jsonResponse;
 		Item item = JDBCItemDAO.getInstance().getItem(item_id);
-		return item;
+		jsonResponse = JsonResponse.ok(item);
+		return jsonResponse;
 	}
 
-	public static List<Item> getAllBillItems(int bill_id) {
+	public static JsonResponse getAllBillItems(int bill_id) {
+		JsonResponse jsonResponse;
 		List<Item> items = JDBCItemDAO.getInstance().getAllItems(bill_id);
-		return items;
+		jsonResponse = JsonResponse.ok(items);
+		return jsonResponse;
 	}
 
-	public static Item updateItem(Item item) {
+	public static JsonResponse updateItem(Item item) {
+		JsonResponse jsonResponse;
 		Item updatedItem = JDBCItemDAO.getInstance().updateItem(item);
-		return updatedItem;
+		jsonResponse = JsonResponse.ok(updatedItem);
+		return jsonResponse;
 	}
 }

@@ -1,5 +1,6 @@
 package api.controller;
 
+import api.route.pojo.response.JsonResponse;
 import database.dao.JDBCGroupDAO;
 import database.dao.JDBCItemDAO;
 import database.dao.JDBCUserDAO;
@@ -10,21 +11,26 @@ import java.util.List;
 
 public class UserController {
 
-    public static List<User> getBillUsers(int bill_id) {
-        List<User> billUsers;
-        billUsers = JDBCGroupDAO.getInstance().getGroupUsersByBillId(bill_id).getUsers();
-        return billUsers;
+    public static JsonResponse getBillUsers(int bill_id) {
+		JsonResponse jsonResponse;
+		List<User> billUsers = JDBCGroupDAO.getInstance().getGroupUsersByBillId(bill_id).getUsers();
+        jsonResponse = JsonResponse.ok(billUsers);
+		return jsonResponse;
     }
 
-    public static User insertUser(User i_user) {
-        User user = JDBCUserDAO.getInstance().insertUser(i_user);
-        return user;
-    }
+    public static JsonResponse insertUser(User i_user) {
+		JsonResponse jsonResponse;
+		User user = JDBCUserDAO.getInstance().insertUser(i_user);
+		jsonResponse = JsonResponse.okIfLegalId(user);
+		return jsonResponse;
+	}
 
-    public static List<User> getAllUsers() {
-        List<User> users = JDBCUserDAO.getInstance().getAllUsers();
-        return users;
-    }
+    public static JsonResponse getAllUsers() {
+		JsonResponse jsonResponse;
+		List<User> users = JDBCUserDAO.getInstance().getAllUsers();
+		jsonResponse = JsonResponse.ok(users);
+		return jsonResponse;
+	}
 
 	public static User getUser(int id) {
 		return JDBCUserDAO.getInstance().getUser(id);
