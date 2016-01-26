@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>debill app</title>
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/main.css">
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
@@ -70,7 +71,7 @@
 
     <div data-role="main" class="ui-content">
         <h2>Select the items you wish to pay for - </h2>
-        <ul id="billItems" class="listview" data-role="listview" data-theme="b">
+        <ul id="billItemsListView" class="listview" data-role="listview" data-theme="b">
 
         </ul>
 
@@ -89,7 +90,16 @@
 
     <div data-role="main" class="ui-content">
         <h2>We'll need to take a picture</h2>
-        <p>Javascript to access camera here</p>
+        <form action="rest/files/upload" method="POST" enctype="multipart/form-data" id="takePhotoForm">
+            <div class="ui-btn ui-corner-all" id="takePhoto" onclick="actualTakePhoto()">Take Photo</div>
+            <div style='height: 0px; width: 0px; overflow: hidden;'>
+                <input type="file" accept="image/*" data-role="none" id="capture" capture="camera">
+            </div>
+        </form>
+
+        <img id="photoTaken">
+        <!--<a href="#" id="uploadPhoto" class="ui-btn" disabled>Upload Photo</a>-->
+        <button id="uploadPhoto" disabled>Upload Photo</button>
     </div>
 
     <div data-role="footer" data-position="fixed">

@@ -17,8 +17,7 @@ public class UserRoute {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public JsonResponse getAllUsers() {
-        List<User> users = UserController.getAllUsers();
-        return JsonResponse.ok(users);
+        return UserController.getAllUsers();
     }
 
     @POST

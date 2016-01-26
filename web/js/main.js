@@ -4,8 +4,9 @@
 "use strict";
 
 var loggedInUser;
-var allBills;
+var allBills = {};
 var selectedBillsId;
+var photoTaken;
 
 var HTTP_METHODS = {
     GET: "GET",
@@ -22,6 +23,10 @@ $(function() {
     });
 
     $('a#joinBillButton').click(handleJoinBillClicked);
+
+    $('button#uploadPhoto').click(uploadPhoto);
+
+    $("#capture").on("change", tookPhoto);
 
     $('form#loginForm').submit(function() {
         console.log("Login clicked");
@@ -46,92 +51,112 @@ $(function() {
 });
 //endregion
 
+// Screens
+
 //region Join Bill
 function handleJoinBillClicked() {
     $.mobile.navigate("#joinBill");
-    ajaxRequest(HTTP_METHODS.GET, "rest/bill", handleAllBills);
+    ajaxRequest(HTTP_METHODS.GET, "rest/bill", addAllBillsToListview);
 }
 
-function handleAllBills(jsonResponse) {
+function addAllBillsToListview(jsonResponse) {
     if (jsonResponse.error) {
         error(jsonResponse.errorMsg);
     } else {
-        console.log(jsonResponse.content);
-        var jsonBillList = jsonResponse.content;
-        allBills = {};
-        for (let jsonBill of jsonBillList) {
+        for (let jsonBill of jsonResponse.content) {
             var bill = new Bill(jsonBill);
             allBills[bill.id] = bill;
         }
-
-        console.log(allBills);
-        createListView("ul#allBills", selectOpenBills(allBills));
+        createListView("ul#allBills", filterOnlyOpenBills(allBills));
     }
 }
 //endregion
 
 //region Display Bill
-function displayBillWithId(id) {
+function joinBillAndDisplayItems(id) {
     selectedBillsId = id;
     $.mobile.navigate("#displayBill");
-    ajaxRequest(HTTP_METHODS.GET, "rest/bill/" + id + "/items", handleAllItems);
+    ajaxRequest(HTTP_METHODS.GET, "rest/bill/" + id, handleBillJsonRecieved);
 }
 
-function handleAllItems(jsonResponse) {
+function handleBillJsonRecieved(jsonResponse) {
     if (jsonResponse.error) {
         error(jsonResponse.errorMsg);
     } else {
-        console.log(jsonResponse.content);
+        displayBill(jsonResponse.content);
     }
+}
+
+var addAllItemsToListview = function (itemsList) {
+    createListView("ul#billItemsListView", itemsList);
+}
+
+function displayBill(data) {
+    var bill = new Bill(data);
+    allBills[bill.id] = bill;
+    selectedBillsId = bill.id;
+    $.mobile.navigate("#displayBill");
+    addAllItemsToListview(bill.items);
 }
 //endregion
 
-//region Bill
-function Bill(jsonBill) {
-    this.id = jsonBill.id;
-    this.manager =  new User(jsonBill.manager);
-    this.isPrivate = jsonBill.isPrivate;
-    this.isOpen = jsonBill.isOpen;
-    this.items = jsonBill.items;
+// Utility Methods
 
-
-    this.display = function() {
-        return "ID: " + this.id + ", Created By: " + this.manager.username;
-    }
-
-    this.onClick = function() {
-        return "displayBillWithId(" + this.id + ")";
-    }
+//region Photo
+function actualTakePhoto() {
+    $("#capture").click();
 }
-//endregion
 
-//region User
-function User(jsonUser) {
-    this.username = jsonUser.username;
-    this.password = jsonUser.password;
-    this.confirmPassword = jsonUser.confirmPassword;
-    this.id = jsonUser.id;
-
-    this.passwordsMatch = function() {
-        return (this.password === this.confirmPassword);
-    }
-
-    this.toJSON = function() {
-        return {
-            "username": this.username,
-            "password": this.password
-        };
+function tookPhoto(event) {
+    if(event.target.files.length == 1 &&
+        event.target.files[0].type.indexOf("image/") == 0) {
+        $("#photoTaken").attr("src",URL.createObjectURL(event.target.files[0]));
+        photoTaken = event.target.files[0];
+        $("#uploadPhoto").attr("disabled", false);
     }
 }
 
-function handleUserCreatedOrLogin(jsonResponse) {
-    if (jsonResponse.error) {
-        error(jsonResponse.errorMsg);
-    } else {
-        console.log(jsonResponse.content);
-        loggedInUser = new User(jsonResponse.content);
-        $.mobile.navigate("#main", jsonResponse);
-    }
+function uploadPhoto() {
+    var data = new FormData();
+    data.append("file", photoTaken);
+
+    $.mobile.loading("show", {
+        text: "Creating Bill",
+        textVisible: true,
+        theme: "b",
+        textonly: false
+    });
+
+    $.ajax({
+        url: 'rest/files/upload',
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function(data, textStatus, jqXHR)
+        {
+            if(typeof data.error === 'undefined')
+            {
+                // Success so call function to process the form
+                console.log("Success!");
+                $.mobile.loading("hide");
+                displayBill(data);
+            }
+            else
+            {
+                // Handle errors here
+                console.log('ERRORS: ' + data.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            // Handle errors here
+            console.log('ERRORS: ' + textStatus);
+            // STOP LOADING SPINNER
+        }
+    });
 }
 //endregion
 
@@ -173,7 +198,7 @@ function error(error) {
     $.mobile.changePage("#error");
 }
 
-function selectOpenBills(billList) {
+function filterOnlyOpenBills(billList) {
     var openBills = [];
 
     $.each(billList, function(key, bill) {
@@ -184,4 +209,95 @@ function selectOpenBills(billList) {
 
     return openBills;
 }
+//endregion
+
+// Objects
+
+//region User
+function User(jsonUser) {
+    this.username = jsonUser.username;
+    this.password = jsonUser.password;
+    this.confirmPassword = jsonUser.confirmPassword;
+    this.id = jsonUser.id;
+
+    this.passwordsMatch = function() {
+        return (this.password === this.confirmPassword);
+    }
+
+    this.toJSON = function() {
+        return {
+            "username": this.username,
+            "password": this.password
+        };
+    }
+}
+
+function handleUserCreatedOrLogin(jsonResponse) {
+    if (jsonResponse.error) {
+        error(jsonResponse.errorMsg);
+    } else {
+        console.log(jsonResponse.content);
+        loggedInUser = new User(jsonResponse.content);
+        $.mobile.navigate("#main", jsonResponse);
+    }
+}
+//endregion
+
+//region Bill
+function Bill(jsonBill) {
+    this.id = jsonBill.id;
+    this.manager =  new User(jsonBill.manager);
+    this.isPrivate = jsonBill.isPrivate;
+    this.isOpen = jsonBill.isOpen;
+    this.items = Item.fromJsonList(jsonBill.items);
+
+
+    this.display = function() {
+        return "ID: " + this.id + ", Created By: " + this.manager.username;
+    }
+
+    this.onClick = function() {
+        return "joinBillAndDisplayItems(" + this.id + ")";
+    }
+}
+//endregion
+
+//region Item
+function Item(jsonItem) {
+    this.billId = jsonItem.billId;
+    this.id = jsonItem.id;
+    this.name = jsonItem.name;
+    this.numPayedFor = jsonItem.numPayedFor;
+    this.price = jsonItem.price;
+    this.quantity = jsonItem.quantity;
+
+    this.display = function() {
+        return "(" + this.quantity + "/" + this.numPayedFor + ") " + this.name + ": $" + this.price;
+    };
+
+    this.onClick = function() {
+        return "Item.doWasClicked(" + this.billId + "," + this.id + ")";
+    };
+
+    this.wasClicked = function() {
+        if (this.numPayedFor < this.quantity) {
+            this.numPayedFor++;
+        }
+        console.log("Payed for " + this.numPayedFor + " " + this.name);
+    }
+}
+
+Item.doWasClicked = function(billId, itemId) {
+    allBills[billId].items[itemId].wasClicked();
+};
+
+Item.fromJsonList = function(jsonItemList) {
+    var itemList = {};
+    $.each(jsonItemList, function(key, jsonItem) {
+        var item = new Item(jsonItem);
+        itemList[item.id] = item;
+    });
+
+    return itemList;
+};
 //endregion
