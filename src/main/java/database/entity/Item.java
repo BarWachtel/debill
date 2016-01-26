@@ -67,6 +67,14 @@ public class Item extends Entity {
         this.price = price;
     }
 
+	public int getNumPayedFor() {
+		return numPayedFor;
+	}
+
+	public void setNumPayedFor(int numPayedFor) {
+		this.numPayedFor = numPayedFor;
+	}
+
 	public boolean update(Item updatedItem) {
 		if (updatedItem.name != null) {
 			this.name = updatedItem.name;

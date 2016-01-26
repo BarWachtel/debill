@@ -56,7 +56,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         Connection conn = DBConn.getConnection();
         T entityToReturn = null;
         try {
-            String query = buildUpdateQuery();
+            String query = buildUpdateQuery(entity.getID());
             PreparedStatement ps = conn.prepareStatement(query);
             setUpdatePreparedStatementParameters(ps, entity);
             int affectedRows = ps.executeUpdate();
@@ -130,12 +130,13 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         return null;
     }
 
-    protected String buildUpdateQuery() {
+    protected String buildUpdateQuery(int id) {
         try {
             return queryBuilderFactory
                     .update()
                     .from(getTableName())
                     .set(getColumnsForUpdate())
+					.where(getIdColumnName(), " = ", String.valueOf(id))
                     .build();
         } catch (QueryBuilder.QueryBuilderException e) {
             System.out.println("EntityDAO -> buildUpdateQuery -> Exception: " + e.getMessage());
@@ -181,4 +182,5 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
     protected abstract void setUpdatePreparedStatementParameters(PreparedStatement ps, T entity);
 
     protected abstract void setInsertPreparedStatementParameters(PreparedStatement ps, T entity);
+
 }

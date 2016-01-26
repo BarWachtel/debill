@@ -68,7 +68,9 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 	}
 
 	@Override public Bill getBill(int id) {
-		return getEntity(id);
+		Bill bill = getEntity(id);
+		bill.populateItems();
+		return bill;
 	}
 
 	@Override public Bill updateBill(Bill bill) {

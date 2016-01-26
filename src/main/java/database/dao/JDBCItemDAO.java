@@ -35,6 +35,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
                 "  `name` varchar(45) NOT NULL,\n" +
                 "  `price` float NOT NULL,\n" +
                 "  `quantity` int(11) NOT NULL,\n" +
+				"  `num_payed_for` int(11) NOT NULL,\n" +
                 "  PRIMARY KEY (`item_id`),\n" +
                 "  KEY `fk_items_bills_bill_id_idx` (`bill_id`),\n" +
                 "  CONSTRAINT `fk_items_bills_bill_id` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`bill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
@@ -46,7 +47,8 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
         billId("bill_id"),
         name("name"),
         price("price"),
-        quantity("quantity");
+        quantity("quantity"),
+		numPayedFor("num_payed_for");
 
         String asString;
 
@@ -114,6 +116,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
             newItem.setName(rs.getString(Columns.name.getAsString()));
             newItem.setPrice(rs.getFloat(Columns.price.getAsString()));
             newItem.setQuantity(rs.getInt(Columns.quantity.getAsString()));
+			newItem.setNumPayedFor(rs.getInt(Columns.numPayedFor.getAsString()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -123,20 +126,26 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
     @Override
     protected Collection<String> getColumnsForUpdate() {
         ArrayList<String> cols = new ArrayList<>();
+
         cols.add(Columns.name.getAsString());
         cols.add(Columns.price.getAsString());
         cols.add(Columns.quantity.getAsString());
+		cols.add(Columns.numPayedFor.getAsString());
+
         return cols;
     }
 
     @Override
     protected Collection<String> getColumnsForInsert() {
         List<String> colsForInsert = new ArrayList<>();
+
         colsForInsert.add(Columns.billId.getAsString());
         colsForInsert.add(Columns.name.getAsString());
         colsForInsert.add(Columns.price.getAsString());
         colsForInsert.add(Columns.quantity.getAsString());
-        return colsForInsert;
+		colsForInsert.add(Columns.numPayedFor.getAsString());
+
+		return colsForInsert;
     }
 
     @Override
@@ -145,7 +154,8 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
             ps.setString(1, entity.getName());
             ps.setFloat(2, entity.getPrice());
             ps.setInt(3, entity.getQuantity());
-        } catch (SQLException e) {
+			ps.setInt(4, entity.getNumPayedFor());
+		} catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -157,6 +167,7 @@ public class JDBCItemDAO extends EntityDAO<Item> implements ItemDAO {
             ps.setString(2, entity.getName());
             ps.setFloat(3, entity.getPrice());
             ps.setInt(4, entity.getQuantity());
+			ps.setInt(5, entity.getNumPayedFor());
         } catch (SQLException e) {
             e.printStackTrace();
         }

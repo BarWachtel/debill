@@ -1,5 +1,6 @@
 package database.querybuilder;
 
+import database.entity.Entity;
 import database.interfaces.QueryBuilder;
 
 import java.util.ArrayList;

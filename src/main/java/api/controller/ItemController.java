@@ -18,4 +18,8 @@ public class ItemController {
 		return items;
 	}
 
+	public static Item updateItem(Item item) {
+		Item updatedItem = JDBCItemDAO.getInstance().updateItem(item);
+		return updatedItem;
+	}
 }
