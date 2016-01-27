@@ -28,30 +28,36 @@ $(function() {
 
     $("#capture").on("change", tookPhoto);
 
-    $('form#loginForm').submit(function() {
-        console.log("Login clicked");
-        var user = new User($('form#loginForm').serializeObject());
-        ajaxRequest(HTTP_METHODS.POST, "/rest/login", handleUserCreatedOrLogin, user);
+    $('form#loginForm').submit(loginFormSubmitted);
 
-        return false;
-    });
-
-    $('form#createUserForm').submit(function() {
-        console.log("Create user clicked");
-        var user = new User($('form#createUserForm').serializeObject());
-        if (user.passwordsMatch()) {
-            ajaxRequest(HTTP_METHODS.POST, "/rest/user", handleUserCreatedOrLogin, user);
-        } else {
-            error("Passwords dont match");
-        }
-
-        console.log("Trying to create user: " + user);
-        return false;
-    });
+    $('form#createUserForm').submit(createUserFormSubmitted);
 });
 //endregion
 
 // Screens
+
+//region Connection/Signup
+function createUserFormSubmitted() {
+    console.log("Create user clicked");
+    var user = new User($('form#createUserForm').serializeObject());
+    if (user.passwordsMatch()) {
+        ajaxRequest(HTTP_METHODS.POST, "rest/user", handleUserCreatedOrLogin, user);
+    } else {
+        error("Passwords dont match");
+    }
+
+    console.log("Trying to create user: " + user);
+    return false;
+}
+
+function loginFormSubmitted() {
+    console.log("Login clicked");
+    var user = new User($('form#loginForm').serializeObject());
+    ajaxRequest(HTTP_METHODS.POST, "rest/login", handleUserCreatedOrLogin, user);
+
+    return false;
+}
+//endregion
 
 //region Join Bill
 function handleJoinBillClicked() {

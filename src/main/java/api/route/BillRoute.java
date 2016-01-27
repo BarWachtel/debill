@@ -15,7 +15,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/bill") public class BillRoute {
+@Path("/bill")
+public class BillRoute {
 	//region Bill routes
 
 	@GET @Produces(MediaType.APPLICATION_JSON)

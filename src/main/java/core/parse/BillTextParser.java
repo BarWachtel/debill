@@ -56,7 +56,9 @@ public class BillTextParser {
 			try {
 				numbers.add(Float.parseFloat(numericalPart));
 			} catch (NumberFormatException e) {
-				numbers.add(Float.parseFloat(replaceCharactersWithDigits(numericalPart)));
+				if (!numericalPart.isEmpty()) {
+					numbers.add(Float.parseFloat(replaceCharactersWithDigits(numericalPart)));
+				}
 			}
 		}
 		return numbers;
