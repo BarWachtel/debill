@@ -15,6 +15,26 @@
 
 <body>
 
+<!--<div data-role="page" id="test">-->
+    <!--<div data-role="header">-->
+        <!--<h1>TEST</h1>-->
+    <!--</div>-->
+
+    <!--<div data-role="main" class="ui-content">-->
+        <!--<ul data-role="listview">-->
+            <!--<li class="interactive-item">-->
+                <!--<span class="item-text">5/7</span>-->
+                <!--<span class="item-text">Mochito</span>-->
+                <!--<div class="item-controlgroup" data-role="controlgroup" data-type="horizontal">-->
+                    <!--<a href="#" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext">Icon only</a>-->
+                    <!--<a href="#" class="ui-btn ui-corner-all ui-icon-minus ui-btn-icon-notext">Icon only</a>-->
+                <!--</div>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+<!--</div>-->
+
 <div data-role="page" id="welcome">
     <div data-role="header">
         <h1>Debill</h1>
@@ -70,16 +90,18 @@
     </div>
 
     <div data-role="main" class="ui-content">
-        <h2>Select the items you wish to pay for - </h2>
-        <ul id="billItemsListView" class="listview" data-role="listview" data-theme="b">
+        <div style="display: block">
+            <span>Total: </span> <span id="totalSpan"></span> <br>
+            <span>My Share: </span> <span id="myShareSpan"></span>
+        </div>
+        <ul id="billItemsListView" class="listview" data-role="listview" data-theme="b" data-inset="true">
 
         </ul>
-
-        <p>Total Payed For/Total</p>
     </div>
 
     <div data-role="footer" data-position="fixed">
         <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l" style="margin-left: 10px">Back</a>
+        <button id="closeBillButton" data-theme="b" class="ui-btn ui-btn-inline ui-btn-b ui-icon-check ui-btn-icon-right ui-corner-all" disabled >Close Bill</button>
     </div>
 </div>
 

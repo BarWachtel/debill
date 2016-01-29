@@ -6,7 +6,79 @@
 var loggedInUser;
 var allBills = {};
 var selectedBillsId;
+var currentPageId;
+var myShare = {};
+
 var photoTaken;
+
+function Persist() {
+    var loggedInUser = undefined;
+    var allBills = undefined;
+    var selectedBillsId = undefined;
+    var myShare = undefined;
+
+    function getLoggedInUser() {
+        if (!loggedInUser) {
+            loggedInUser = new User(JSON.parse(localStorage.loggedInUser));
+        }
+
+        return loggedInUser;
+    }
+
+    function setLoggedInUser(_loggedInUser) {
+        loggedInUser = _loggedInUser;
+        localStorage.loggedInUser = JSON.stringify(loggedInUser);
+    }
+
+    function getAllBills() {
+        if (!allBills) {
+            allBills = Bill.fromJsonCollection(JSON.parse(localStorage.allBills));
+        }
+
+        return allBills;
+    }
+
+    function getBill(billId) {
+        return getAllBills()[billId];
+    }
+
+    function setAllBills(_allBills) {
+        allBills = _allBills;
+        localStorage.allBills = JSON.stringify(_allBills);
+    }
+
+    function setBill(_bill) {
+        allBills = getAllBills();
+        allBills[_bill.id] = _bill;
+        setAllBills(allBills);
+    }
+
+    function getSelectedBillsId() {
+        if (!selectedBillsId) {
+            selectedBillsId = Number(localStorage.selectedBillsId);
+        }
+
+        return selectedBillsId;
+    }
+
+    function setSelectedBillsId(_selectedBillsId) {
+        selectedBillsId = _selectedBillsId;
+        localStorage.selectedBillsId = selectedBillsId;
+    }
+
+    function getMyShare() {
+        if (!myShare) {
+            myShare = JSON.parse(localStorage.myShare);
+        }
+
+        return myShare[getSelectedBillsId()];
+    }
+
+    function addToMyShare(amount) {
+        myShare[getSelectedBillsId()] += amount;
+        localStorage.myShare = JSON.stringify(myShare);
+    }
+}
 
 var HTTP_METHODS = {
     GET: "GET",
@@ -15,11 +87,23 @@ var HTTP_METHODS = {
 };
 
 //region Main
+function storeCurrentPageId() {
+    currentPageId = $(".ui-page-active").attr('id');
+}
+
 $(function() {
     console.log("Main script running...");
+    storeCurrentPageId();
 
-    $(window).on("navigate", function( event, data ) {
-        console.log("Navigated to page");
+    $(window).on("pageshow", function( event, data ) {
+        storeCurrentPageId();
+        if (currentPageId) {
+            eval("pageLoad_" + currentPageId)();
+        }
+    });
+
+    $(window).on("pagehide", function( event, data ) {
+        console.log("Navigating away from page " + currentPageId);
     });
 
     $('a#joinBillButton').click(handleJoinBillClicked);
@@ -31,7 +115,54 @@ $(function() {
     $('form#loginForm').submit(loginFormSubmitted);
 
     $('form#createUserForm').submit(createUserFormSubmitted);
+
+    $('#closeBillButton').click(closeBillButtonClicked);
 });
+//endregion
+
+//region On Page Load functions
+function pageLoad_welcome() {
+    console.log("On welcome page");
+}
+
+function pageLoad_main() {
+    console.log("On main page");
+}
+
+function pageLoad_joinBill() {
+    console.log("On join bill page");
+    ajaxRequest(HTTP_METHODS.GET, "rest/bill", addAllBillsToListview);
+}
+
+function pageLoad_displayBill() {
+    getSelectedBillsIdFromLocalStorage();
+    console.log("On display bill page");
+    if (!myShare[selectedBillsId]) {
+        myShare[selectedBillsId] = 0;
+    }
+
+    if (allBills[selectedBillsId]) {
+        displayBill();
+    } else {
+        ajaxRequest(HTTP_METHODS.GET, Bill.restGetPath(selectedBillsId), handleBillJsonRecieved);
+    }
+}
+
+function pageLoad_createBill() {
+    console.log("On create bill page");
+}
+
+function pageLoad_login() {
+    // do nothing
+}
+
+function pageLoad_createUser() {
+    // do nothing
+}
+
+function pageLoad_error() {
+    // do nothing
+}
 //endregion
 
 // Screens
@@ -62,7 +193,6 @@ function loginFormSubmitted() {
 //region Join Bill
 function handleJoinBillClicked() {
     $.mobile.navigate("#joinBill");
-    ajaxRequest(HTTP_METHODS.GET, "rest/bill", addAllBillsToListview);
 }
 
 function addAllBillsToListview(jsonResponse) {
@@ -73,37 +203,232 @@ function addAllBillsToListview(jsonResponse) {
             var bill = new Bill(jsonBill);
             allBills[bill.id] = bill;
         }
-        createListView("ul#allBills", filterOnlyOpenBills(allBills));
+        createListView("ul#allBills", filterOpenBillsWithItems(allBills));
     }
 }
 //endregion
 
 //region Display Bill
-function joinBillAndDisplayItems(id) {
-    selectedBillsId = id;
+function joinBillAndDisplayItems(billId) {
+    storeSelectedBillsId(billId);
     $.mobile.navigate("#displayBill");
-    ajaxRequest(HTTP_METHODS.GET, "rest/bill/" + id, handleBillJsonRecieved);
 }
 
 function handleBillJsonRecieved(jsonResponse) {
     if (jsonResponse.error) {
         error(jsonResponse.errorMsg);
     } else {
-        displayBill(jsonResponse.content);
+        var bill = new Bill(jsonResponse.content);
+        allBills[bill.id] = bill;
+        displayBill();
     }
 }
 
-var addAllItemsToListview = function (itemsList) {
-    createListView("ul#billItemsListView", itemsList);
+function displayTotalPricesAndMyShare(itemsCollection) {
+    var total, payedFor;
+    total = 0;
+    payedFor = 0;
+
+    $.each(itemsCollection, function(index, item) {
+        total += item.total();
+        payedFor += item.payedFor();
+    });
+
+    $("#totalSpan").text('$' + payedFor + ' / $' + total);
+    $('#myShareSpan').text('$' + myShare[selectedBillsId]);
+
+    if (payedFor == total) {
+        $('#closeBillButton').removeAttr('disabled');
+    }
 }
 
-function displayBill(data) {
-    var bill = new Bill(data);
-    allBills[bill.id] = bill;
-    selectedBillsId = bill.id;
-    $.mobile.navigate("#displayBill");
-    addAllItemsToListview(bill.items);
+function addAllItemsToListview(itemsCollection) {
+    createListView("ul#billItemsListView", itemsCollection);
 }
+
+function displayBill() {
+    displayTotalPricesAndMyShare(allBills[selectedBillsId].items);
+    addAllItemsToListview(allBills[selectedBillsId].items);
+}
+
+function closeBillButtonClicked() {
+    allBills[selectedBillsId].close();
+}
+//endregion
+
+
+// Classes
+
+//region User
+function User(jsonUser) {
+    this.username = jsonUser.username;
+    this.password = jsonUser.password;
+    this.confirmPassword = jsonUser.confirmPassword;
+    this.id = jsonUser.id;
+
+    this.passwordsMatch = function() {
+        return (this.password === this.confirmPassword);
+    }
+
+    this.toJSON = function() {
+        return {
+            "username": this.username,
+            "password": this.password
+        };
+    }
+}
+
+function handleUserCreatedOrLogin(jsonResponse) {
+    if (jsonResponse.error) {
+        error(jsonResponse.errorMsg);
+    } else {
+        console.log(jsonResponse.content);
+        loggedInUser = new User(jsonResponse.content);
+        $.mobile.navigate("#main", jsonResponse);
+    }
+}
+//endregion
+
+//region Bill
+function Bill(jsonBill) {
+    this.id = jsonBill.id;
+    this.manager =  new User(jsonBill.manager);
+    this.isPrivate = jsonBill.isPrivate;
+    this.isOpen = jsonBill.isOpen;
+    this.items = Item.fromJsonCollection(jsonBill.items);
+
+
+    this.display = function() {
+        return "ID: " + this.id + ", Created By: " + this.manager.username;
+    };
+
+    this.onClick = function() {
+        return "joinBillAndDisplayItems(" + this.id + ")";
+    };
+
+    this.identifier = function() {
+        return "__bill-" + this.id;
+    };
+
+    this.hasItems = function() {
+        return Object.keys(this.items).length > 0;
+    };
+
+    this.close = function() {
+        this.isOpen = false;
+        updateResource(this);
+    };
+
+    this.restUpdatePath = function () {
+        return "rest/bill/" + this.id;
+    };
+
+    this.restGetPath = function () {
+        return "rest/bill/" + this.id;
+    };
+
+    this.updateView = function () {
+        console.log("Bill: Update View");
+    }
+
+    this.toJSON = function() {
+        return {
+            id: this.id,
+            isPrivate: this.isPrivate,
+            isOpen: this.isOpen
+        }
+    }
+}
+
+Bill.restGetPath = function(id) {
+    return "rest/bill/" + id;
+}
+
+Bill.fromJsonCollection = function (jsonCollection) {
+    var billCollection = {};
+
+    $.each(jsonCollection, function(key, jsonBill) {
+        var bill = new Bill(jsonBill);
+        billCollection[bill.id] = jsonBill;
+    });
+
+    return billCollection;
+}
+//endregion
+
+//region Item
+function Item(jsonItem) {
+    this.billId = jsonItem.billId;
+    this.id = jsonItem.id;
+    this.name =  removeNonAlphanumeric(jsonItem.name);
+    this.numPayedFor = jsonItem.numPayedFor;
+    this.price = jsonItem.price;
+    this.quantity = jsonItem.quantity;
+
+    this.display = function() {
+        return "(" + this.quantity + "/" + this.numPayedFor + ") " + this.name + ": $" + this.price;
+    };
+
+    this.onClick = function() {
+        return "Item.doWasClicked(" + this.billId + "," + this.id + ")";
+    };
+
+    this.identifier = function() {
+        return "__item-" + this.id;
+    };
+
+    this.wasClicked = function() {
+        if (this.numPayedFor < this.quantity) {
+            this.numPayedFor++;
+            myShare[selectedBillsId] += this.price;
+            updateResource(this);
+        }
+        console.log("Payed for " + this.numPayedFor + " " + this.name);
+    };
+
+    this.restUpdatePath = function() {
+        return "rest/bill/" + this.billId + "/item/" + this.id;
+    };
+
+    this.updateView = function() {
+        displayTotalPricesAndMyShare(allBills[selectedBillsId].items);
+        $("#" + this.identifier()).text(this.display());
+        $("ul#billItemsListView").listview('refresh');
+    };
+
+    this.total = function() {
+        return this.price * this.quantity;
+    };
+
+    this.payedFor = function() {
+        return this.price * this.numPayedFor;
+    };
+
+    this.toJSON = function() {
+        return {
+            billId: this.billId,
+            id: this.id,
+            name: this.name,
+            quantity: this.quantity,
+            price: this.price,
+            numPayedFor: this.numPayedFor
+        }
+    }
+}
+
+Item.doWasClicked = function(billId, itemId) {
+    allBills[billId].items[itemId].wasClicked();
+};
+
+Item.fromJsonCollection = function(jsonItemCollection) {
+    var itemCollection = {};
+    $.each(jsonItemCollection, function(key, jsonItem) {
+        var item = new Item(jsonItem);
+        itemCollection[item.id] = item;
+    });
+
+    return itemCollection;
+};
 //endregion
 
 // Utility Methods
@@ -183,19 +508,19 @@ function ajaxRequest(method, url, callback, /*optional*/ entity, /*optional*/ er
     });
 }
 
-function createListView(listId, dataList) {
-    $(listId).empty();
-    $.each(dataList, function(index, data) {
-        $(listId).append(
+function createListView(listViewId, dataCollection) {
+    $(listViewId).empty();
+    $.each(dataCollection, function(index, data) {
+        $(listViewId).append(
             '<li>'  +
             '<a href="" onclick=' + data.onClick() + '>' +
-            '<h3>' + data.display() + '</h3>' +
+            '<h3 id="' + data.identifier() + '">' + data.display() + '</h3>' +
             '</a>' +
             '</li>'
         );
     });	// end for each
 
-    $(listId).listview('refresh');
+    $(listViewId).listview('refresh');
 }
 
 function error(error) {
@@ -204,106 +529,39 @@ function error(error) {
     $.mobile.changePage("#error");
 }
 
-function filterOnlyOpenBills(billList) {
+function filterOpenBillsWithItems(billList) {
     var openBills = [];
 
     $.each(billList, function(key, bill) {
-       if (bill.isOpen) {
-           openBills.push(bill);
-       }
+        if (bill.isOpen && bill.hasItems()) {
+            openBills.push(bill);
+        }
     });
 
     return openBills;
 }
-//endregion
 
-// Objects
-
-//region User
-function User(jsonUser) {
-    this.username = jsonUser.username;
-    this.password = jsonUser.password;
-    this.confirmPassword = jsonUser.confirmPassword;
-    this.id = jsonUser.id;
-
-    this.passwordsMatch = function() {
-        return (this.password === this.confirmPassword);
-    }
-
-    this.toJSON = function() {
-        return {
-            "username": this.username,
-            "password": this.password
-        };
-    }
+function removeNonAlphanumeric(str) {
+    return str.replace(/[^a-zA-Z 0-9]+/g, '');
 }
 
-function handleUserCreatedOrLogin(jsonResponse) {
-    if (jsonResponse.error) {
-        error(jsonResponse.errorMsg);
-    } else {
-        console.log(jsonResponse.content);
-        loggedInUser = new User(jsonResponse.content);
-        $.mobile.navigate("#main", jsonResponse);
-    }
+function getSelectedBillsIdFromLocalStorage() {
+    selectedBillsId = localStorage.selectedBillsId ? localStorage.selectedBillsId : 0;
+}
+
+function storeSelectedBillsId(billId) {
+    selectedBillsId = billId;
+    localStorage.selectedBillsId = selectedBillsId;
 }
 //endregion
 
-//region Bill
-function Bill(jsonBill) {
-    this.id = jsonBill.id;
-    this.manager =  new User(jsonBill.manager);
-    this.isPrivate = jsonBill.isPrivate;
-    this.isOpen = jsonBill.isOpen;
-    this.items = Item.fromJsonList(jsonBill.items);
-
-
-    this.display = function() {
-        return "ID: " + this.id + ", Created By: " + this.manager.username;
-    }
-
-    this.onClick = function() {
-        return "joinBillAndDisplayItems(" + this.id + ")";
-    }
+//region Inform Server methods
+function updateResource(resource) {
+    ajaxRequest(
+        HTTP_METHODS.PUT,
+        resource.restUpdatePath(),
+        function() { resource.updateView(); },
+        resource);
 }
 //endregion
 
-//region Item
-function Item(jsonItem) {
-    this.billId = jsonItem.billId;
-    this.id = jsonItem.id;
-    this.name = jsonItem.name;
-    this.numPayedFor = jsonItem.numPayedFor;
-    this.price = jsonItem.price;
-    this.quantity = jsonItem.quantity;
-
-    this.display = function() {
-        return "(" + this.quantity + "/" + this.numPayedFor + ") " + this.name + ": $" + this.price;
-    };
-
-    this.onClick = function() {
-        return "Item.doWasClicked(" + this.billId + "," + this.id + ")";
-    };
-
-    this.wasClicked = function() {
-        if (this.numPayedFor < this.quantity) {
-            this.numPayedFor++;
-        }
-        console.log("Payed for " + this.numPayedFor + " " + this.name);
-    }
-}
-
-Item.doWasClicked = function(billId, itemId) {
-    allBills[billId].items[itemId].wasClicked();
-};
-
-Item.fromJsonList = function(jsonItemList) {
-    var itemList = {};
-    $.each(jsonItemList, function(key, jsonItem) {
-        var item = new Item(jsonItem);
-        itemList[item.id] = item;
-    });
-
-    return itemList;
-};
-//endregion

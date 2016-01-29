@@ -34,6 +34,12 @@ public class BillRoute {
 		return BillController.updateBill(i_bill);
 	}
 
+	@PUT @Path("/{id}") @Consumes(MediaType.APPLICATION_JSON) @Produces(MediaType.APPLICATION_JSON)
+	public JsonResponse updateBillWithId(Bill i_bill, @PathParam("id") int id) {
+		i_bill.setID(id);
+		return BillController.updateBill(i_bill);
+	}
+
 	@GET @Path("/{id}") @Produces(MediaType.APPLICATION_JSON)
 	public JsonResponse getBill(@PathParam("id") int id) {
 		return BillController.get(id);
