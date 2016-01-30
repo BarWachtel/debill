@@ -15,7 +15,7 @@ public abstract class CommonDAO {
 
 	protected void init() {
 		System.out.println("In sampleDao - creating table " + getTableName());
-		if(!isTableExists() || IN_DEVELOPMENT) {
+		if(!isTableExists()) {
 			createTable();
 		}
 	}
@@ -44,8 +44,10 @@ public abstract class CommonDAO {
         try {
             Statement stmt = connection.createStatement();
 
-			String dropTableQuery = "DROP TABLE IF EXISTS " + getTableName() + ";";
-			stmt.executeUpdate(dropTableQuery);
+			if (IN_DEVELOPMENT) {
+				String dropTableQuery = "DROP TABLE IF EXISTS " + getTableName() + ";";
+				stmt.executeUpdate(dropTableQuery);
+			}
 
             String createTableQuery = generateSqlCreateTableQuery();
             successs = stmt.executeUpdate(createTableQuery);
