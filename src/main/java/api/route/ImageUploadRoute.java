@@ -29,13 +29,10 @@ private static final String SAVE_DIR = "uploadFiles";
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bill uploadFile(@Context HttpServletRequest request, FormDataMultiPart form) {
-        FormDataBodyPart filePart = form.getField("file");
+		SessionService.addSessionToLocalStore(request);
+		FormDataBodyPart filePart = form.getField("file");
         ContentDisposition headerOfFilePart = filePart.getContentDisposition();
         InputStream fileInputStream = filePart.getValueAs(InputStream.class);
-
-		SessionService.addSessionToLocalStore(request);
-		SessionService.setUserId(1);
-
         Bill bill = ImageUploadController.createBillFromImage(fileInputStream, headerOfFilePart.getFileName());
 		return bill;
     }

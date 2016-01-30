@@ -17,7 +17,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.logging.Logger;
 
 public class ImageUploadController {
-//	private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/path/to/uploads/";
 	private static final String SERVER_UPLOAD_LOCATION_FOLDER = "/uploads/";
 	static Logger log = Logger.getLogger("ImageUploadController");
 
@@ -48,9 +47,7 @@ public class ImageUploadController {
 
         //sending image to parser
         Core core = new Core();
-        Bill bill = core.createNewBill(sFile);
-
-        return bill;
+        return core.createNewBill(sFile);
     }
 
     private static File writeFile(byte[] content, String filename) throws IOException {
