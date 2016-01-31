@@ -23,7 +23,6 @@ public class ImageUploadRoute {
 private static final String DIR_NAME = "Images";
 private static final String SAVE_DIR = "uploadFiles";
 
-
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)

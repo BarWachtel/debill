@@ -1,6 +1,7 @@
 package api.controller;
 
 import api.route.pojo.response.JsonResponse;
+import api.service.SessionService;
 import database.dao.JDBCGroupDAO;
 import database.dao.JDBCItemDAO;
 import database.dao.JDBCUserDAO;
@@ -22,6 +23,9 @@ public class UserController {
 		JsonResponse jsonResponse;
 		User user = JDBCUserDAO.getInstance().insertUser(i_user);
 		jsonResponse = JsonResponse.okIfLegalId(user);
+		if (!jsonResponse.isError()) {
+			SessionService.setUserId(user.getID());
+		}
 		return jsonResponse;
 	}
 

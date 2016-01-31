@@ -15,26 +15,6 @@
 
 <body>
 
-<!--<div data-role="page" id="test">-->
-    <!--<div data-role="header">-->
-        <!--<h1>TEST</h1>-->
-    <!--</div>-->
-
-    <!--<div data-role="main" class="ui-content">-->
-        <!--<ul data-role="listview">-->
-            <!--<li class="interactive-item">-->
-                <!--<span class="item-text">5/7</span>-->
-                <!--<span class="item-text">Mochito</span>-->
-                <!--<div class="item-controlgroup" data-role="controlgroup" data-type="horizontal">-->
-                    <!--<a href="#" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext">Icon only</a>-->
-                    <!--<a href="#" class="ui-btn ui-corner-all ui-icon-minus ui-btn-icon-notext">Icon only</a>-->
-                <!--</div>-->
-            <!--</li>-->
-        <!--</ul>-->
-    <!--</div>-->
-
-<!--</div>-->
-
 <div data-role="page" id="welcome">
     <div data-role="header">
         <h1>Debill</h1>
@@ -63,7 +43,7 @@
     </div>
 
     <div data-role="footer" data-position="fixed">
-        <h1>yes please.</h1>
+        <a href="#" id="logoutButton" class="ui-btn ui-btn-inline ui-corner-all ui-btn-b ui-icon-arrow-l ui-btn-icon-left" style="margin-left: 10px">Logout</a>
     </div>
 </div>
 
@@ -142,6 +122,10 @@
             <input type="submit" value="Login">
         </form>
     </div>
+
+    <div data-role="footer" data-position="fixed" style="padding-left: 10px">
+        <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l">Back</a>
+    </div>
 </div>
 
 <div data-role="page" data-dialog="true" id="createUser" data-title="Create User">
@@ -158,6 +142,10 @@
             <input type="submit" value="Sign Up">
         </form>
     </div>
+
+    <div data-role="footer" data-position="fixed" style="padding-left: 10px">
+        <a href="#" data-role="button" data-theme="b" data-rel="back" data-icon="arrow-l">Back</a>
+    </div>
 </div>
 
 <div data-role="dialog" id="error" data-title="Error">
@@ -165,6 +153,14 @@
         <h4>The following error occured:</h4>
         <p style="color: darkred" id="errorMsg"></p>
         <a href="#" data-role="button" data-theme="b" data-rel="back">Back</a>
+    </div>
+</div>
+
+<div data-role="dialog" id="billClosed" data-title="Bill Closed">
+    <div data-role="content">
+        <h4>You had to pay:</h4>
+        <p id="billClosedAmountToPay"></p>
+        <a class="ui-btn ui-corner-all" href="#main">OK</a>
     </div>
 </div>
 

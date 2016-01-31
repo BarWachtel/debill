@@ -76,6 +76,10 @@ public class Core {
 
 		List<String> billLines = OcrClient.getImgLines(imgFileName);
 
+		for (String billLine : billLines) {
+			System.out.println(billLine);
+		}
+
 		BillTextParser billParser = new BillTextParser();
 		List<ParsedBillItem> parsedBillItems = billParser.parse(billLines);
 

@@ -1,6 +1,8 @@
 package core.parse;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,17 +25,22 @@ public class BillTextParser {
 
 	private ParsedBillItem parseItem(String billLine) {
 		ParsedBillItem parsedBillItem = null;
+		billLine = clearInhumanCharacters(billLine);
 		String[] billParts = billLine.split("\\s+");
 
-		String name = extractName(billParts);
-		String[] numericalParts = removeName(billParts);
-		if (numericalParts.length > 0) {
+		NameExtracted nameExtracted = extractName(billParts);
+		String[] partsWithoutName = nameExtracted.getPartsWithoutName();
+		if (partsWithoutName.length > 0) {
 			parsedBillItem = new ParsedBillItem();
-			parsedBillItem.setName(name);
-			findAndSetNumericalValues(parsedBillItem, numericalParts);
+			parsedBillItem.setName(nameExtracted.getName());
+			findAndSetNumericalValues(parsedBillItem, partsWithoutName);
 		}
 
 		return parsedBillItem;
+	}
+
+	String clearInhumanCharacters(String str) {
+		return str.replaceAll("[^a-zA-Z0-9.,;: ]", "");
 	}
 
 	private void findAndSetNumericalValues(ParsedBillItem parsedBillItem, String[] numericalParts) {
@@ -52,8 +59,12 @@ public class BillTextParser {
 
 	private List<Float> parseNumbers(String[] numericalParts) {
 		List<Float> numbers = new ArrayList<>();
-		for (String numericalPart : numericalParts) {
+		for (int i = 0, len = numericalParts.length; i < len; i++) {
+			String numericalPart = numericalParts[i];
 			try {
+				if (i == len - 1 && hasAtleastFourDigits(numericalPart)) {
+					numericalPart = numericalPart.substring(0, numericalPart.length() - 2);
+				}
 				numbers.add(Float.parseFloat(numericalPart));
 			} catch (NumberFormatException e) {
 				if (!numericalPart.isEmpty()) {
@@ -149,8 +160,7 @@ public class BillTextParser {
 		if (a == 0 || b == 0) {
 			quantity = (int) Math.max(a, b);
 			total = price = 0;
-		}
-		else if (secondIsQuantity(a, b)) {
+		} else if (secondIsQuantity(a, b)) {
 			quantity = (int) b;
 			total = a;
 			price = total / quantity;
@@ -185,38 +195,110 @@ public class BillTextParser {
 	private String[] removeName(String[] billParts) {
 		List<String> numericalParts = new ArrayList<>();
 		for (String part : billParts) {
-			if (!isPartOfName(part)) {
+			if (!isMostlyCharacters(part)) {
 				numericalParts.add(part);
 			}
 		}
 		return numericalParts.toArray(new String[numericalParts.size()]);
 	}
 
-	private String extractName(String[] billParts) {
+	private NameExtracted extractName(String[] billParts) {
 		StringBuilder sb = new StringBuilder();
 		boolean reachedNamePart = false;
-		for (String part : billParts) {
-			if (isPartOfName(part)) {
-				reachedNamePart = true;
-				sb.append(part).append(' ');
+		int startOfName, endOfName;
+		startOfName = endOfName = -1;
+
+		for (int i = 0; i < billParts.length; i++) {
+			if (isMostlyCharacters(billParts[i]) || (reachedNamePart && (i - billParts.length > 2)) || (reachedNamePart && hasAtleastFourDigits(
+					billParts[billParts.length - 1]) && i < (billParts.length - 1))) {
+				if (!reachedNamePart) {
+					startOfName = i;
+					reachedNamePart = true;
+				}
+				sb.append(billParts[i]).append(' ');
 			} else {
 				if (reachedNamePart) {
+					endOfName = i;
 					break;
 				}
 			}
+
 		}
 
-		return sb.toString().trim();
+		NameExtracted nameExtracted = new NameExtracted();
+		nameExtracted.setName(sb.toString().trim());
+		nameExtracted.setOriginalParts(billParts);
+		nameExtracted.setStartOfName(startOfName);
+		nameExtracted.setEndOfName(endOfName);
+
+		return nameExtracted;
 	}
 
-	private boolean isPartOfName(String part) {
+	private boolean hasAtleastFourDigits(String billPart) {
+		return getNumDigitsInPart(billPart) >= 4;
+	}
+
+	private boolean isMostlyCharacters(String part) {
+		int numDigitsInPart = getNumDigitsInPart(part);
+		// might have decimal parts as Ol, OI etc.
+		return numDigitsInPart < (part.length() - numDigitsInPart);
+	}
+
+	private int getNumDigitsInPart(String part) {
 		int numDigitsInPart = 0;
 		for (Character ch : part.toCharArray()) {
 			if (Character.isDigit(ch)) {
 				numDigitsInPart++;
 			}
 		}
-		// might have decimal parts as Ol, OI etc.
-		return numDigitsInPart < (part.length() - numDigitsInPart);
+		return numDigitsInPart;
+	}
+
+	private class NameExtracted {
+		String[] originalParts;
+		int startOfName, endOfName;
+		String name;
+
+		public String[] getOriginalParts() {
+			return originalParts;
+		}
+
+		public String[] getPartsWithoutName() {
+			RangeRemoveSupportArrayList<String> numericalParts = new RangeRemoveSupportArrayList<>(originalParts.length);
+			numericalParts.addAll(Arrays.asList(originalParts));
+			numericalParts.removeRange(startOfName, endOfName);
+			return numericalParts.toArray(new String[numericalParts.size()]);
+		}
+
+		public void setOriginalParts(String[] originalParts) {
+			this.originalParts = originalParts;
+		}
+
+		public void setStartOfName(int startOfName) {
+			this.startOfName = startOfName;
+		}
+
+		public void setEndOfName(int endOfName) {
+			this.endOfName = endOfName;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
+
+	public class RangeRemoveSupportArrayList<E> extends ArrayList<E> {
+		public RangeRemoveSupportArrayList(int length) {
+			super(length);
+		}
+
+		public void removeRange(int fromIndex, int toIndex) {
+			super.removeRange(fromIndex, toIndex);
+		}
+
 	}
 }

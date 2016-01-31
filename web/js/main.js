@@ -7,11 +7,21 @@
 
 var currentPageId;
 var photoTaken;
+var pollForBillUpdates;
+
 var HTTP_METHODS = {
     GET: "GET",
     POST: "POST",
     PUT: "PUT"
 };
+var SCREENS = {
+    MAIN: '#main',
+    WELCOME: '#welcome',
+    JOIN_BILL: '#joinBill',
+    DISPLAY_BILL: '#displayBill',
+    BILL_CLOSED: '#billClosed'
+}
+
 
 //region Data Persistance
 
@@ -21,7 +31,7 @@ function Persist() {
     var selectedBillsId = undefined;
     var myShare = undefined;
 
-    this.getLoggedInUser = function() {
+    this.getLoggedInUser = function () {
         if (!loggedInUser) {
             loggedInUser = localStorage.loggedInUser ?
                 new User(JSON.parse(localStorage.loggedInUser)) : {};
@@ -112,19 +122,26 @@ function storeCurrentPageId() {
     currentPageId = $(".ui-page-active").attr('id');
 }
 
-$(function() {
+$(function () {
     console.log("Main script running...");
     storeCurrentPageId();
 
-    $(window).on("pageshow", function( event, data ) {
+    $(window).on("pageshow", function (event, data) {
         storeCurrentPageId();
         if (currentPageId) {
             eval("pageLoad_" + currentPageId)();
         }
     });
 
-    $(window).on("pagehide", function( event, data ) {
+    $(window).on("pagehide", function (event, data) {
         console.log("Navigating away from page " + currentPageId);
+        if (currentPageId === "displayBill") {
+            if (pollForBillUpdates) {
+                clearInterval(pollForBillUpdates);
+                console.log("Stopped polling server for bill updates");
+                pollForBillUpdates = null;
+            }
+        }
     });
 
     $('a#joinBillButton').click(handleJoinBillClicked);
@@ -138,12 +155,19 @@ $(function() {
     $('form#createUserForm').submit(createUserFormSubmitted);
 
     $('#closeBillButton').click(closeBillButtonClicked);
+
+    $('#logoutButton').click(logoutButtonClicked);
 });
 //endregion
 
 //region On Page Load functions
 function pageLoad_welcome() {
     console.log("On welcome page");
+    var loggedInUser = persist.getLoggedInUser();
+    if (loggedInUser.id) {
+        console.log(loggedInUser.username + " already logged in");
+        navigateToScreen(SCREENS.MAIN);
+    }
 }
 
 function pageLoad_main() {
@@ -162,10 +186,19 @@ function pageLoad_displayBill() {
     } else {
         ajaxRequest(HTTP_METHODS.GET, Bill.restGetPath(persist.getSelectedBillsId()), handleBillJsonRecieved);
     }
+
+    if (!pollForBillUpdates) {
+        console.log("Starting to poll server for bill updates");
+        pollForBillUpdates = setInterval(updateExistingBillDisplay, 400);
+    }
 }
 
 function pageLoad_createBill() {
     console.log("On create bill page");
+}
+
+function pageLoad_billClosed() {
+    console.log("On bill closed page");
 }
 
 function pageLoad_login() {
@@ -205,11 +238,18 @@ function loginFormSubmitted() {
 
     return false;
 }
+
+function logoutButtonClicked() {
+    localStorage.clear();
+    persist = new Persist();
+    console.log(persist.getLoggedInUser());
+    navigateToScreen(SCREENS.WELCOME);
+}
 //endregion
 
 //region Join Bill
 function handleJoinBillClicked() {
-    $.mobile.navigate("#joinBill");
+    navigateToScreen(SCREENS.JOIN_BILL);
 }
 
 function addAllBillsToListview(jsonResponse) {
@@ -228,7 +268,7 @@ function addAllBillsToListview(jsonResponse) {
 //region Display Bill
 function joinBillAndDisplayItems(billId) {
     persist.setSelectedBillsId(billId)
-    $.mobile.navigate("#displayBill");
+    navigateToScreen(SCREENS.DISPLAY_BILL);
 }
 
 function handleBillJsonRecieved(jsonResponse) {
@@ -247,7 +287,7 @@ function displayTotalPricesAndMyShare(itemsCollection) {
     total = 0;
     payedFor = 0;
 
-    $.each(itemsCollection, function(index, item) {
+    $.each(itemsCollection, function (index, item) {
         total += item.total();
         payedFor += item.payedFor();
     });
@@ -271,7 +311,32 @@ function displayBill() {
 
 function closeBillButtonClicked() {
     persist.getCurrentBill().close();
+    goToBillClosedScreen();
 }
+
+function goToBillClosedScreen() {
+    $("#billClosedAmountToPay").text('$' + persist.getMyShare());
+    navigateToScreen(SCREENS.BILL_CLOSED);
+}
+
+function updateExistingBillDisplay() {
+    ajaxRequest(HTTP_METHODS.GET, Bill.restGetPath(persist.getSelectedBillsId()), function(jsonResponse) {
+        if (jsonResponse.error) {
+            error(jsonResponse.errorMsg);
+        } else {
+            var bill = new Bill(jsonResponse.content);
+            persist.setBill(bill);
+            if (!bill.isOpen) {
+                goToBillClosedScreen();
+            } else {
+                $.each(bill.items, function (key, item) {
+                    item.updateView();
+                })
+            }
+        }
+    });
+}
+
 //endregion
 
 
@@ -284,11 +349,11 @@ function User(jsonUser) {
     this.confirmPassword = jsonUser.confirmPassword;
     this.id = jsonUser.id;
 
-    this.passwordsMatch = function() {
+    this.passwordsMatch = function () {
         return (this.password === this.confirmPassword);
     }
 
-    this.toJSON = function() {
+    this.toJSON = function () {
         return {
             "username": this.username,
             "password": this.password
@@ -302,7 +367,7 @@ function handleUserCreatedOrLogin(jsonResponse) {
     } else {
         console.log(jsonResponse.content);
         persist.setLoggedInUser(new User(jsonResponse.content));
-        $.mobile.navigate("#main", jsonResponse);
+        navigateToScreen(SCREENS.MAIN);
     }
 }
 //endregion
@@ -310,29 +375,29 @@ function handleUserCreatedOrLogin(jsonResponse) {
 //region Bill
 function Bill(jsonBill) {
     this.id = jsonBill.id;
-    this.manager =  new User(jsonBill.manager);
+    this.manager = new User(jsonBill.manager);
     this.isPrivate = jsonBill.isPrivate;
     this.isOpen = jsonBill.isOpen;
     this.items = Item.fromJsonCollection(jsonBill.items);
 
 
-    this.display = function() {
+    this.display = function () {
         return "ID: " + this.id + ", Created By: " + this.manager.username;
     };
 
-    this.onClick = function() {
+    this.onClick = function () {
         return "joinBillAndDisplayItems(" + this.id + ")";
     };
 
-    this.identifier = function() {
+    this.identifier = function () {
         return "__bill-" + this.id;
     };
 
-    this.hasItems = function() {
+    this.hasItems = function () {
         return Object.keys(this.items).length > 0;
     };
 
-    this.close = function() {
+    this.close = function () {
         this.isOpen = false;
         updateResource(this);
     };
@@ -349,7 +414,7 @@ function Bill(jsonBill) {
         console.log("Bill: Update View");
     }
 
-    this.toJSON = function() {
+    this.toJSON = function () {
         return {
             id: this.id,
             isPrivate: this.isPrivate,
@@ -359,7 +424,7 @@ function Bill(jsonBill) {
         }
     }
 
-    this.updateJson = function() {
+    this.updateJson = function () {
         var updateJson = this.toJSON();
         delete updateJson.items;
         delete updateJson.manager;
@@ -367,14 +432,14 @@ function Bill(jsonBill) {
     }
 }
 
-Bill.restGetPath = function(id) {
+Bill.restGetPath = function (id) {
     return "rest/bill/" + id;
 }
 
 Bill.fromJsonCollection = function (jsonCollection) {
     var billCollection = {};
 
-    $.each(jsonCollection, function(key, jsonBill) {
+    $.each(jsonCollection, function (key, jsonBill) {
         jsonBill.items = JSON.parse(jsonBill.items);
         var bill = new Bill(jsonBill);
         billCollection[bill.id] = bill;
@@ -388,24 +453,24 @@ Bill.fromJsonCollection = function (jsonCollection) {
 function Item(jsonItem) {
     this.billId = jsonItem.billId;
     this.id = jsonItem.id;
-    this.name =  removeNonAlphanumeric(jsonItem.name);
+    this.name = removeNonAlphanumeric(jsonItem.name);
     this.numPayedFor = jsonItem.numPayedFor;
     this.price = jsonItem.price;
     this.quantity = jsonItem.quantity;
 
-    this.display = function() {
+    this.display = function () {
         return "(" + this.quantity + "/" + this.numPayedFor + ") " + this.name + ": $" + this.price;
     };
 
-    this.onClick = function() {
+    this.onClick = function () {
         return "Item.doWasClicked(" + this.billId + "," + this.id + ")";
     };
 
-    this.identifier = function() {
+    this.identifier = function () {
         return "__item-" + this.id;
     };
 
-    this.wasClicked = function() {
+    this.wasClicked = function () {
         if (this.numPayedFor < this.quantity) {
             this.numPayedFor++;
             persist.saveAllBills();
@@ -415,25 +480,25 @@ function Item(jsonItem) {
         console.log("Payed for " + this.numPayedFor + " " + this.name);
     };
 
-    this.restUpdatePath = function() {
+    this.restUpdatePath = function () {
         return "rest/bill/" + this.billId + "/item/" + this.id;
     };
 
-    this.updateView = function() {
+    this.updateView = function () {
         displayTotalPricesAndMyShare(persist.getCurrentBill().items);
         $("#" + this.identifier()).text(this.display());
         $("ul#billItemsListView").listview('refresh');
     };
 
-    this.total = function() {
+    this.total = function () {
         return this.price * this.quantity;
     };
 
-    this.payedFor = function() {
+    this.payedFor = function () {
         return this.price * this.numPayedFor;
     };
 
-    this.toJSON = function() {
+    this.toJSON = function () {
         return {
             billId: this.billId,
             id: this.id,
@@ -444,18 +509,18 @@ function Item(jsonItem) {
         }
     }
 
-    this.updateJson = function() {
+    this.updateJson = function () {
         return this.toJSON();
     }
 }
 
-Item.doWasClicked = function(billId, itemId) {
+Item.doWasClicked = function (billId, itemId) {
     persist.getBill(billId).items[itemId].wasClicked();
 };
 
-Item.fromJsonCollection = function(jsonItemCollection) {
+Item.fromJsonCollection = function (jsonItemCollection) {
     var itemCollection = {};
-    $.each(jsonItemCollection, function(key, jsonItem) {
+    $.each(jsonItemCollection, function (key, jsonItem) {
         var item = new Item(jsonItem);
         itemCollection[item.id] = item;
     });
@@ -473,9 +538,9 @@ function actualTakePhoto() {
 }
 
 function tookPhoto(event) {
-    if(event.target.files.length == 1 &&
+    if (event.target.files.length == 1 &&
         event.target.files[0].type.indexOf("image/") == 0) {
-        $("#photoTaken").attr("src",URL.createObjectURL(event.target.files[0]));
+        $("#photoTaken").attr("src", URL.createObjectURL(event.target.files[0]));
         photoTaken = event.target.files[0];
         $("#uploadPhoto").attr("disabled", false);
     }
@@ -500,19 +565,16 @@ function uploadPhoto() {
         dataType: 'json',
         processData: false, // Don't process the files
         contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-        success: function(data, textStatus, jqXHR)
-        {
+        success: function (data, textStatus, jqXHR) {
             $.mobile.loading("hide");
-            if(typeof data.error === 'undefined')
-            {
+            if (typeof data.error === 'undefined') {
                 var bill = new Bill(data);
                 persist.setSelectedBillsId(bill.id);
                 persist.setBill(bill);
-                $.mobile.navigate("#displayBill");
+                navigateToScreen(SCREENS.DISPLAY_BILL);
             }
         },
-        error: function(jqXHR, textStatus, errorThrown)
-        {
+        error: function (jqXHR, textStatus, errorThrown) {
             $.mobile.loading("hide");
             console.log('ERRORS: ' + textStatus);
         }
@@ -539,9 +601,9 @@ function ajaxRequest(method, url, callback, /*optional*/ entity, /*optional*/ er
 
 function createListView(listViewId, dataCollection) {
     $(listViewId).empty();
-    $.each(dataCollection, function(index, data) {
+    $.each(dataCollection, function (index, data) {
         $(listViewId).append(
-            '<li>'  +
+            '<li>' +
             '<a href="" onclick=' + data.onClick() + '>' +
             '<h3 id="' + data.identifier() + '">' + data.display() + '</h3>' +
             '</a>' +
@@ -561,7 +623,7 @@ function error(error) {
 function filterOpenBillsWithItems(billList) {
     var openBills = [];
 
-    $.each(billList, function(key, bill) {
+    $.each(billList, function (key, bill) {
         if (bill.isOpen && bill.hasItems()) {
             openBills.push(bill);
         }
@@ -573,6 +635,10 @@ function filterOpenBillsWithItems(billList) {
 function removeNonAlphanumeric(str) {
     return str.replace(/[^a-zA-Z 0-9]+/g, '');
 }
+
+function navigateToScreen(screen) {
+    $.mobile.navigate(screen);
+};
 //endregion
 
 //region Inform Server methods
@@ -580,7 +646,9 @@ function updateResource(resource) {
     ajaxRequest(
         HTTP_METHODS.PUT,
         resource.restUpdatePath(),
-        function() { resource.updateView(); },
+        function () {
+            resource.updateView();
+        },
         resource.updateJson());
 }
 //endregion
