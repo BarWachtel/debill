@@ -7,9 +7,9 @@ package core.ocr;
  */
 public class ClientSettings {
 	// Name of application you created
-	public static final String APPLICATION_ID = "debill please";
+	public static final String APPLICATION_ID = "debill-app";
 	// Password should be sent to your e-mail after application was created
-	public static final String PASSWORD = "Tr+a3abEJc078yNGgvcsa/av";
+	public static final String PASSWORD = "30ZhIj+cuYq1aOH6saUbLzGQ";
 	
 	public static void setupProxy()
 	{

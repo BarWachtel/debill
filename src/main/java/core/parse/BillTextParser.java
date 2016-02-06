@@ -30,7 +30,7 @@ public class BillTextParser {
 
 		NameExtracted nameExtracted = extractName(billParts);
 		String[] partsWithoutName = nameExtracted.getPartsWithoutName();
-		if (partsWithoutName.length > 0) {
+		if (partsWithoutName != null && partsWithoutName.length > 0) {
 			parsedBillItem = new ParsedBillItem();
 			parsedBillItem.setName(nameExtracted.getName());
 			findAndSetNumericalValues(parsedBillItem, partsWithoutName);
@@ -124,7 +124,10 @@ public class BillTextParser {
 
 		} else if (firstQuantityMiddlePriceLastTotal(b, c, a, parsedBillItem)) {
 
-		} else {
+		} else if (c == 0 && a >= 0 && b >= 0) {
+			handleTwoNumbers(parsedBillItem, numbers);
+		}
+		else {
 			parsedBillItem.setPrice(a);
 			parsedBillItem.setTotal(b);
 			parsedBillItem.setQuantity((int) c);
@@ -264,10 +267,16 @@ public class BillTextParser {
 		}
 
 		public String[] getPartsWithoutName() {
-			RangeRemoveSupportArrayList<String> numericalParts = new RangeRemoveSupportArrayList<>(originalParts.length);
-			numericalParts.addAll(Arrays.asList(originalParts));
-			numericalParts.removeRange(startOfName, endOfName);
-			return numericalParts.toArray(new String[numericalParts.size()]);
+			String[] result = null;
+
+			if (originalParts.length > 0 && startOfName >= 0 && endOfName >= startOfName) {
+				RangeRemoveSupportArrayList<String> numericalParts = new RangeRemoveSupportArrayList<>(originalParts.length);
+				numericalParts.addAll(Arrays.asList(originalParts));
+				numericalParts.removeRange(startOfName, endOfName);
+				result = numericalParts.toArray(new String[numericalParts.size()]);
+			}
+
+			return result;
 		}
 
 		public void setOriginalParts(String[] originalParts) {
