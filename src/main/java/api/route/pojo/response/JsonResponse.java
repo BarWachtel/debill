@@ -2,13 +2,7 @@ package api.route.pojo.response;
 
 import com.sun.istack.Nullable;
 import database.entity.Entity;
-import database.entity.User;
 
-import java.util.Objects;
-
-/**
- * Created by user on 10/01/2016.
- */
 public class JsonResponse {
 	boolean error;
 	Object content;

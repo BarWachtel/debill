@@ -3,17 +3,12 @@ package api.route;
 import api.controller.UserController;
 import api.route.pojo.response.JsonResponse;
 import api.service.SessionService;
-import database.dao.JDBCUserDAO;
 import database.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
-
-
 
 @Path("/user")
 public class UserRoute {

@@ -2,6 +2,8 @@ package database;
 
 //import database.DatabaseCredentials;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -37,8 +39,11 @@ public class DBConn {
 				SetDatabaseCredentials();
 				conn = DriverManager.getConnection(URL + DB_NAME, USER_NAME, PASSWORD);
 				System.out.println((new StringBuilder("conn success. conn=")).append(conn).toString());
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch(CommunicationsException ce) {
+				System.out.println("DBConn -> No communication with SQL server. Check if the service is running");
+			}
+			catch (SQLException e) {
+				System.out.println("DBConn -> getConnection -> Exception: " + e.getMessage());
 			}
 		}
 

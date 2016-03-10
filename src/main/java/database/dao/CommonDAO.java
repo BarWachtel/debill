@@ -7,17 +7,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class CommonDAO {
-	private static boolean IN_DEVELOPMENT = true;
+	private static boolean IN_DEVELOPMENT = false;
 	private static Logger log = Logger.getGlobal();
 
     public CommonDAO() {
     }
 
 	protected void init() {
-		System.out.println("In sampleDao - creating table " + getTableName());
-		if(!isTableExists()) {
-			createTable();
-		}
+		log.info("Initializing CommonDAO - " + getTableName());
+        createTable();
 	}
 
 	protected abstract String getTableName();
@@ -40,7 +38,7 @@ public abstract class CommonDAO {
     public int createTable() {
 		log.info("Creating table " + getTableName());
         Connection connection = DBConn.getConnection();
-        int successs = 0;
+        int success = 0;
         try {
             Statement stmt = connection.createStatement();
 
@@ -50,14 +48,14 @@ public abstract class CommonDAO {
 			}
 
             String createTableQuery = generateSqlCreateTableQuery();
-            successs = stmt.executeUpdate(createTableQuery);
+            success = stmt.executeUpdate(createTableQuery);
 
 			log.info("Executed statement - ");
 			log.info(createTableQuery);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return successs;
+        return success;
     }
 
     protected abstract String generateSqlCreateTableQuery();

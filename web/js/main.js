@@ -224,7 +224,7 @@ function createUserFormSubmitted() {
     if (user.passwordsMatch()) {
         ajaxRequest(HTTP_METHODS.POST, "rest/user", handleUserCreatedOrLogin, user.toJSON());
     } else {
-        error("Passwords dont match");
+        error("Passwords don't match");
     }
 
     console.log("Trying to create user: " + user);

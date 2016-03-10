@@ -5,9 +5,6 @@ import generalutils.thread.ThreadLocalUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-/**
- * Created by user on 03/01/2016.
- */
 public class SessionService {
 	private static final boolean CREATE_SESSION_IF_NONE_EXISTS = true;
 

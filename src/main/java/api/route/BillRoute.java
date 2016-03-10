@@ -6,14 +6,9 @@ import api.controller.UserController;
 import api.route.pojo.response.JsonResponse;
 import database.entity.Bill;
 import database.entity.Item;
-import database.entity.User;
-import generalutils.thread.ThreadLocalUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/bill")
 public class BillRoute {

@@ -49,7 +49,7 @@ public class JDBCGroupDAO extends CommonDAO implements GroupDAO {
 
     @Override
     protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `bills_groups` (\n" +
+        return "CREATE TABLE IF NOT EXISTS `bills_groups` (\n" +
                 "  `group_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `user_id` int(11) NOT NULL,\n" +

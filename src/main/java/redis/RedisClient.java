@@ -3,15 +3,19 @@ package redis;
 import database.entity.Bill;
 import database.entity.Item;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RedisClient {
-    private static String redisHost = "localhost";
-    private static int redisPort = 6379;
-    private static Jedis jedis = new Jedis(redisHost, redisPort);
+
+    private static final String redisHost = "localhost";
+    private static final int redisPort = 6379;
+
+    private static final Jedis jedis = new Jedis(redisHost, redisPort);
 
     private static final String USER_KEY = "user:";
     private static final String BILL_KEY = "bill:";
@@ -51,7 +55,9 @@ public class RedisClient {
 
     public void setBillByUserId(Bill bill) {
         String key = USER_KEY + bill.getManager().getID();
-        jedis.set(key, String.valueOf(bill.getID()));
+        String val = String.valueOf((bill.getID()));
+        jedis.set(key, val);
+        System.out.println("set key " + key + " with " + val);
     }
 
     public Item getItem(int billId, int itemId) {
@@ -94,13 +100,13 @@ public class RedisClient {
 
     private void setEachItemInHashMap(Bill bill) {
         for (Item item : bill.getItems()) {
-			this.setItem(item);
-		}
+            this.setItem(item);
+        }
     }
 
     public void removeAllItems(Bill bill) {
-		for (Item item : bill.getItems()) {
-			this.removeItem(item);
-		}
+        for (Item item : bill.getItems()) {
+            this.removeItem(item);
+        }
     }
 }

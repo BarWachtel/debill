@@ -32,19 +32,19 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
 	@Override
     protected String generateSqlCreateTableQuery() {
-		return 	"CREATE TABLE `users` (\n" +
-                "  `user_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                "  `username` varchar(45) NOT NULL UNIQUE,\n" +
-				"  `password` varchar(45) DEFAULT NULL,\n" +
-                "  PRIMARY KEY (`user_id`)\n" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+		return 	"CREATE TABLE IF NOT EXISTS `users` (\n"+
+                "`user_id` int(11) NOT NULL AUTO_INCREMENT,\n"+
+                "`user_name` varchar(45) NOT NULL,\n"+
+                "`password` varchar(45) DEFAULT NULL,\n"+
+                "PRIMARY KEY (`user_id`)\n"+
+                ") ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8\n";
     }
 
 
 
 	private enum Columns {
-        userId("user_id"),
-        username("username"),
+        userID("user_id"),
+        userName("user_name"),
         password("password");
 
         private String asString;
@@ -72,7 +72,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 		Connection conn = DBConn.getConnection();
 		User user = null;
 		try {
-			String query = buildGetEntityByColumnName(Columns.username.getAsString());
+			String query = buildGetEntityByColumnName(Columns.userName.getAsString());
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
@@ -104,15 +104,15 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     protected String getIdColumnName() {
-        return Columns.userId.getAsString();
+        return Columns.userID.getAsString();
     }
 
     @Override
     protected User createEntityFromResultSet(ResultSet rs) {
         User newUser = new User();
         try {
-            newUser.setID(rs.getInt(Columns.userId.getAsString()));
-            newUser.setUsername(rs.getString(Columns.username.getAsString()));
+            newUser.setID(rs.getInt(Columns.userID.getAsString()));
+            newUser.setUsername(rs.getString(Columns.userName.getAsString()));
             newUser.setPassword(rs.getString(Columns.password.getAsString()));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
 	@Override protected Collection<String> getColumnsForUpdate() {
 		ArrayList<String> colsForUpdate = new ArrayList<>();
-        colsForUpdate.add(Columns.username.getAsString());
+        colsForUpdate.add(Columns.userName.getAsString());
         colsForUpdate.add(Columns.password.getAsString());
         return colsForUpdate;
 	}
@@ -130,7 +130,7 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
     @Override
     protected Collection<String> getColumnsForInsert() {
         List<String> colsForInsert = new ArrayList<>();
-        colsForInsert.add(Columns.username.getAsString());
+        colsForInsert.add(Columns.userName.getAsString());
         colsForInsert.add(Columns.password.getAsString());
         return colsForInsert;
     }

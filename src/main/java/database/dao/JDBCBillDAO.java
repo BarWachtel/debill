@@ -31,7 +31,7 @@ public class JDBCBillDAO extends EntityDAO<Bill> implements BillDAO {
 	}
 
 	@Override protected String generateSqlCreateTableQuery() {
-		return 	"CREATE TABLE `bills` (\n" +
+		return 	"CREATE TABLE IF NOT EXISTS `bills` (\n" +
 				"  `bill_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
 				"  `user_id` int(11) NOT NULL,\n" +
 				"  `private` tinyint(1) NOT NULL,\n" +

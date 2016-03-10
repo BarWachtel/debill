@@ -25,6 +25,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
         try {
             String query = buildGetAllQueryString();
             Statement st = conn.createStatement();
+            System.out.println("EntityDAO -> Get All Entities Query: " + query);
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
                 entities.add(createEntityFromResultSet(rs));
@@ -42,6 +43,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
             String query = buildGetEntityByIdQuery();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityID);
+            System.out.println("EntityDAO -> Get Entity Query: " + ps.toString());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 entity = createEntityFromResultSet(rs);
@@ -59,6 +61,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
             String query = buildUpdateQuery(entity.getID());
             PreparedStatement ps = conn.prepareStatement(query);
             setUpdatePreparedStatementParameters(ps, entity);
+            System.out.println("EntityDAO -> Update Query: " + ps.toString());
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
                 entityToReturn = getEntity(entity.getID());
@@ -76,6 +79,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
             String query = buildInsertQuery();
             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             setInsertPreparedStatementParameters(ps, entity);
+            System.out.println("EntityDAO -> Insert Query: " + ps.toString());
             int affectedRows = ps.executeUpdate();
             if(affectedRows > 0) {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
@@ -98,6 +102,7 @@ public abstract class EntityDAO<T extends Entity> extends CommonDAO {
             String query = buildDeleteQuery(entityToDeleteID);
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, entityToDeleteID);
+            System.out.println("EntityDAO -> Delete Query: " + ps.toString());
             result = ps.execute();
         } catch (SQLException e) {
             System.out.println("EntityDAO -> deleteEntry -> Exception: " + e.getMessage());

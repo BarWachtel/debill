@@ -1,8 +1,5 @@
 package api.route.pojo.request;
 
-/**
- * Created by user on 10/01/2016.
- */
 public class UserLoginDetails {
 	String username;
 	String password;

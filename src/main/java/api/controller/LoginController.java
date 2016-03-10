@@ -5,14 +5,10 @@ import api.route.pojo.response.JsonResponse;
 import api.service.SessionService;
 import database.entity.User;
 
-/**
- * Created by user on 10/01/2016.
- */
 public class LoginController {
 	public static JsonResponse login(UserLoginDetails userLoginDetails) {
 		JsonResponse jsonResponse = null;
 		String errorMsg = null;
-
 		User user = UserController.getUser(userLoginDetails.getUsername());
 		if (user != null) {
 			if (user.comparePassword(userLoginDetails.getPassword())) {
@@ -20,7 +16,7 @@ public class LoginController {
 					jsonResponse = JsonResponse.ok(user);
 					SessionService.setUserId(user.getID());
 				} else {
-					errorMsg = "Unknown error occured";
+					errorMsg = "Unknown error occurred";
 				}
 			} else {
 				errorMsg = "Password incorrect";

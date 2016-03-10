@@ -141,7 +141,7 @@ public class JDBCSummaryDAO extends EntityDAO<ItemSummary> implements SummaryDAO
 
     @Override
     protected String generateSqlCreateTableQuery() {
-        return "CREATE TABLE `bills_summary` (\n" +
+        return "CREATE TABLE IF NOT EXISTS `bills_summary` (\n" +
                 "  `bill_summary_id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `bill_id` int(11) NOT NULL,\n" +
                 "  `item_id` int(11) NOT NULL,\n" +
