@@ -44,6 +44,8 @@ public class JsonResponse {
 	public static JsonResponse okIfLegalId(Entity entity) {
 		if (entity.hasLegalId()) {
 			return ok(entity);
+		} else if (entity.getID() == 0) {
+			return error("Username already exists");
 		} else {
 			return error("Failed to create");
 		}

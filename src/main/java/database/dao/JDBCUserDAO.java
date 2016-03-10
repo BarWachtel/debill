@@ -98,7 +98,12 @@ public class JDBCUserDAO extends EntityDAO<User> implements UserDAO {
 
     @Override
     public User insertUser(User user) {
-        insertEntity(user);
+        User tempUser = getUser(user.getUsername());
+        if(tempUser == null) { // username does not exists in db
+            insertEntity(user);
+        } else { // username already exists in db
+            user.setID(0);
+        }
         return user;
     }
 
